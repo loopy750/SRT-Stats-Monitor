@@ -14,6 +14,10 @@ Basic features (**_MultiCameraSwitch=false_**) allow a simple two-scene scenario
 
 Advanced features (**_MultiCameraSwitch=true_**) consider for a two-camera multiple-scene scenario, and can alternate between scenes depending on the combination of cameras/streams used, i.e. stream 1, stream 2, and both stream 1&2 simultaneously. See 'readme.txt' for a full description regarding these and other settings.
   
+  Twitch streamer [sprEEEzy](https://www.twitch.tv/spreeezy) has been a big advocate of high quality IRL streaming at an affordable price, and helping test various equipment. SprEEEzy's [Discord](https://discord.gg/REgDtsTVar) has a channel for IRL streaming and techincal discussion. Both the hardware and software can be confusing at first, but as a community, helping each other, we can iron out all the bugs.
+  
+  I also have an (inactive) [Discord](https://discord.gg/HQ23xS3ASt) and [Twitch](https://www.twitch.tv/loopy750) channel that I may or may not make use of one day.
+  
   [Example of program being used in a live stream](https://user-images.githubusercontent.com/35911135/116689723-c2803680-a9fb-11eb-99bd-dbc29c6f75f5.mp4)
   
 DOWNLOADS
@@ -23,7 +27,7 @@ Programs to download
 --------------------
 OBS Studio - [https://obsproject.com/](https://obsproject.com/)  
 OBS Websocket - [https://github.com/Palakis/obs-websocket/releases/latest](https://github.com/Palakis/obs-websocket/releases/latest)  
-Node.js - [https://nodejs.org/](https://nodejs.org/)
+Node.js - [https://nodejs.org/](https://nodejs.org/)  
 VLC 64-bit - [https://www.videolan.org/vlc/download-windows.html](https://www.videolan.org/vlc/download-windows.html)
 
 
