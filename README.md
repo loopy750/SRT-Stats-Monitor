@@ -25,8 +25,8 @@ DOWNLOADS
 
 Programs to download
 --------------------
-OBS Studio - [https://obsproject.com/](https://obsproject.com/)  
-OBS Websocket - [https://github.com/Palakis/obs-websocket/releases/latest](https://github.com/Palakis/obs-websocket/releases/latest)  
+OBS Studio (v27 or newer recommended for the best stability with SRT) - [https://obsproject.com/](https://obsproject.com/)  
+OBS Websocket (v4.9.0 or newer required) - [https://github.com/Palakis/obs-websocket/releases/latest](https://github.com/Palakis/obs-websocket/releases/latest)  
 Node.js - [https://nodejs.org/](https://nodejs.org/)  
 VLC 64-bit - [https://www.videolan.org/vlc/download-windows.html](https://www.videolan.org/vlc/download-windows.html)
 
