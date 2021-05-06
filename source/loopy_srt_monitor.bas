@@ -6,8 +6,12 @@
 
 ': Controls' IDs: ------------------------------------------------------------------
 OPTION _EXPLICIT
-DIM SHARED LoopySRTMonitor2 AS LONG
 DIM SHARED LoopySRTMonitor AS LONG
+DIM SHARED LoopySRTMonitor2 AS LONG
+DIM SHARED StreamUptimeLB3 AS LONG
+DIM SHARED StreamFailTimerLB2 AS LONG
+DIM SHARED Stream_UptimeLB AS LONG
+DIM SHARED Stream_Fail_TimerLB AS LONG
 DIM SHARED FileMenu AS LONG
 DIM SHARED OptionsMenu AS LONG
 DIM SHARED HelpMenu AS LONG
@@ -103,6 +107,13 @@ COMMON SHARED MediaSource2 AS STRING
 COMMON SHARED MediaSource1Time AS LONG
 COMMON SHARED MediaSource2Time AS LONG
 COMMON SHARED c34 AS STRING
+COMMON SHARED ErrorTestRunOnce AS INTEGER
+COMMON SHARED ErrorTestVal AS INTEGER
+COMMON SHARED Error_Exit AS INTEGER
+COMMON SHARED Test_Pass_9 AS INTEGER
+COMMON SHARED Test_Pass_9_Value AS STRING
+COMMON SHARED Test_Pass_10 AS INTEGER
+COMMON SHARED Test_Pass_10_Value AS STRING
 
 COMMON SHARED image_data() AS _UNSIGNED LONG
 COMMON SHARED Scene_OK AS STRING
@@ -125,8 +136,10 @@ COMMON SHARED temp_dir AS STRING
 COMMON SHARED config_main AS STRING
 COMMON SHARED obs_change_scene AS STRING
 COMMON SHARED obs_get_scene AS STRING
+COMMON SHARED obs_get_scene_list AS STRING
 COMMON SHARED obs_get_media1 AS STRING
 COMMON SHARED obs_get_media2 AS STRING
+COMMON SHARED obs_check_websocket AS STRING
 COMMON SHARED filePrevious AS STRING
 COMMON SHARED filePrevious_ms AS STRING
 COMMON SHARED fileCheckVersion AS STRING
@@ -161,6 +174,7 @@ COMMON SHARED returnFirstCheck
 COMMON SHARED filePrevious
 COMMON SHARED PUT_Refresh
 COMMON SHARED NoKill
+COMMON SHARED file90$
 COMMON SHARED file92$
 COMMON SHARED file96$
 COMMON SHARED findSceneName
@@ -327,15 +341,15 @@ SUB __UI_BeforeInit
     $VERSIONINFO:ProductName=Loopy SRT Monitor
     $VERSIONINFO:Comments=Monitor SRT Streams
     $VERSIONINFO:FileDescription=Loopy SRT Monitor
-    $VERSIONINFO:FILEVERSION#=0,9,1,0
-    $VERSIONINFO:PRODUCTVERSION#=0,9,1,0
+    $VERSIONINFO:FILEVERSION#=0,9,2,0
+    $VERSIONINFO:PRODUCTVERSION#=0,9,2,0
     $CHECKING:ON
     $RESIZE:OFF
     IF ERR = 0 THEN
         $EXEICON:'.\icon.ico'
         _TITLE "Loopy SRT Monitor - loopy750"
     END IF
-    Ver = "0.9.1"
+    Ver = "0.9.2"
     VerDate = "05/21"
 
     'Always on top : ------------------------------------------------------------------
@@ -386,6 +400,9 @@ SUB __UI_OnLoad
     SetCaption mouseXVarLB, "-"
     SetCaption mouseYVarLB, "-"
     SetCaption __ERRORLINEVarLB, "-"
+    'Stream #1 only
+    SetCaption Stream_UptimeLB, "-"
+    SetCaption Stream_Fail_TimerLB, "-"
 
     'Variables
     c34 = CHR$(34)
@@ -399,8 +416,10 @@ SUB __UI_OnLoad
     config_main = config_dir + "\config.ini"
     obs_change_scene = config_dir + "\js\obs_change_scene.js"
     obs_get_scene = config_dir + "\js\obs_get_scene.js"
+    obs_get_scene_list = config_dir + "\js\obs_get_scene_list.js"
     obs_get_media1 = config_dir + "\js\obs_get_media1.js"
     obs_get_media2 = config_dir + "\js\obs_get_media2.js"
+    obs_check_websocket = config_dir + "\js\obs_check_websocket.js"
     filePrevious = temp_dir + "\returnPreviousScene.tmp"
     filePrevious_ms = temp_dir + "\returnPreviousSource.tmp"
     fileCheckVersion = temp_dir + "\checkversion.txt"
@@ -414,15 +433,40 @@ SUB __UI_OnLoad
     ON ERROR GOTO 0
     _ALLOWFULLSCREEN OFF
     RANDOMIZE TIMER
+    ErrorTestRunOnce = 1
+
+    'Test #1
+    IF ErrorTestRunOnce = 1 THEN
+        IF NOT _DIREXISTS(nodejs_dir) THEN
+            Error_msg = "- Folder " + c34 + nodejs_dir + c34 + " cannot be accessed, check if it exists."
+            ErrorDisplay (1)
+        END IF
+    END IF
+
+    'Test #2
+    IF ErrorTestRunOnce = 1 THEN
+        IF NOT _FILEEXISTS(config_main) THEN
+            Error_msg = "- Unable to read config file in the " + c34 + "Documents\Loopy SRT Monitor" + c34 + " folder" + CHR$(10) + "- File " + c34 + config_main + c34 + " cannot be found."
+            ErrorDisplay (2)
+        END IF
+    END IF
+
+    'Test #3
+    IF ErrorTestRunOnce = 1 THEN
+        IF NOT _DIREXISTS(nodejs_dir + "\node_modules\obs-websocket-js") AND NOT _DIREXISTS(nodejs_dir + "\obs-websocket-js") THEN
+            Error_msg = "- " + c34 + "obs-websocket-js" + c34 + " not found, check if it exists in " + c34 + "\js\node_modules\obs-websocket-js" + c34 + " folder." + CHR$(10) + "- Install node.js from https://nodejs.org/ and then run install.cmd in the settings folder."
+            ErrorDisplay (3)
+        END IF
+    END IF
 
     'Check config
     Stream_Fail_Delay = 10
     Desktop_Width_Position = 160
     Desktop_Height_Position = 100
-    IF NOT _FILEEXISTS(config_main) THEN RefreshDisplayRequest = 1: Error_msg$ = "- Unable to read config file in the " + c34 + "Documents\Loopy SRT Monitor" + c34 + " folder" + CHR$(10) + "- File " + c34 + config_main + c34 + " cannot be accessed, check if it exists. (#1)": _DELAY 3
+    IF NOT _FILEEXISTS(config_main) THEN RefreshDisplayRequest = 1: Error_msg = "- Unable to read config file in the " + c34 + "Documents\Loopy SRT Monitor" + c34 + " folder" + CHR$(10) + "- File " + c34 + config_main + c34 + " cannot be accessed, check if it exists. (#1)": _DELAY 3
     IF _FILEEXISTS(config_main) THEN
         OPEN config_main FOR INPUT AS #4 'Basic INI management, nothing fancy needed
-        IF EOF(4) THEN RefreshDisplayRequest = 1: Error_msg$ = "- Unable to read config file in the " + c34 + "Documents\Loopy SRT Monitor" + c34 + " folder" + CHR$(10) + "- File " + c34 + config_main + c34 + " cannot be accessed, check if it exists. (#10)": _DELAY 3
+        IF EOF(4) THEN RefreshDisplayRequest = 1: Error_msg = "- Unable to read config file in the " + c34 + "Documents\Loopy SRT Monitor" + c34 + " folder" + CHR$(10) + "- File " + c34 + config_main + c34 + " cannot be accessed, check if it exists. (#10)": _DELAY 3
         DO
             IF NOT EOF(4) THEN LINE INPUT #4, file4$
             IF LEFT$(file4$, 1) <> "#" AND LEFT$(file4$, 1) <> ";" AND LEFT$(file4$, 1) <> "" THEN
@@ -434,6 +478,8 @@ SUB __UI_OnLoad
                     IF file4_var$ = "streamfaildelay" THEN Stream_Fail_Delay = VAL(file4_val$)
                     IF file4_var$ = "xwindow" THEN Desktop_Width_Position = VAL(file4_val$)
                     IF file4_var$ = "ywindow" THEN Desktop_Height_Position = VAL(file4_val$)
+                    IF file4_var$ = "xwindowposition" THEN Desktop_Width_Position = VAL(file4_val$)
+                    IF file4_var$ = "ywindowposition" THEN Desktop_Height_Position = VAL(file4_val$)
                     IF file4_var$ = "sceneok" THEN Scene_OK = file4_val$
                     IF file4_var$ = "scenefail" THEN Scene_Fail = file4_val$
                     IF file4_var$ = "sceneintro" THEN Scene_Intro = file4_val$
@@ -480,8 +526,9 @@ SUB __UI_OnLoad
     IF returnPreviousSceneRemember$ = "true" THEN returnPreviousSceneRemember = 1 ELSE returnPreviousSceneRemember = 0
     IF __MultiCameraSwitch = 0 THEN __returnPreviousScene = 0: returnPreviousSceneRemember = 0
 
-    IF NOT _DIREXISTS(nodejs_dir) THEN Error_msg$ = "- Folder " + c34 + nodejs_dir + c34 + " cannot be accessed, check if it exists. (#2)"
-    IF Error_msg$ <> "" THEN
+    IF NOT _DIREXISTS(nodejs_dir) THEN Error_msg = "- Folder " + c34 + nodejs_dir + c34 + " cannot be accessed, check if it exists. (#2)"
+    'ErrorDisplay:
+    IF Error_msg <> "" THEN
         _DELAY 1
         CLS , _RGB(1, 120, 220)
         BSOD& = __imageMEM&("face_sad_x.png")
@@ -489,15 +536,25 @@ SUB __UI_OnLoad
         _FREEIMAGE BSOD&
         COLOR _RGB(254, 254, 254), _RGB(1, 120, 220)
         _PRINTSTRING (37, 12 * 18), "Program encountered an error and needs to restart."
-        IF INSTR(Error_msg$, CHR$(10)) >= 1 THEN
-            _PRINTSTRING (37, 14 * 18), LEFT$(Error_msg$, INSTR(Error_msg$, CHR$(10)) - 1)
-            _PRINTSTRING (37, 15 * 18), MID$(Error_msg$, INSTR(Error_msg$, CHR$(10)) + 1)
+        IF INSTR(Error_msg, CHR$(10)) >= 1 THEN
+            _PRINTSTRING (37, 14 * 18), LEFT$(Error_msg, INSTR(Error_msg, CHR$(10)) - 1)
+            _PRINTSTRING (37, 15 * 18), MID$(Error_msg, INSTR(Error_msg, CHR$(10)) + 1)
         ELSE
-            _PRINTSTRING (37, 14 * 18), Error_msg$
+            _PRINTSTRING (37, 14 * 18), Error_msg
         END IF
-        _PRINTSTRING (37, 22 * 18), "Program will exit shortly"
+        _PRINTSTRING (37, 22 * 18), "Program will exit shortly or press any key to exit now"
         _DISPLAY
-        _DELAY 15
+        _DELAY 1
+        IF INKEY$ <> "" THEN SYSTEM
+        _DELAY 1
+        IF INKEY$ <> "" THEN SYSTEM
+        _DELAY 3
+        IF INKEY$ <> "" THEN SYSTEM
+        _DELAY 3
+        IF INKEY$ <> "" THEN SYSTEM
+        _DELAY 5
+        IF INKEY$ <> "" THEN SYSTEM
+        _DELAY 5
         SYSTEM
     END IF
 
@@ -574,7 +631,7 @@ SUB __UI_OnLoad
     PRINT #76, ".then(() => {"
     PRINT #76, "        return obs.send('GetMediaTime', {"
     PRINT #76, "                  'sourceName': " + c34 + MediaSource1 + c34
-    PRINT #76, "         })"
+    PRINT #76, "        })"
     PRINT #76, "    })"
     PRINT #76, ".then((data) => {"
     PRINT #76, "    console.log(`${data.timestamp}`);"
@@ -614,6 +671,45 @@ SUB __UI_OnLoad
     PRINT #80, ".then(() => { obs.disconnect(); clearTimeout(timer4); });"
     CLOSE #80
 
+    OPEN obs_check_websocket FOR OUTPUT AS #82
+    PRINT #82, "// This file has been automatically generated"
+    PRINT #82, "// Any changes made will be lost"
+    PRINT #82, "// https://github.com/loopy750/SRT-Stats-Monitor"
+    PRINT #82, "const OBSWebSocket = require('obs-websocket-js');"
+    PRINT #82, "const obs = new OBSWebSocket();"
+    PRINT #82, "const WebsocketAddress = " + c34 + OBS_URL + c34 + ";"
+    PRINT #82, "const WebsocketPassword = " + c34 + OBS_PW + c34 + ";"
+    PRINT #82, "var timer5 = setTimeout(function() { obs.disconnect(); }, 3000);"
+    PRINT #82, "obs.connect({ address: WebsocketAddress, password: WebsocketPassword })"
+    PRINT #82, ".then(() => {"
+    PRINT #82, "    console.log(`OK`);"
+    PRINT #82, "})"
+    PRINT #82, ".then(() => { obs.disconnect(); clearTimeout(timer5); });"
+    CLOSE #82
+
+    OPEN obs_get_scene_list FOR OUTPUT AS #84
+    PRINT #84, "// This file has been automatically generated"
+    PRINT #84, "// Any changes made will be lost"
+    PRINT #84, "// https://github.com/loopy750/SRT-Stats-Monitor"
+    PRINT #84, "const OBSWebSocket = require('obs-websocket-js');"
+    PRINT #84, "const obs = new OBSWebSocket();"
+    PRINT #84, "const WebsocketAddress = " + c34 + OBS_URL + c34 + ";"
+    PRINT #84, "const WebsocketPassword = " + c34 + OBS_PW + c34 + ";"
+    PRINT #84, "var timer6 = setTimeout(function() { obs.disconnect(); }, 3000);"
+    PRINT #84, "obs.connect({ address: WebsocketAddress, password: WebsocketPassword })"
+    PRINT #84, ".then(() => { return obs.send('GetCurrentScene'); })"
+    PRINT #84, ".then(name => { console.log(`${name.name}`); })"
+    PRINT #84, ".then(() => { return obs.send('GetSceneList'); })"
+    PRINT #84, ".then(data => {"
+    PRINT #84, "    data.scenes.forEach(scene => {"
+    PRINT #84, "        if (scene.name !== data.currentScene) {"
+    PRINT #84, "            console.log(`${scene.name}`);"
+    PRINT #84, "        }"
+    PRINT #84, "    });"
+    PRINT #84, "})"
+    PRINT #84, ".then(() => { obs.disconnect(); clearTimeout(timer6); });"
+    CLOSE #84
+
     IF CheckUpdateOnStartup = "true" AND iniFeatures = 0 THEN
         file224$ = ""
         updateResult$ = ""
@@ -638,7 +734,174 @@ SUB __UI_OnLoad
 
     iniFeatures = 0
 
-    IF Scene_OK = "" OR Scene_Fail = "" OR Scene_Intro = "" OR OBS_URL = "" THEN RefreshDisplayRequest = 1: Error_msg$ = "- Variable/s for scenes empty, check if " + c34 + config_main + c34 + " exists. (#3)": _DELAY 3
+    'Test #4
+    IF ErrorTestRunOnce = 1 THEN
+        IF __MultiCameraSwitch = 0 THEN
+            IF Scene_OK = "" OR Scene_Fail = "" OR Scene_Intro = "" THEN
+                Error_msg = "- Scene names in " + c34 + "config.ini" + c34 + " are empty. Configure to match OBS scene names."
+                ErrorDisplay (4)
+            END IF
+        END IF
+    END IF
+
+    'Test #5
+    IF ErrorTestRunOnce = 1 THEN
+        IF __MultiCameraSwitch = 1 THEN
+            IF titleScene1 = "" OR titleScene2 = "" OR titleScene12 = "" THEN
+                _DELAY 1
+                Error_msg = "- Scene names in " + c34 + "config.ini" + c34 + " are empty. Configure to match OBS scene names."
+                ErrorDisplay (5)
+            END IF
+        END IF
+    END IF
+
+    'Test #6
+    IF ErrorTestRunOnce = 1 THEN
+        SHELL _HIDE "%ComSpec% /C node.exe " + c34 + obs_check_websocket + c34 + " > " + c34 + filePrevious_ms + c34
+        _DELAY .1
+        IF _FILEEXISTS(filePrevious_ms) THEN
+            OPEN filePrevious_ms FOR INPUT AS #90
+            IF EOF(90) OR LOF(90) = 0 THEN
+                CLOSE #90
+                IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
+                Error_msg = "- OBS " + c34 + "Websockets Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + CHR$(10) + "- If configuration is correct, check " + c34 + "Websockets Server" + c34 + " is running in OBS."
+                ErrorDisplay (6)
+            END IF
+
+            LINE INPUT #90, file90$
+            CLOSE #90
+            IF file90$ <> "OK" THEN
+                CLOSE #90
+                IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
+                Error_msg = "- OBS " + c34 + "Websockets Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in " + c34 + "config.ini"+c34+" and retry." + CHR$(10) + "- If configuration is correct, check " + c34 + "Websockets Server" + c34 + " is running in OBS."
+                ErrorDisplay (6)
+            END IF
+        END IF
+    END IF
+
+    'Test #7
+    IF ErrorTestRunOnce = 1 THEN
+        IF __MultiCameraSwitch = 0 THEN
+            SHELL _HIDE "%ComSpec% /C node.exe " + c34 + obs_get_media1 + c34 + " > " + c34 + filePrevious_ms + c34
+            _DELAY .1
+            IF _FILEEXISTS(filePrevious_ms) THEN
+                OPEN filePrevious_ms FOR INPUT AS #90
+                IF EOF(90) OR LOF(90) = 0 THEN
+                    CLOSE #90
+                    IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
+                    Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ". Correctly configure " + c34 + "MediaSource1" + c34 + " in " + c34 + "config.ini and retry." + CHR$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSockets version is 4.9.0 or newer."
+                    ErrorDisplay (7)
+                END IF
+
+                'LINE INPUT #90, file90$
+                CLOSE #90
+            END IF
+        END IF
+    END IF
+
+    'Test #8
+    IF ErrorTestRunOnce = 1 THEN
+        IF __MultiCameraSwitch = 1 THEN
+            SHELL _HIDE "%ComSpec% /C node.exe " + c34 + obs_get_media2 + c34 + " > " + c34 + filePrevious_ms + c34
+            _DELAY .1
+            IF _FILEEXISTS(filePrevious_ms) THEN
+                OPEN filePrevious_ms FOR INPUT AS #90
+                IF EOF(90) OR LOF(90) = 0 THEN
+                    CLOSE #90
+                    IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
+                    Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ". Correctly configure " + c34 + "MediaSource1" + c34 + " in " + c34 + "config.ini and retry." + CHR$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSockets version is 4.9.0 or newer."
+                    ErrorDisplay (8)
+                END IF
+
+                LINE INPUT #90, file90$
+                IF EOF(90) OR LOF(90) = 0 THEN
+                    CLOSE #90
+                    IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
+                    Error_msg = "- Unable to read " + c34 + "MediaSource2" + c34 + ". Correctly configure " + c34 + "MediaSource2" + c34 + " in " + c34 + "config.ini and retry." + CHR$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSockets version is 4.9.0 or newer."
+                    ErrorDisplay (8)
+                END IF
+                CLOSE #90
+            END IF
+        END IF
+    END IF
+
+    'Test #9
+    IF ErrorTestRunOnce = 1 THEN
+        SHELL _HIDE "%ComSpec% /C node.exe " + c34 + obs_get_scene_list + c34 + " > " + c34 + filePrevious_ms + c34
+        _DELAY .1
+        IF _FILEEXISTS(filePrevious_ms) THEN
+            OPEN filePrevious_ms FOR INPUT AS #90
+            IF EOF(90) OR LOF(90) = 0 THEN
+                CLOSE #90
+                IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
+                Error_msg = "- Unable to retrieve OBS scene list. Correctly configure scenes in OBS and confirm they all contain at least one source."
+                ErrorDisplay (9)
+            END IF
+
+            Test_Pass_9 = 0
+            DO
+                IF NOT EOF(90) THEN LINE INPUT #90, file90$
+                IF file90$ = Scene_OK THEN Test_Pass_9 = Test_Pass_9 + 1
+                IF file90$ = Scene_Fail THEN Test_Pass_9 = Test_Pass_9 + 2
+                IF file90$ = Scene_Intro THEN Test_Pass_9 = Test_Pass_9 + 4
+                SELECT CASE Test_Pass_9
+                    CASE 0: Test_Pass_9_Value = "SceneOK, SceneFail, SceneIntro"
+                    CASE 1: Test_Pass_9_Value = "SceneFail, SceneIntro"
+                    CASE 2: Test_Pass_9_Value = "SceneIntro, SceneOK"
+                    CASE 3: Test_Pass_9_Value = "SceneIntro"
+                    CASE 4: Test_Pass_9_Value = "SceneOK, SceneFail"
+                    CASE 5: Test_Pass_9_Value = "SceneFail"
+                    CASE 6: Test_Pass_9_Value = "SceneOK"
+                END SELECT
+            LOOP UNTIL EOF(90)
+            CLOSE #90
+            IF Test_Pass_9 <> 7 THEN
+                Error_msg = "- OBS scenes are missing. Scene names are case-sensitive and cannot be more than eight words." + CHR$(10) + "- Correctly configure scenes " + c34 + Test_Pass_9_Value + c34 + " in " + c34 + "config.ini" + c34 + " and confirm all scenes contain at least one source."
+                ErrorDisplay (9)
+            END IF
+        END IF
+    END IF
+
+    'Test #10
+    IF ErrorTestRunOnce = 1 THEN
+        IF __MultiCameraSwitch = 1 THEN
+            SHELL _HIDE "%ComSpec% /C node.exe " + c34 + obs_get_scene_list + c34 + " > " + c34 + filePrevious_ms + c34
+            _DELAY .1
+            IF _FILEEXISTS(filePrevious_ms) THEN
+                OPEN filePrevious_ms FOR INPUT AS #90
+                IF EOF(90) OR LOF(90) = 0 THEN
+                    CLOSE #90
+                    IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
+                    Error_msg = "- Unable to retrieve OBS scene list. Correctly configure scenes in OBS and confirm they all contain at least one source."
+                    ErrorDisplay (10)
+                END IF
+
+                Test_Pass_10 = 0
+                DO
+                    IF NOT EOF(90) THEN LINE INPUT #90, file90$
+                    IF file90$ = titleScene1 THEN Test_Pass_10 = Test_Pass_10 + 1
+                    IF file90$ = titleScene2 THEN Test_Pass_10 = Test_Pass_10 + 2
+                    IF file90$ = titleScene12 THEN Test_Pass_10 = Test_Pass_10 + 4
+                    SELECT CASE Test_Pass_10
+                        CASE 0: Test_Pass_10_Value = "TitleScene1, TitleScene2, TitleScene12"
+                        CASE 1: Test_Pass_10_Value = "TitleScene2, TitleScene12"
+                        CASE 2: Test_Pass_10_Value = "TitleScene1, TitleScene12"
+                        CASE 3: Test_Pass_10_Value = "TitleScene12"
+                        CASE 4: Test_Pass_10_Value = "TitleScene1, TitleScene2"
+                        CASE 5: Test_Pass_10_Value = "TitleScene2"
+                        CASE 6: Test_Pass_10_Value = "TitleScene1"
+                    END SELECT
+                LOOP UNTIL EOF(90)
+                CLOSE #90
+                IF Test_Pass_10 <> 7 THEN
+                    Error_msg = "- OBS scenes are missing. Scene names are case-sensitive and cannot be more than eight words." + CHR$(10) + "- Correctly configure scenes " + c34 + Test_Pass_10_Value + c34 + " in " + c34 + "config.ini" + c34 + " and confirm all scenes contain at least one source."
+                    ErrorDisplay (10)
+                END IF
+            END IF
+        END IF
+    END IF
+
+    IF Scene_OK = "" OR Scene_Fail = "" OR Scene_Intro = "" OR OBS_URL = "" THEN RefreshDisplayRequest = 1: Error_msg = "- Variable/s for scenes empty, check if " + c34 + config_main + c34 + " exists. (#3)": _DELAY 3
 
     IF __MultiCameraSwitch = 0 THEN
         Scene_Current$ = Scene_OK
@@ -664,6 +927,12 @@ SUB __UI_OnLoad
         Control(failLB2).Hidden = True
         Control(Uptime_Stream_2LB).Hidden = True
         Control(Timer_Fail_Stream2LB).Hidden = True
+    ELSE
+        'Stream #1 only
+        SetCaption StreamUptimeLB3, ""
+        SetCaption StreamFailTimerLB2, ""
+        SetCaption Stream_UptimeLB, ""
+        SetCaption Stream_Fail_TimerLB, ""
     END IF
 
     Control(DebugFrame).Hidden = True
@@ -686,6 +955,7 @@ SUB __UI_OnLoad
 
     ON TIMER(1) Timer01
     TIMER ON
+
 END SUB
 
 SUB __UI_BeforeUpdateDisplay
@@ -704,11 +974,11 @@ SUB __UI_BeforeUpdateDisplay
         _FREEIMAGE BSOD&
         COLOR _RGB(254, 254, 254), _RGB(1, 120, 220)
         _PRINTSTRING (37, 12 * 18), "Program encountered an error and needs to restart."
-        IF INSTR(Error_msg$, CHR$(10)) >= 1 THEN
-            _PRINTSTRING (37, 14 * 18), LEFT$(Error_msg$, INSTR(Error_msg$, CHR$(10)) - 1)
-            _PRINTSTRING (37, 15 * 18), MID$(Error_msg$, INSTR(Error_msg$, CHR$(10)) + 1)
+        IF INSTR(Error_msg, CHR$(10)) >= 1 THEN
+            _PRINTSTRING (37, 14 * 18), LEFT$(Error_msg, INSTR(Error_msg, CHR$(10)) - 1)
+            _PRINTSTRING (37, 15 * 18), MID$(Error_msg, INSTR(Error_msg, CHR$(10)) + 1)
         ELSE
-            _PRINTSTRING (37, 14 * 18), Error_msg$
+            _PRINTSTRING (37, 14 * 18), Error_msg
         END IF
         IF INSTR(Error_msg_2$, CHR$(10)) >= 1 THEN
             _PRINTSTRING (37, 16 * 18), LEFT$(Error_msg_2$, INSTR(Error_msg_2$, CHR$(10)) - 1)
@@ -719,7 +989,7 @@ SUB __UI_BeforeUpdateDisplay
         _PRINTSTRING (37, 22 * 18), "Program will resume shortly"
         _DISPLAY
         _DELAY 10
-        Error_msg$ = ""
+        Error_msg = ""
         Error_msg_2$ = ""
         CLS , BG
         TIMER ON
@@ -791,6 +1061,14 @@ END SUB
 
 SUB __UI_Click (id AS LONG)
     SELECT CASE id
+        CASE StreamUptimeLB3
+
+        CASE StreamFailTimerLB2
+
+        CASE Stream_UptimeLB
+
+        CASE Stream_Fail_TimerLB
+
         CASE LoopySRTMonitor2
 
         CASE LoopySRTMonitor
@@ -963,6 +1241,14 @@ END SUB
 
 SUB __UI_MouseEnter (id AS LONG)
     SELECT CASE id
+        CASE StreamUptimeLB3
+
+        CASE StreamFailTimerLB2
+
+        CASE Stream_UptimeLB
+
+        CASE Stream_Fail_TimerLB
+
         CASE LoopySRTMonitor2
 
         CASE LoopySRTMonitor
@@ -1078,6 +1364,14 @@ END SUB
 
 SUB __UI_MouseLeave (id AS LONG)
     SELECT CASE id
+        CASE StreamUptimeLB3
+
+        CASE StreamFailTimerLB2
+
+        CASE Stream_UptimeLB
+
+        CASE Stream_Fail_TimerLB
+
         CASE LoopySRTMonitor2
 
         CASE LoopySRTMonitor
@@ -1207,6 +1501,14 @@ END SUB
 
 SUB __UI_MouseDown (id AS LONG)
     SELECT CASE id
+        CASE StreamUptimeLB3
+
+        CASE StreamFailTimerLB2
+
+        CASE Stream_UptimeLB
+
+        CASE Stream_Fail_TimerLB
+
         CASE LoopySRTMonitor2
 
         CASE LoopySRTMonitor
@@ -1322,6 +1624,14 @@ END SUB
 
 SUB __UI_MouseUp (id AS LONG)
     SELECT CASE id
+        CASE StreamUptimeLB3
+
+        CASE StreamFailTimerLB2
+
+        CASE Stream_UptimeLB
+
+        CASE Stream_Fail_TimerLB
+
         CASE LoopySRTMonitor2
 
         CASE LoopySRTMonitor
@@ -1580,6 +1890,33 @@ SUB statusBitrateToFile (outputBR$)
 
 END SUB
 
+SUB ErrorDisplay (ErrorTestVal)
+
+    IF Error_msg <> "" THEN
+        _DELAY 1
+        CLS , _RGB(1, 120, 220)
+        BSOD& = __imageMEM&("face_sad_x.png")
+        _PUTIMAGE (50, 50)-(107, 162), BSOD&
+        _FREEIMAGE BSOD&
+        COLOR _RGB(254, 254, 254), _RGB(1, 120, 220)
+        _PRINTSTRING (37, 12 * 18), "TEST #" + _TRIM$(STR$(ErrorTestVal)) + " FAILED"
+        IF INSTR(Error_msg, CHR$(10)) >= 1 THEN
+            _PRINTSTRING (37, 14 * 18), LEFT$(Error_msg, INSTR(Error_msg, CHR$(10)) - 1)
+            _PRINTSTRING (37, 15 * 18), MID$(Error_msg, INSTR(Error_msg, CHR$(10)) + 1)
+        ELSE
+            _PRINTSTRING (37, 14 * 18), Error_msg
+        END IF
+        _PRINTSTRING (37, 22 * 18), "Program will exit shortly or press any key to exit now"
+        _DISPLAY
+        FOR Error_Exit = 1 TO 30
+            _DELAY 1
+            IF INKEY$ <> "" THEN SYSTEM
+        NEXT
+        SYSTEM
+    END IF
+
+END SUB
+
 SUB Timer01
     'Timer01 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
     td_update# = TIMER(.001) - timer1#
@@ -1598,7 +1935,7 @@ SUB Timer01
         PUT_Refresh = 1
         IF _FILEEXISTS(filePrevious_ms) THEN
             OPEN filePrevious_ms FOR INPUT AS #92
-            IF EOF(92) THEN RefreshDisplayRequest = 1: Error_msg$ = "- Unable to read " + c34 + "SceneOK" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + CHR$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + CHR$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS Websockets options are correctly set. (#9)": _DELAY 3: GOTO LOF92
+            IF EOF(92) THEN RefreshDisplayRequest = 1: Error_msg = "- Unable to read " + c34 + "SceneOK" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + CHR$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + CHR$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS Websockets options are correctly set. (#9)": _DELAY 3: GOTO LOF92
             IF LOF(92) = 0 THEN NoKill = 1: GOTO LOF92 'Overkill with EOF checking, but just being safe
             IF EOF(92) THEN GOTO LOF92
             LINE INPUT #92, file92$
@@ -1622,11 +1959,11 @@ SUB Timer01
         PUT_Refresh = 1
         IF _FILEEXISTS(filePrevious_ms) THEN
             OPEN filePrevious_ms FOR INPUT AS #92
-            IF EOF(92) THEN RefreshDisplayRequest = 1: Error_msg$ = "- Unable to read " + c34 + "MediaSource1" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + CHR$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + CHR$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS Websockets options are correctly set. (#7)": _DELAY 3: GOTO LOF922
+            IF EOF(92) THEN RefreshDisplayRequest = 1: Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + CHR$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + CHR$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS Websockets options are correctly set. (#7)": _DELAY 3: GOTO LOF922
             IF LOF(92) = 0 THEN NoKill = 1: GOTO LOF922 'Overkill with EOF checking, but just being safe
             LINE INPUT #92, file92$
             MediaSource1Time = VAL(file92$) / 1000
-            IF EOF(92) THEN RefreshDisplayRequest = 1: Error_msg$ = "- Unable to read " + c34 + "MediaSource2" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + CHR$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + CHR$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS Websockets options are correctly set. (#8)": _DELAY 3: GOTO LOF922
+            IF EOF(92) THEN RefreshDisplayRequest = 1: Error_msg = "- Unable to read " + c34 + "MediaSource2" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + CHR$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + CHR$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS Websockets options are correctly set. (#8)": _DELAY 3: GOTO LOF922
             LINE INPUT #92, file92$
             MediaSource2Time = VAL(file92$) / 1000
             LOF922:
@@ -1694,9 +2031,19 @@ SUB Timer01
         SetCaption (Uptime_Stream_1LB), calc_srt$(MediaSource1Time, 1) 'SRT
         IF MediaSource2Time <= 2 THEN Control(Uptime_Stream_2LB).ForeColor = RED_FAIL ELSE IF MediaSource2Time >= 3 AND MediaSource2Time <= 10 THEN Control(Uptime_Stream_2LB).ForeColor = RED_WARNING ELSE Control(Uptime_Stream_2LB).ForeColor = GREEN_OK
         SetCaption (Uptime_Stream_2LB), calc_srt$(MediaSource2Time, 1) 'SRT
+    ELSE
+        'Stream #1 only
+        IF srt_warmup = 1 THEN Timer_Fail_Stream1 = Timer_Fail_Stream1 + 1
+        IF MediaSource1Time <> 0 THEN Timer_Fail_Stream1 = 0: Timer_Fail = 0 'SRT
+        IF Timer_Fail_Stream1 > 19999 THEN Timer_Fail_Stream1 = 19999
+
+        IF MediaSource1Time <= 2 THEN Control(Stream_UptimeLB).ForeColor = RED_FAIL ELSE IF MediaSource1Time >= 3 AND MediaSource1Time <= 10 THEN Control(Stream_UptimeLB).ForeColor = RED_WARNING ELSE Control(Stream_UptimeLB).ForeColor = GREEN_OK
+        SetCaption (Stream_UptimeLB), calc_srt$(MediaSource1Time, 1) 'SRT
+        IF Timer_Fail_Stream1 >= Stream_Fail_Delay THEN Control(Stream_Fail_TimerLB).ForeColor = RED_FAIL ELSE IF Timer_Fail_Stream1 >= 1 THEN Control(Stream_Fail_TimerLB).ForeColor = RED_WARNING ELSE Control(Stream_Fail_TimerLB).ForeColor = GREEN_OK
+        SetCaption (Stream_Fail_TimerLB), calc_srt$(Timer_Fail_Stream1, 1)
     END IF
 
-    IF Scene_OK = "" OR Scene_Fail = "" OR Scene_Intro = "" THEN RefreshDisplayRequest = 1: Error_msg$ = "- Variable/s for scenes empty, check if " + c34 + config_main + c34 + " exists. (#5)": _DELAY 3
+    IF Scene_OK = "" OR Scene_Fail = "" OR Scene_Intro = "" THEN RefreshDisplayRequest = 1: Error_msg = "- Variable/s for scenes empty, check if " + c34 + config_main + c34 + " exists. (#5)": _DELAY 3
 
     IF Timer_Fail >= 1 AND Exe_OK = 1 AND streamsUp$ <> "0" THEN
         LoadImageMEM Control(PictureBox1), "tick_warning.png"
@@ -1919,7 +2266,7 @@ SUB Timer01
         END IF
     END IF
 
-    IF srt_warmup = 1 AND returnFirstCheck = 1 AND __MultiCameraSwitch = 1 AND previousSceneDisplay$ = "" THEN RefreshDisplayRequest = 1: Error_msg$ = "- Variable/s for scenes empty, check if OBS is open." + CHR$(10) + "- If OBS is open, check communication is available via Node.js.": Error_msg_2$ = "- If Node.js is installed, check OBS Websockets options are correctly set. (#6)": _DELAY 3
+    IF srt_warmup = 1 AND returnFirstCheck = 1 AND __MultiCameraSwitch = 1 AND previousSceneDisplay$ = "" THEN RefreshDisplayRequest = 1: Error_msg = "- Variable/s for scenes empty, check if OBS is open." + CHR$(10) + "- If OBS is open, check communication is available via Node.js.": Error_msg_2$ = "- If Node.js is installed, check OBS Websockets options are correctly set. (#6)": _DELAY 3
 
     'temp2 variables
 
@@ -1948,6 +2295,8 @@ SUB Timer01
     END IF
 
     IF srt_warmup = 0 THEN srt_warmup = 1
+
+    IF ErrorTestRunOnce = 1 THEN ErrorTestRunOnce = 0
 
     td_display# = TIMER(.001) - timer1#
 END SUB

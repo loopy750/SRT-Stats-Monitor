@@ -105,7 +105,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).BackColor = _RGB32(254, 254, 255)
     Control(__UI_NewID).BorderColor = _RGB32(170, 166, 170)
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "StreamFailTimerLB", 208, 21, 43, 59, 0)
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "StreamFailTimerLB", 215, 21, 43, 59, 0)
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Stream fail timer"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf", 12)
@@ -115,7 +115,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "FailCountLB", 180, 21, 251, 59, 0)
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "FailCountLB", 180, 21, 258, 59, 0)
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Fail count"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf", 12)
@@ -125,7 +125,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "ServerPingLB", 200, 21, 431, 59, 0)
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "ServerPingLB", 215, 21, 438, 59, 0)
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "WebSocket ping"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf", 12)
@@ -135,7 +135,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "UpdateIntervalLB", 129, 21, 631, 59, 0)
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "UpdateIntervalLB", 105, 21, 653, 59, 0)
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Update interval"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf", 12)
@@ -155,7 +155,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "Timer_Fail_CountLB", 111, 21, 252, 81, 0)
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "Timer_Fail_CountLB", 111, 21, 258, 81, 0)
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Timer_Fail_Count"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf", 12)
@@ -165,7 +165,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "tPingOutLB", 104, 21, 434, 81, 0)
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "tPingOutLB", 104, 21, 438, 81, 0)
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "tPingOut#"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf", 12)
@@ -175,7 +175,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "td_updateLB", 128, 21, 633, 81, 0)
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "td_updateLB", 105, 21, 653, 81, 0)
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "td_update"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf", 12)
@@ -185,7 +185,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "StreamFailDelayLB", 560, 21, 43, 156, 0)
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "StreamFailDelayLB", 215, 21, 43, 156, 0)
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Stream fail delay"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf", 12)
@@ -195,7 +195,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "MultiCameraSwitchLB", 155, 21, 603, 156, 0)
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "MultiCameraSwitchLB", 135, 21, 623, 156, 0)
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Multi Camera Switch"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf", 12)
@@ -215,7 +215,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "MultiCameraSwitchStatusLB", 156, 21, 604, 178, 0)
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "MultiCameraSwitchStatusLB", 135, 21, 623, 178, 0)
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "MultiCameraSwitchStatus"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf", 12)
@@ -495,6 +495,46 @@ SUB __UI_LoadForm
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).BorderSize = 1
 
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "StreamUptimeLB3", 180, 21, 258, 156, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Stream uptime"
+    Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf", 12)
+    Control(__UI_NewID).ForeColor = _RGB32(3, 4, 4)
+    Control(__UI_NewID).BackColor = _RGB32(164, 168, 172)
+    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).VAlign = __UI_Middle
+    Control(__UI_NewID).Padding = 10
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "StreamFailTimerLB2", 185, 21, 438, 156, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Stream fail timer"
+    Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf", 12)
+    Control(__UI_NewID).ForeColor = _RGB32(3, 4, 4)
+    Control(__UI_NewID).BackColor = _RGB32(164, 168, 172)
+    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).VAlign = __UI_Middle
+    Control(__UI_NewID).Padding = 10
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "Stream_UptimeLB", 190, 21, 258, 178, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Stream_Uptime"
+    Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf", 12)
+    Control(__UI_NewID).ForeColor = _RGB32(142, 166, 143)
+    Control(__UI_NewID).BackColor = _RGB32(25, 28, 33)
+    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).VAlign = __UI_Middle
+    Control(__UI_NewID).Padding = 10
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "Stream_Fail_TimerLB", 190, 21, 438, 178, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Stream_Fail_Timer"
+    Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf", 12)
+    Control(__UI_NewID).ForeColor = _RGB32(142, 166, 143)
+    Control(__UI_NewID).BackColor = _RGB32(25, 28, 33)
+    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).VAlign = __UI_Middle
+    Control(__UI_NewID).Padding = 10
+
 END SUB
 
 SUB __UI_AssignIDs
@@ -552,4 +592,8 @@ SUB __UI_AssignIDs
     HelpMenuAbout = __UI_GetID("HelpMenuAbout")
     StatusLB = __UI_GetID("StatusLB")
     PictureBoxLogoBottom = __UI_GetID("PictureBoxLogoBottom")
+    StreamUptimeLB3 = __UI_GetID("StreamUptimeLB3")
+    StreamFailTimerLB2 = __UI_GetID("StreamFailTimerLB2")
+    Stream_UptimeLB = __UI_GetID("Stream_UptimeLB")
+    Stream_Fail_TimerLB = __UI_GetID("Stream_Fail_TimerLB")
 END SUB
