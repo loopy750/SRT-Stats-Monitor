@@ -8,6 +8,16 @@
 OPTION _EXPLICIT
 DIM SHARED LoopySRTMonitor AS LONG
 DIM SHARED LoopySRTMonitor2 AS LONG
+DIM SHARED LowBitrateSceneLB AS LONG
+DIM SHARED Low_Bitrate_StatusLB AS LONG
+DIM SHARED MSRateLB AS LONG
+DIM SHARED ms_playLB AS LONG
+DIM SHARED LowBRTimerLB AS LONG
+DIM SHARED br_countdownLB AS LONG
+DIM SHARED Timer_Fail_Count_2LB AS LONG
+DIM SHARED IPPingLB AS LONG
+DIM SHARED tIPPingOutLB AS LONG
+DIM SHARED FailCount2LB AS LONG
 DIM SHARED StreamUptimeLB3 AS LONG
 DIM SHARED StreamFailTimerLB2 AS LONG
 DIM SHARED Stream_UptimeLB AS LONG
@@ -24,7 +34,7 @@ DIM SHARED Stream2 AS LONG
 DIM SHARED versionFrame AS LONG
 DIM SHARED FileMenuExit AS LONG
 DIM SHARED StreamFailTimerLB AS LONG
-DIM SHARED FailCountLB AS LONG
+DIM SHARED FailCount1LB AS LONG
 DIM SHARED ServerPingLB AS LONG
 DIM SHARED UpdateIntervalLB AS LONG
 DIM SHARED Timer_FailLB AS LONG
@@ -72,6 +82,7 @@ COMMON SHARED Error_Display AS STRING
 COMMON SHARED Error_msg AS STRING
 COMMON SHARED Error_msg_2 AS STRING
 COMMON SHARED Ver AS STRING
+COMMON SHARED VerBeta AS STRING
 COMMON SHARED VerDate AS STRING
 COMMON SHARED bout AS STRING
 COMMON SHARED tout AS STRING
@@ -98,14 +109,29 @@ COMMON SHARED __FileStatusOutput AS _BYTE
 COMMON SHARED FileStatusOutput AS STRING
 COMMON SHARED outputBitrateFile AS STRING
 COMMON SHARED outputStatusFile AS STRING
+COMMON SHARED outputConnectionsLogFile AS STRING
+COMMON SHARED outputLB1 AS STRING
+COMMON SHARED outputLB2 AS STRING
+COMMON SHARED outputLB_Temp1 AS STRING
+COMMON SHARED outputLB_Temp2 AS STRING
 COMMON SHARED iniFeatures AS _BYTE
 COMMON SHARED Debug AS _BYTE
 COMMON SHARED q
 COMMON SHARED Timer_Failed AS _BYTE
+COMMON SHARED Timer_Failed1 AS _BYTE
+COMMON SHARED Timer_Failed2 AS _BYTE
 COMMON SHARED MediaSource1 AS STRING
 COMMON SHARED MediaSource2 AS STRING
 COMMON SHARED MediaSource1Time AS LONG
 COMMON SHARED MediaSource2Time AS LONG
+COMMON SHARED MediaSource1TimeMS AS LONG
+COMMON SHARED MediaSource2TimeMS AS LONG
+COMMON SHARED MediaSource1TimeMSOffset AS LONG
+COMMON SHARED MediaSource2TimeMSOffset AS LONG
+COMMON SHARED MediaSourceTimeMSOffsetDisplay AS LONG
+COMMON SHARED MediaSource1TimeLog AS LONG
+COMMON SHARED MediaSource2TimeLog AS LONG
+COMMON SHARED MediaSourceTimeLB AS LONG
 COMMON SHARED c34 AS STRING
 COMMON SHARED ErrorTestRunOnce AS INTEGER
 COMMON SHARED ErrorTestVal AS INTEGER
@@ -114,9 +140,22 @@ COMMON SHARED Test_Pass_9 AS INTEGER
 COMMON SHARED Test_Pass_9_Value AS STRING
 COMMON SHARED Test_Pass_10 AS INTEGER
 COMMON SHARED Test_Pass_10_Value AS STRING
+COMMON SHARED ConnectionsLog AS INTEGER
+COMMON SHARED ConnectionsLog1Count AS INTEGER
+COMMON SHARED ConnectionsLog2Count AS INTEGER
+COMMON SHARED ConnectionsLog1DCCount AS INTEGER
+COMMON SHARED ConnectionsLog2DCCount AS INTEGER
+COMMON SHARED CooldownLog AS INTEGER
+COMMON SHARED CooldownLogTotal AS INTEGER
+COMMON SHARED CooldownStartup AS INTEGER
+COMMON SHARED CooldownActive AS INTEGER
+COMMON SHARED CooldownDuration AS INTEGER
+COMMON SHARED SceneLBActive AS INTEGER
 
 COMMON SHARED image_data() AS _UNSIGNED LONG
 COMMON SHARED Scene_OK AS STRING
+COMMON SHARED Scene_LBR AS STRING
+COMMON SHARED Scene_LBR_Enabled AS STRING
 COMMON SHARED Scene_Fail AS STRING
 COMMON SHARED Scene_Intro AS STRING
 COMMON SHARED OBS_URL AS STRING
@@ -129,6 +168,7 @@ COMMON SHARED titleScene12 AS STRING
 COMMON SHARED returnPreviousScene AS STRING
 COMMON SHARED shell_nodejs_1 AS STRING
 COMMON SHARED shell_nodejs_2 AS STRING
+COMMON SHARED ConnectionsLog_Check AS STRING
 
 COMMON SHARED config_dir AS STRING
 COMMON SHARED nodejs_dir AS STRING
@@ -159,6 +199,8 @@ COMMON SHARED mouseX
 COMMON SHARED mouseY
 COMMON SHARED Timer_Fail AS INTEGER
 COMMON SHARED Timer_Fail_Count AS INTEGER
+COMMON SHARED Timer_Fail_Count1 AS INTEGER
+COMMON SHARED Timer_Fail_Count2 AS INTEGER
 COMMON SHARED Timer_Fail_Stream1 AS INTEGER
 COMMON SHARED Timer_Fail_Stream2 AS INTEGER
 COMMON SHARED FullScreen AS _BYTE
@@ -192,6 +234,10 @@ COMMON SHARED tPing1#
 COMMON SHARED client
 COMMON SHARED tPing2#
 COMMON SHARED tPingOut#
+COMMON SHARED tIPPing1#
+COMMON SHARED tIPPing2#
+COMMON SHARED tIPPingOut#
+COMMON SHARED tPingTimer
 COMMON SHARED EOL$
 COMMON SHARED Timer_GET!
 COMMON SHARED __MultiCameraSwitch
@@ -341,16 +387,17 @@ SUB __UI_BeforeInit
     $VERSIONINFO:ProductName=Loopy SRT Monitor
     $VERSIONINFO:Comments=Monitor SRT Streams
     $VERSIONINFO:FileDescription=Loopy SRT Monitor
-    $VERSIONINFO:FILEVERSION#=0,9,2,0
-    $VERSIONINFO:PRODUCTVERSION#=0,9,2,0
+    $VERSIONINFO:FILEVERSION#=0,9,4,0
+    $VERSIONINFO:PRODUCTVERSION#=0,9,4,0
     $CHECKING:ON
     $RESIZE:OFF
     IF ERR = 0 THEN
         $EXEICON:'.\icon.ico'
         _TITLE "Loopy SRT Monitor - loopy750"
     END IF
-    Ver = "0.9.2"
-    VerDate = "05/21"
+    Ver = "0.9.4"
+    VerBeta = ""
+    VerDate = "07/21"
 
     'Always on top : ------------------------------------------------------------------
     CONST HWND_TOPMOST%& = -1
@@ -373,7 +420,9 @@ END SUB
 SUB __UI_OnLoad
     SetCaption Timer_FailLB, "-"
     SetCaption Timer_Fail_CountLB, "-"
+    SetCaption Timer_Fail_Count_2LB, "-"
     SetCaption tPingOutLB, "-"
+    SetCaption tIPPingOutLB, "-"
     SetCaption td_updateLB, "-"
     'Settings
     SetCaption Stream_Fail_DelayLB, "-"
@@ -386,6 +435,8 @@ SUB __UI_OnLoad
     SetCaption Timer_Fail_Stream2LB, "-"
     'Current Scene
     SetCaption Scene_CurrentLB, "-"
+    'Low bitrate multiple cameras
+    SetCaption Low_Bitrate_StatusLB, "-"
     'Debug
     SetCaption Debug_TimerLB, "-"
     SetCaption Debug_Timer_SnapshotLB, "-"
@@ -425,8 +476,15 @@ SUB __UI_OnLoad
     fileCheckVersion = temp_dir + "\checkversion.txt"
     outputBitrateFile = temp_dir + "\outputBitrate.txt"
     outputStatusFile = temp_dir + "\outputStatus.txt"
+    outputConnectionsLogFile = temp_dir + "\outputConnections.log"
+    outputLB1 = config_dir + "\outputLB1."
+    outputLB2 = config_dir + "\outputLB2."
+    outputLB_Temp1 = config_dir + "\_outputLB1."
+    outputLB_Temp2 = config_dir + "\_outputLB2."
 
     ON ERROR GOTO PUT_Fail
+    _DELAY .25
+    IF VerBeta <> "" THEN _TITLE "Loopy SRT Monitor v" + VerBeta + "beta" ELSE _TITLE "Loopy SRT Monitor v" + Ver
     IF _DIREXISTS(config_dir) THEN IF NOT _DIREXISTS(temp_dir) THEN MKDIR temp_dir
     IF _FILEEXISTS(filePrevious) THEN KILL filePrevious
     IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
@@ -434,6 +492,11 @@ SUB __UI_OnLoad
     _ALLOWFULLSCREEN OFF
     RANDOMIZE TIMER
     ErrorTestRunOnce = 1
+
+    'Set font for error screen
+    ON ERROR GOTO PUT_Fail
+    _FONT _LOADFONT(ENVIRON$("SYSTEMROOT") + "\fonts\seguisb.ttf", 12)
+    ON ERROR GOTO 0
 
     'Test #1
     IF ErrorTestRunOnce = 1 THEN
@@ -488,6 +551,8 @@ SUB __UI_OnLoad
                     IF file4_var$ = "websocketaddress" THEN OBS_URL = file4_val$
                     IF file4_var$ = "websocketpassword" THEN OBS_PW = file4_val$
                     IF file4_var$ = "filestatusoutput" THEN FileStatusOutput = file4_val$
+                    IF file4_var$ = "connectionslog" THEN ConnectionsLog_Check = file4_val$
+                    IF file4_var$ = "scenelbrenabled" THEN Scene_LBR_Enabled = file4_val$
                     IF file4_var$ = "checkupdateonstartup" THEN CheckUpdateOnStartup = file4_val$
                     IF file4_var$ = "multicameraswitch" THEN MultiCameraSwitch$ = file4_val$
                     IF file4_var$ = "titlescene1" THEN titleScene1 = file4_val$
@@ -500,7 +565,18 @@ SUB __UI_OnLoad
         LOOP UNTIL EOF(4)
         CLOSE #4
 
-        IF Scene_OK = "" OR Scene_Fail = "" OR Scene_Intro = "" OR OBS_URL = "" OR OBS_PW = "" OR FileStatusOutput = "" OR CheckUpdateOnStartup = "" OR MultiCameraSwitch$ = "" OR titleScene1 = "" OR titleScene2 = "" OR titleScene12 = "" OR returnPreviousScene = "" OR returnPreviousSceneRemember$ = "" THEN verCheck$ = "Settings missing in 'config.ini' file, check 'readme.txt'...": iniFeatures = 1
+        Scene_LBR = Scene_OK + " LBR"
+
+        IF Scene_OK = "" OR Scene_Fail = "" OR Scene_Intro = "" OR OBS_URL = "" OR OBS_PW = "" OR FileStatusOutput = "" OR CheckUpdateOnStartup = "" OR MultiCameraSwitch$ = "" OR titleScene1 = "" OR titleScene2 = "" OR titleScene12 = "" OR returnPreviousScene = "" OR returnPreviousSceneRemember$ = "" OR ConnectionsLog_Check = "" OR Scene_LBR_Enabled = "" THEN verCheck$ = "Settings missing in 'config.ini' file, check 'readme.txt'...": iniFeatures = 1
+
+        'Set variables for low bitrate detection
+        CooldownStartup = 10
+        IF ConnectionsLog_Check = "true" THEN ConnectionsLog = 1 ELSE ConnectionsLog = 0
+        CooldownLogTotal = 8
+        MediaSourceTimeLB = 800
+        CooldownLog = CooldownLogTotal
+
+        IF Scene_LBR_Enabled = "true" THEN SceneLBActive = 1
 
         IF Stream_Fail_Delay < 3 THEN
             Stream_Fail_Delay = 3
@@ -532,17 +608,17 @@ SUB __UI_OnLoad
         _DELAY 1
         CLS , _RGB(1, 120, 220)
         BSOD& = __imageMEM&("face_sad_x.png")
-        _PUTIMAGE (50, 50)-(107, 162), BSOD&
+        _PUTIMAGE (25, 46)-(82, 158), BSOD&
         _FREEIMAGE BSOD&
         COLOR _RGB(254, 254, 254), _RGB(1, 120, 220)
-        _PRINTSTRING (37, 12 * 18), "Program encountered an error and needs to restart."
+        _PRINTSTRING (20, 12 * 18), "Program encountered an error and needs to restart."
         IF INSTR(Error_msg, CHR$(10)) >= 1 THEN
-            _PRINTSTRING (37, 14 * 18), LEFT$(Error_msg, INSTR(Error_msg, CHR$(10)) - 1)
-            _PRINTSTRING (37, 15 * 18), MID$(Error_msg, INSTR(Error_msg, CHR$(10)) + 1)
+            _PRINTSTRING (20, 14 * 18), LEFT$(Error_msg, INSTR(Error_msg, CHR$(10)) - 1)
+            _PRINTSTRING (20, 15 * 18), MID$(Error_msg, INSTR(Error_msg, CHR$(10)) + 1)
         ELSE
-            _PRINTSTRING (37, 14 * 18), Error_msg
+            _PRINTSTRING (20, 14 * 18), Error_msg
         END IF
-        _PRINTSTRING (37, 22 * 18), "Program will exit shortly or press any key to exit now"
+        _PRINTSTRING (20, 20 * 18), "Program will exit shortly or press any key to exit now..."
         _DISPLAY
         _DELAY 1
         IF INKEY$ <> "" THEN SYSTEM
@@ -763,8 +839,10 @@ SUB __UI_OnLoad
             OPEN filePrevious_ms FOR INPUT AS #90
             IF EOF(90) OR LOF(90) = 0 THEN
                 CLOSE #90
+                ON ERROR GOTO PUT_Fail
                 IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
-                Error_msg = "- OBS " + c34 + "Websockets Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + CHR$(10) + "- If configuration is correct, check " + c34 + "Websockets Server" + c34 + " is running in OBS."
+                ON ERROR GOTO 0
+                Error_msg = "- OBS " + c34 + "WebSockets Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + CHR$(10) + "- If configuration is correct, check " + c34 + "WebSockets Server" + c34 + " is running in OBS, and " + c34 + "Node.js" + c34 + " is installed."
                 ErrorDisplay (6)
             END IF
 
@@ -773,7 +851,7 @@ SUB __UI_OnLoad
             IF file90$ <> "OK" THEN
                 CLOSE #90
                 IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
-                Error_msg = "- OBS " + c34 + "Websockets Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in " + c34 + "config.ini"+c34+" and retry." + CHR$(10) + "- If configuration is correct, check " + c34 + "Websockets Server" + c34 + " is running in OBS."
+                Error_msg = "- OBS " + c34 + "WebSockets Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + CHR$(10) + "- If configuration is correct, check " + c34 + "WebSockets Server" + c34 + " is running in OBS, and " + c34 + "Node.js" + c34 + " is installed."
                 ErrorDisplay (6)
             END IF
         END IF
@@ -833,7 +911,9 @@ SUB __UI_OnLoad
             OPEN filePrevious_ms FOR INPUT AS #90
             IF EOF(90) OR LOF(90) = 0 THEN
                 CLOSE #90
+                ON ERROR GOTO PUT_Fail
                 IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
+                ON ERROR GOTO 0
                 Error_msg = "- Unable to retrieve OBS scene list. Correctly configure scenes in OBS and confirm they all contain at least one source."
                 ErrorDisplay (9)
             END IF
@@ -903,6 +983,9 @@ SUB __UI_OnLoad
 
     IF Scene_OK = "" OR Scene_Fail = "" OR Scene_Intro = "" OR OBS_URL = "" THEN RefreshDisplayRequest = 1: Error_msg = "- Variable/s for scenes empty, check if " + c34 + config_main + c34 + " exists. (#3)": _DELAY 3
 
+    IF ConnectionsLog THEN statusConnectionsLogToFile ""
+    IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Program launched"
+
     IF __MultiCameraSwitch = 0 THEN
         Scene_Current$ = Scene_OK
         SHELL _DONTWAIT _HIDE shell_nodejs_1 + Scene_OK
@@ -916,6 +999,14 @@ SUB __UI_OnLoad
     _DELAY .25
     _TITLE "Loopy SRT Monitor"
 
+    IF VerBeta <> "" THEN
+        Debug = 1
+        Control(DebugFrame).Hidden = False
+        Control(versionFrame).Hidden = True
+        Control(PictureBoxLogoBottom).Hidden = True
+        SetRadioButtonValue OptionsMenuDebug
+    END IF
+
     IF __MultiCameraSwitch = 0 THEN
         Control(Stream1).Hidden = True
         Control(Stream2).Hidden = True
@@ -927,12 +1018,21 @@ SUB __UI_OnLoad
         Control(failLB2).Hidden = True
         Control(Uptime_Stream_2LB).Hidden = True
         Control(Timer_Fail_Stream2LB).Hidden = True
+        'Low bitrate scene for multiple cameras only
+        Control(LowBitrateSceneLB).Hidden = True
+        Control(Low_Bitrate_StatusLB).Hidden = True
+        SetCaption FailCount2LB, ""
+        SetCaption Timer_Fail_Count_2LB, ""
+        SetCaption FailCount1LB, "DC / Low bitrate"
+        SetCaption FailCount2LB, "Low bitrate scene"
+        IF SceneLBActive THEN SetCaption Timer_Fail_Count_2LB, "Enabled" ELSE SetCaption Timer_Fail_Count_2LB, "Disabled"
     ELSE
         'Stream #1 only
         SetCaption StreamUptimeLB3, ""
         SetCaption StreamFailTimerLB2, ""
         SetCaption Stream_UptimeLB, ""
         SetCaption Stream_Fail_TimerLB, ""
+        IF SceneLBActive THEN SetCaption Low_Bitrate_StatusLB, "Enabled" ELSE SetCaption Low_Bitrate_StatusLB, "Disabled"
     END IF
 
     Control(DebugFrame).Hidden = True
@@ -950,8 +1050,12 @@ SUB __UI_OnLoad
     Control(mouseXLB).Hidden = True
     Control(mouseYLB).Hidden = True
     Control(__ERRORLINELB).Hidden = True
+    Control(LowBRTimerLB).Hidden = True
+    Control(br_countdownLB).Hidden = True
+    Control(MSRateLB).Hidden = True
+    Control(ms_playLB).Hidden = True
     Control(PictureBoxLogoBottom).Hidden = False
-    SetCaption (versionFrame), "v" + Ver
+    IF VerBeta = "" THEN SetCaption (versionFrame), "v" + Ver ELSE SetCaption (versionFrame), "v" + VerBeta + "beta"
 
     ON TIMER(1) Timer01
     TIMER ON
@@ -970,23 +1074,23 @@ SUB __UI_BeforeUpdateDisplay
         TIMER STOP
         CLS , _RGB(1, 120, 220)
         BSOD& = __imageMEM&("face_sad_x.png")
-        _PUTIMAGE (50, 50)-(107, 162), BSOD&
+        _PUTIMAGE (25, 46)-(82, 158), BSOD&
         _FREEIMAGE BSOD&
         COLOR _RGB(254, 254, 254), _RGB(1, 120, 220)
-        _PRINTSTRING (37, 12 * 18), "Program encountered an error and needs to restart."
+        _PRINTSTRING (20, 12 * 18), "Program encountered an error and needs to restart."
         IF INSTR(Error_msg, CHR$(10)) >= 1 THEN
-            _PRINTSTRING (37, 14 * 18), LEFT$(Error_msg, INSTR(Error_msg, CHR$(10)) - 1)
-            _PRINTSTRING (37, 15 * 18), MID$(Error_msg, INSTR(Error_msg, CHR$(10)) + 1)
+            _PRINTSTRING (20, 14 * 18), LEFT$(Error_msg, INSTR(Error_msg, CHR$(10)) - 1)
+            _PRINTSTRING (20, 15 * 18), MID$(Error_msg, INSTR(Error_msg, CHR$(10)) + 1)
         ELSE
-            _PRINTSTRING (37, 14 * 18), Error_msg
+            _PRINTSTRING (20, 14 * 18), Error_msg
         END IF
         IF INSTR(Error_msg_2$, CHR$(10)) >= 1 THEN
-            _PRINTSTRING (37, 16 * 18), LEFT$(Error_msg_2$, INSTR(Error_msg_2$, CHR$(10)) - 1)
-            _PRINTSTRING (37, 17 * 18), MID$(Error_msg_2$, INSTR(Error_msg_2$, CHR$(10)) + 1)
+            _PRINTSTRING (20, 16 * 18), LEFT$(Error_msg_2$, INSTR(Error_msg_2$, CHR$(10)) - 1)
+            _PRINTSTRING (20, 17 * 18), MID$(Error_msg_2$, INSTR(Error_msg_2$, CHR$(10)) + 1)
         ELSE
-            _PRINTSTRING (37, 16 * 18), Error_msg_2$
+            _PRINTSTRING (20, 16 * 18), Error_msg_2$
         END IF
-        _PRINTSTRING (37, 22 * 18), "Program will resume shortly"
+        _PRINTSTRING (20, 20 * 18), "Program will resume shortly"
         _DISPLAY
         _DELAY 10
         Error_msg = ""
@@ -1025,6 +1129,7 @@ SUB __UI_BeforeUpdateDisplay
         IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
         IF _FILEEXISTS(outputBitrateFile) THEN KILL outputBitrateFile
         IF _FILEEXISTS(outputStatusFile) THEN KILL outputStatusFile
+        IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Program exit"
         SYSTEM
     END IF
 
@@ -1061,6 +1166,26 @@ END SUB
 
 SUB __UI_Click (id AS LONG)
     SELECT CASE id
+        CASE LowBitrateSceneLB
+
+        CASE Low_Bitrate_StatusLB
+
+        CASE MSRateLB
+
+        CASE ms_playLB
+
+        CASE LowBRTimerLB
+
+        CASE br_countdownLB
+
+        CASE Timer_Fail_Count_2LB
+
+        CASE IPPingLB
+
+        CASE tIPPingOutLB
+
+        CASE FailCount2LB
+
         CASE StreamUptimeLB3
 
         CASE StreamFailTimerLB2
@@ -1098,11 +1223,12 @@ SUB __UI_Click (id AS LONG)
             IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
             IF _FILEEXISTS(outputBitrateFile) THEN KILL outputBitrateFile
             IF _FILEEXISTS(outputStatusFile) THEN KILL outputStatusFile
+            IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Program exit"
             SYSTEM
 
         CASE StreamFailTimerLB
 
-        CASE FailCountLB
+        CASE FailCount1LB
 
         CASE ServerPingLB
 
@@ -1230,7 +1356,12 @@ SUB __UI_Click (id AS LONG)
         CASE IndicatorLB
 
         CASE HelpMenuAbout
-            Answer = MessageBox("Loopy SRT Stats Monitor v" + Ver + " (" + VerDate + ") \nby loopy750\n\nGitHub: https://www.github.com/loopy750", "About", MsgBox_OkOnly + MsgBox_Information)
+            IF VerBeta = "" THEN
+                Answer = MessageBox("Loopy SRT Stats Monitor v" + Ver + " (" + VerDate + ") \nby loopy750\n\nGitHub: https://www.github.com/loopy750", "About", MsgBox_OkOnly + MsgBox_Information)
+            ELSE
+                Answer = MessageBox("Loopy SRT Stats Monitor v" + VerBeta + "beta (" + VerDate + ") \nby loopy750\n\nGitHub: https://www.github.com/loopy750", "About", MsgBox_OkOnly + MsgBox_Information)
+            END IF
+
 
         CASE StatusLB
 
@@ -1241,6 +1372,26 @@ END SUB
 
 SUB __UI_MouseEnter (id AS LONG)
     SELECT CASE id
+        CASE LowBitrateSceneLB
+
+        CASE Low_Bitrate_StatusLB
+
+        CASE MSRateLB
+
+        CASE ms_playLB
+
+        CASE LowBRTimerLB
+
+        CASE br_countdownLB
+
+        CASE Timer_Fail_Count_2LB
+
+        CASE IPPingLB
+
+        CASE tIPPingOutLB
+
+        CASE FailCount2LB
+
         CASE StreamUptimeLB3
 
         CASE StreamFailTimerLB2
@@ -1277,7 +1428,7 @@ SUB __UI_MouseEnter (id AS LONG)
 
         CASE StreamFailTimerLB
 
-        CASE FailCountLB
+        CASE FailCount1LB
 
         CASE ServerPingLB
 
@@ -1364,6 +1515,26 @@ END SUB
 
 SUB __UI_MouseLeave (id AS LONG)
     SELECT CASE id
+        CASE LowBitrateSceneLB
+
+        CASE Low_Bitrate_StatusLB
+
+        CASE MSRateLB
+
+        CASE ms_playLB
+
+        CASE LowBRTimerLB
+
+        CASE br_countdownLB
+
+        CASE Timer_Fail_Count_2LB
+
+        CASE IPPingLB
+
+        CASE tIPPingOutLB
+
+        CASE FailCount2LB
+
         CASE StreamUptimeLB3
 
         CASE StreamFailTimerLB2
@@ -1400,7 +1571,7 @@ SUB __UI_MouseLeave (id AS LONG)
 
         CASE StreamFailTimerLB
 
-        CASE FailCountLB
+        CASE FailCount1LB
 
         CASE ServerPingLB
 
@@ -1501,6 +1672,26 @@ END SUB
 
 SUB __UI_MouseDown (id AS LONG)
     SELECT CASE id
+        CASE LowBitrateSceneLB
+
+        CASE Low_Bitrate_StatusLB
+
+        CASE MSRateLB
+
+        CASE ms_playLB
+
+        CASE LowBRTimerLB
+
+        CASE br_countdownLB
+
+        CASE Timer_Fail_Count_2LB
+
+        CASE IPPingLB
+
+        CASE tIPPingOutLB
+
+        CASE FailCount2LB
+
         CASE StreamUptimeLB3
 
         CASE StreamFailTimerLB2
@@ -1537,7 +1728,7 @@ SUB __UI_MouseDown (id AS LONG)
 
         CASE StreamFailTimerLB
 
-        CASE FailCountLB
+        CASE FailCount1LB
 
         CASE ServerPingLB
 
@@ -1624,6 +1815,26 @@ END SUB
 
 SUB __UI_MouseUp (id AS LONG)
     SELECT CASE id
+        CASE LowBitrateSceneLB
+
+        CASE Low_Bitrate_StatusLB
+
+        CASE MSRateLB
+
+        CASE ms_playLB
+
+        CASE LowBRTimerLB
+
+        CASE br_countdownLB
+
+        CASE Timer_Fail_Count_2LB
+
+        CASE IPPingLB
+
+        CASE tIPPingOutLB
+
+        CASE FailCount2LB
+
         CASE StreamUptimeLB3
 
         CASE StreamFailTimerLB2
@@ -1660,7 +1871,7 @@ SUB __UI_MouseUp (id AS LONG)
 
         CASE StreamFailTimerLB
 
-        CASE FailCountLB
+        CASE FailCount1LB
 
         CASE ServerPingLB
 
@@ -1890,23 +2101,37 @@ SUB statusBitrateToFile (outputBR$)
 
 END SUB
 
+SUB statusConnectionsLogToFile (outputCL$)
+
+    TIMER STOP
+    OPEN outputConnectionsLogFile FOR APPEND AS #60
+    IF outputCL$ = "" AND LOF(60) THEN
+        PRINT #60, outputCL$
+    ELSEIF outputCL$ <> "" THEN
+        PRINT #60, "[" + DATE$ + "] [" + TIME$ + "] " + outputCL$
+    END IF
+    CLOSE #60
+    TIMER ON
+
+END SUB
+
 SUB ErrorDisplay (ErrorTestVal)
 
     IF Error_msg <> "" THEN
         _DELAY 1
         CLS , _RGB(1, 120, 220)
         BSOD& = __imageMEM&("face_sad_x.png")
-        _PUTIMAGE (50, 50)-(107, 162), BSOD&
+        _PUTIMAGE (25, 46)-(82, 158), BSOD&
         _FREEIMAGE BSOD&
         COLOR _RGB(254, 254, 254), _RGB(1, 120, 220)
-        _PRINTSTRING (37, 12 * 18), "TEST #" + _TRIM$(STR$(ErrorTestVal)) + " FAILED"
+        _PRINTSTRING (20, 12 * 18), "Test #" + _TRIM$(STR$(ErrorTestVal)) + " of 10 failed"
         IF INSTR(Error_msg, CHR$(10)) >= 1 THEN
-            _PRINTSTRING (37, 14 * 18), LEFT$(Error_msg, INSTR(Error_msg, CHR$(10)) - 1)
-            _PRINTSTRING (37, 15 * 18), MID$(Error_msg, INSTR(Error_msg, CHR$(10)) + 1)
+            _PRINTSTRING (20, 14 * 18), LEFT$(Error_msg, INSTR(Error_msg, CHR$(10)) - 1)
+            _PRINTSTRING (20, 15 * 18), MID$(Error_msg, INSTR(Error_msg, CHR$(10)) + 1)
         ELSE
-            _PRINTSTRING (37, 14 * 18), Error_msg
+            _PRINTSTRING (20, 14 * 18), Error_msg
         END IF
-        _PRINTSTRING (37, 22 * 18), "Program will exit shortly or press any key to exit now"
+        _PRINTSTRING (20, 20 * 18), "Program will exit shortly or press any key to exit now..."
         _DISPLAY
         FOR Error_Exit = 1 TO 30
             _DELAY 1
@@ -1922,24 +2147,38 @@ SUB Timer01
     td_update# = TIMER(.001) - timer1#
     timer1# = TIMER(.001)
 
+    CooldownLog = CooldownLog - 1
+    IF CooldownLog < 0 THEN CooldownLog = 0
+
     IF _DIREXISTS(config_dir) THEN IF NOT _DIREXISTS(temp_dir) THEN MKDIR temp_dir
 
     tPing1# = TIMER(.001)
 
-    IF __MultiCameraSwitch = 0 THEN
+    'Count how many seconds stream has been running at low bitrate
+    IF CooldownLog THEN CooldownDuration = CooldownDuration + 1
+    IF CooldownDuration > 30600 THEN CooldownDuration = 30600
 
+    IF __MultiCameraSwitch = 0 THEN
         'Get Media Source times (1 stream) -------------------------------------------------------------------------------------------------------------
+
+        'Cancel cooldown if stream has stopped
+        'It's not required for single camera, but it will exit LBR quicker on playback stop
+        IF Scene_Current$ = Scene_LBR AND Timer_Fail_Stream1 >= 1 THEN CooldownLog = 0
+        IF SceneLBActive = 0 AND Timer_Fail_Stream1 >= 1 THEN CooldownLog = 0
+
+        MediaSource1TimeLog = MediaSource1TimeMS
         SHELL _HIDE "%ComSpec% /C node.exe " + c34 + obs_get_media1 + c34 + " > " + c34 + filePrevious_ms + c34
-        _DELAY .01
+        _DELAY .001
         ON ERROR GOTO PUT_Fail
         PUT_Refresh = 1
         IF _FILEEXISTS(filePrevious_ms) THEN
             OPEN filePrevious_ms FOR INPUT AS #92
-            IF EOF(92) THEN RefreshDisplayRequest = 1: Error_msg = "- Unable to read " + c34 + "SceneOK" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + CHR$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + CHR$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS Websockets options are correctly set. (#9)": _DELAY 3: GOTO LOF92
+            IF EOF(92) THEN RefreshDisplayRequest = 1: Error_msg = "- Unable to read " + c34 + "SceneOK" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + CHR$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + CHR$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSockets options are correctly set. (#9)": _DELAY 3: GOTO LOF92
             IF LOF(92) = 0 THEN NoKill = 1: GOTO LOF92 'Overkill with EOF checking, but just being safe
             IF EOF(92) THEN GOTO LOF92
             LINE INPUT #92, file92$
-            MediaSource1Time = VAL(file92$) / 1000
+            MediaSource1TimeMS = VAL(file92$)
+            MediaSource1Time = MediaSource1TimeMS / 1000
             LOF92:
         END IF
         CLOSE #92
@@ -1948,24 +2187,70 @@ SUB Timer01
         ON ERROR GOTO 0
         PUT_Refresh = 0
 
+        MediaSource1TimeMSOffset = MediaSource1TimeMS - MediaSource1TimeLog
+        IF MediaSource1TimeMSOffset < 0 THEN MediaSource1TimeMSOffset = 0
+
+        IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 AND CooldownLog = 0 THEN
+            CooldownActive = 1
+            ConnectionsLog1Count = ConnectionsLog1Count + 1
+            IF ConnectionsLog1Count > 999 THEN ConnectionsLog1Count = 999
+
+            'Switch to Low Bandwidth Scene
+            IF SceneLBActive THEN
+                Scene_Current$ = Scene_LBR
+                SHELL _DONTWAIT _HIDE shell_nodejs_1 + Scene_LBR
+            END IF
+
+            IF __FileStatusOutput = 1 THEN statusOutputToFile "[LOW BANDWIDTH]:[STREAM]"
+            IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] Insufficient bandwidth for stream, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times": CooldownLog = CooldownLogTotal
+        END IF
+        IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 THEN CooldownLog = CooldownLogTotal: IF CooldownLog > CooldownLogTotal THEN CooldownLog = CooldownLogTotal
+        IF CooldownActive = 1 AND CooldownLog = 0 THEN
+            CooldownActive = 0
+
+            'Restore Scene_OK
+            IF SceneLBActive THEN
+                IF Scene_Current$ = Scene_LBR THEN
+                    Scene_Current$ = Scene_OK
+                    SHELL _DONTWAIT _HIDE shell_nodejs_1 + Scene_OK
+                END IF
+            END IF
+
+            IF __FileStatusOutput = 1 THEN statusOutputToFile "[FULL BANDWIDTH]:[STREAM] (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
+            IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Bandwidth restored for stream, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
+            'Reset low bitrate duration seconds count
+            CooldownDuration = 0
+        END IF
+
     END IF
 
     IF __MultiCameraSwitch = 1 THEN
-
         'Get Media Source times (2 streams) -------------------------------------------------------------------------------------------------------------
+
+        'Cancel cooldown if stream has stopped otherwise things will break
+        'if StreamFailDelay is set lower than CooldownLogTotal
+        IF Scene_Current$ = titleScene1 AND Timer_Fail_Stream1 >= 1 THEN CooldownLog = 0
+        IF Scene_Current$ = titleScene2 AND Timer_Fail_Stream2 >= 1 THEN CooldownLog = 0
+        IF Scene_Current$ = titleScene12 AND Timer_Fail_Stream1 >= 1 THEN CooldownLog = 0
+        IF Scene_Current$ = titleScene12 AND Timer_Fail_Stream2 >= 1 THEN CooldownLog = 0
+
+        MediaSource1TimeLog = MediaSource1TimeMS
+        MediaSource2TimeLog = MediaSource2TimeMS
         SHELL _HIDE "%ComSpec% /C node.exe " + c34 + obs_get_media2 + c34 + " > " + c34 + filePrevious_ms + c34
-        _DELAY .01
+        _DELAY .001
         ON ERROR GOTO PUT_Fail
         PUT_Refresh = 1
         IF _FILEEXISTS(filePrevious_ms) THEN
             OPEN filePrevious_ms FOR INPUT AS #92
-            IF EOF(92) THEN RefreshDisplayRequest = 1: Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + CHR$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + CHR$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS Websockets options are correctly set. (#7)": _DELAY 3: GOTO LOF922
+            IF EOF(92) THEN RefreshDisplayRequest = 1: Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + CHR$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + CHR$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSockets options are correctly set. (#7)": _DELAY 3: GOTO LOF922
             IF LOF(92) = 0 THEN NoKill = 1: GOTO LOF922 'Overkill with EOF checking, but just being safe
             LINE INPUT #92, file92$
-            MediaSource1Time = VAL(file92$) / 1000
-            IF EOF(92) THEN RefreshDisplayRequest = 1: Error_msg = "- Unable to read " + c34 + "MediaSource2" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + CHR$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + CHR$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS Websockets options are correctly set. (#8)": _DELAY 3: GOTO LOF922
+            MediaSource1TimeMS = VAL(file92$)
+            MediaSource1Time = MediaSource1TimeMS / 1000
+            IF EOF(92) THEN RefreshDisplayRequest = 1: Error_msg = "- Unable to read " + c34 + "MediaSource2" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + CHR$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + CHR$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSockets options are correctly set. (#8)": _DELAY 3: GOTO LOF922
             LINE INPUT #92, file92$
-            MediaSource2Time = VAL(file92$) / 1000
+            MediaSource2TimeMS = VAL(file92$)
+            MediaSource2Time = MediaSource2TimeMS / 1000
             LOF922:
         END IF
         CLOSE #92
@@ -1974,29 +2259,162 @@ SUB Timer01
         ON ERROR GOTO 0
         PUT_Refresh = 0
 
+        MediaSource1TimeMSOffset = MediaSource1TimeMS - MediaSource1TimeLog
+        IF MediaSource1TimeMSOffset < 0 THEN MediaSource1TimeMSOffset = 0
+
+        MediaSource2TimeMSOffset = MediaSource2TimeMS - MediaSource2TimeLog
+        IF MediaSource2TimeMSOffset < 0 THEN MediaSource2TimeMSOffset = 0
+
+        IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 AND CooldownLog = 0 THEN
+            CooldownActive = 1
+            ConnectionsLog1Count = ConnectionsLog1Count + 1
+            IF ConnectionsLog1Count > 999 THEN ConnectionsLog1Count = 999
+
+            'Switch to Low Bandwidth Scene #1
+            ON ERROR GOTO PUT_Fail
+            IF SceneLBActive THEN
+                IF _FILEEXISTS(outputLB_Temp1 + "png") THEN NAME outputLB_Temp1 + "png" AS outputLB1 + "png"
+                IF _FILEEXISTS(outputLB_Temp1 + "gif") THEN NAME outputLB_Temp1 + "gif" AS outputLB1 + "gif"
+
+                'Change scene for multi camera
+                IF Scene_Current$ = titleScene1 THEN SHELL _DONTWAIT _HIDE shell_nodejs_1 + titleScene1 + " LBR"
+                IF Scene_Current$ = titleScene12 THEN SHELL _DONTWAIT _HIDE shell_nodejs_1 + titleScene12 + " LBR"
+
+            END IF
+            ON ERROR GOTO 0
+
+            IF __FileStatusOutput = 1 THEN statusOutputToFile "[LOW BANDWIDTH]:[CAMERA #1]"
+            IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] Insufficient bandwidth for stream #1, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times": CooldownLog = CooldownLogTotal
+        END IF
+
+        IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 THEN CooldownLog = CooldownLogTotal: IF CooldownLog > CooldownLogTotal THEN CooldownLog = CooldownLogTotal
+
+        IF CooldownActive = 1 AND CooldownLog = 0 THEN
+            CooldownActive = 0
+
+            'Switch to Low Bandwidth Scene #1 end
+            ON ERROR GOTO PUT_Fail
+            IF SceneLBActive THEN
+                IF _FILEEXISTS(outputLB1 + "png") THEN NAME outputLB1 + "png" AS outputLB_Temp1 + "png"
+                IF _FILEEXISTS(outputLB1 + "gif") THEN NAME outputLB1 + "gif" AS outputLB_Temp1 + "gif"
+
+                'Change scene for multi camera
+                IF Scene_Current$ = titleScene1 THEN SHELL _DONTWAIT _HIDE shell_nodejs_1 + titleScene1
+                IF Scene_Current$ = titleScene12 THEN SHELL _DONTWAIT _HIDE shell_nodejs_1 + titleScene12
+
+            END IF
+            ON ERROR GOTO 0
+
+            IF __FileStatusOutput = 1 THEN statusOutputToFile "[FULL BANDWIDTH]:[CAMERA #1] (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
+            IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Bandwidth restored for stream #1, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
+            'Reset low bitrate duration seconds count
+            CooldownDuration = 0
+        END IF
+
+        IF MediaSource2TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream2 = 0 AND CooldownLog = 0 THEN
+            CooldownActive = 2
+            ConnectionsLog2Count = ConnectionsLog2Count + 1
+            IF ConnectionsLog2Count > 999 THEN ConnectionsLog2Count = 999
+
+            'Switch to Low Bandwidth Scene #2
+            ON ERROR GOTO PUT_Fail
+            IF SceneLBActive THEN
+                IF _FILEEXISTS(outputLB_Temp2 + "png") THEN NAME outputLB_Temp2 + "png" AS outputLB2 + "png"
+                IF _FILEEXISTS(outputLB_Temp2 + "gif") THEN NAME outputLB_Temp2 + "gif" AS outputLB2 + "gif"
+
+                'Change scene for multi camera
+                IF Scene_Current$ = titleScene2 THEN SHELL _DONTWAIT _HIDE shell_nodejs_1 + titleScene2 + " LBR"
+                IF Scene_Current$ = titleScene12 THEN SHELL _DONTWAIT _HIDE shell_nodejs_1 + titleScene12 + " LBR"
+
+            END IF
+            ON ERROR GOTO 0
+
+            IF __FileStatusOutput = 1 THEN statusOutputToFile "[LOW BANDWIDTH]:[CAMERA #2]"
+            IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] Insufficient bandwidth for stream #2, " + _TRIM$(STR$(ConnectionsLog2Count)) + " times": CooldownLog = CooldownLogTotal
+        END IF
+
+        IF MediaSource2TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream2 = 0 THEN CooldownLog = CooldownLogTotal: IF CooldownLog > CooldownLogTotal THEN CooldownLog = CooldownLogTotal
+
+        IF CooldownActive = 2 AND CooldownLog = 0 THEN
+            CooldownActive = 0
+
+            'Switch to Low Bandwidth Scene #2 end
+            ON ERROR GOTO PUT_Fail
+            IF SceneLBActive THEN
+                IF _FILEEXISTS(outputLB2 + "png") THEN NAME outputLB2 + "png" AS outputLB_Temp2 + "png"
+                IF _FILEEXISTS(outputLB2 + "gif") THEN NAME outputLB2 + "gif" AS outputLB_Temp2 + "gif"
+
+                'Change scene for multi camera
+                IF Scene_Current$ = titleScene2 THEN SHELL _DONTWAIT _HIDE shell_nodejs_1 + titleScene2
+                IF Scene_Current$ = titleScene12 THEN SHELL _DONTWAIT _HIDE shell_nodejs_1 + titleScene12
+
+            END IF
+            ON ERROR GOTO 0
+
+            IF __FileStatusOutput = 1 THEN statusOutputToFile "[FULL BANDWIDTH]:[CAMERA #2] (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
+            IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Bandwidth restored for stream #2, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
+            'Reset low bitrate duration seconds count
+            CooldownDuration = 0
+        END IF
+
     END IF
+
+    'Debug: MS rate
+    MediaSourceTimeMSOffsetDisplay = INT((MediaSource1TimeMSOffset) / 10) * 10
+    IF MediaSourceTimeMSOffsetDisplay > 950 AND MediaSourceTimeMSOffsetDisplay < 1050 THEN MediaSourceTimeMSOffsetDisplay = 1000
 
     tPing2# = TIMER(.001)
     tPingOut# = (tPing2# - tPing1#)
 
-    IF Timer_Failed = 1 THEN Timer_Failed = 0: ToolTip(Timer_Fail_CountLB) = "Last Failed: " + TIME$
+    tPingTimer = tPingTimer + 1
+    IF tPingTimer >= 15 THEN
+        tPingTimer = 0
+        ON ERROR GOTO PUT_Fail
+        tIPPing1# = TIMER(.001)
+        client = _OPENCLIENT("TCP/IP:" + MID$(OBS_URL, INSTR(OBS_URL, ":") + 1) + ":" + LEFT$(OBS_URL, INSTR(OBS_URL, ":") - 1))
+        CLOSE client
+        tIPPing2# = TIMER(.001)
+        tIPPingOut# = (tIPPing2# - tIPPing1#)
+        ON ERROR GOTO 0
+    END IF
+
+    IF Timer_Failed1 = 1 THEN Timer_Failed1 = 0: ToolTip(Timer_Fail_CountLB) = "Last Failed: " + TIME$
+    IF Timer_Failed2 = 1 THEN Timer_Failed2 = 0: ToolTip(Timer_Fail_Count_2LB) = "Last Failed: " + TIME$
 
     IF MediaSource1Time <> 0 OR MediaSource2Time <> 0 THEN Timer_Fail = 0 'SRT
 
     IF MediaSource1Time = 0 AND MediaSource2Time = 0 AND srt_warmup = 1 THEN Timer_Fail = Timer_Fail + 1 'SRT
-    IF Timer_Fail > 20999 THEN Timer_Fail = 20999
+    IF Timer_Fail > 30600 THEN Timer_Fail = 30600
 
     IF Timer_Fail >= Stream_Fail_Delay THEN Control(Timer_FailLB).ForeColor = RED_FAIL ELSE IF Timer_Fail >= 1 THEN Control(Timer_FailLB).ForeColor = RED_WARNING: SD = 1: _TITLE "Stream Down!" ELSE Control(Timer_FailLB).ForeColor = GREEN_OK
     SetCaption (Timer_FailLB), calc_srt$(Timer_Fail, 1)
 
     IF Timer_Fail = 0 AND SD = 1 THEN SD = 0: _TITLE "Loopy SRT Monitor"
 
-    IF Timer_Fail_Count >= 1 THEN Control(Timer_Fail_CountLB).ForeColor = RED_WARNING ELSE Control(Timer_Fail_CountLB).ForeColor = GREEN_OK
-    IF Timer_Fail_Count <> 1 THEN SetCaption (Timer_Fail_CountLB), LTRIM$(STR$(Timer_Fail_Count)) + " times" ELSE SetCaption (Timer_Fail_CountLB), LTRIM$(STR$(Timer_Fail_Count)) + " time"
+    IF __MultiCameraSwitch = 0 THEN
+
+        IF Timer_Fail_Count >= 1 THEN Control(Timer_Fail_CountLB).ForeColor = RED_WARNING ELSE Control(Timer_Fail_CountLB).ForeColor = GREEN_OK
+        SetCaption (Timer_Fail_CountLB), LTRIM$(STR$(Timer_Fail_Count)) + "   /   " + LTRIM$(STR$(ConnectionsLog1Count)) + "  times"
+
+    ELSE
+
+        IF Timer_Fail_Count1 >= 1 THEN Control(Timer_Fail_CountLB).ForeColor = RED_WARNING ELSE Control(Timer_Fail_CountLB).ForeColor = GREEN_OK
+        SetCaption (Timer_Fail_CountLB), LTRIM$(STR$(Timer_Fail_Count1)) + "   /   " + LTRIM$(STR$(ConnectionsLog1Count)) + "  times"
+
+        IF Timer_Fail_Count2 >= 1 THEN Control(Timer_Fail_Count_2LB).ForeColor = RED_WARNING ELSE Control(Timer_Fail_Count_2LB).ForeColor = GREEN_OK
+        SetCaption (Timer_Fail_Count_2LB), LTRIM$(STR$(Timer_Fail_Count2)) + "   /   " + LTRIM$(STR$(ConnectionsLog2Count)) + "  times"
+
+    END IF
+
+    TIMEms tIPPingOut#, 0
+    IF VAL(tout) >= .3 THEN Control(tIPPingOutLB).ForeColor = RED_WARNING ELSE Control(tIPPingOutLB).ForeColor = GREEN_OK
+    IF ConnectionsLog AND VAL(tout) >= .1 AND CooldownLog = 0 THEN statusConnectionsLogToFile "[WARN] IP ping exceeding 100ms": CooldownLog = CooldownLogTotal
+    SetCaption (tIPPingOutLB), LTRIM$(STR$(VAL(tout) * 1000)) + " ms"
 
     TIMEms tPingOut#, 0
     IF VAL(tout) >= .3 THEN Control(tPingOutLB).ForeColor = RED_WARNING ELSE Control(tPingOutLB).ForeColor = GREEN_OK
-    SetCaption (tPingOutLB), LTRIM$(STR$(VAL(tout) * 1000)) + "ms"
+    IF ConnectionsLog AND VAL(tout) >= .5 AND CooldownLog = 0 THEN statusConnectionsLogToFile "[WARN] WebSocket ping exceeding 500ms": CooldownLog = CooldownLogTotal
+    SetCaption (tPingOutLB), LTRIM$(STR$(VAL(tout) * 1000)) + " ms"
 
     IF srt_warmup = 1 THEN
         IF td_update# <= 0.001 THEN td_update# = 0.001
@@ -2014,12 +2432,12 @@ SUB Timer01
         'temp1_stream1 variables
         IF srt_warmup = 1 THEN Timer_Fail_Stream1 = Timer_Fail_Stream1 + 1
         IF MediaSource1Time <> 0 THEN Timer_Fail_Stream1 = 0: Timer_Fail = 0 'SRT
-        IF Timer_Fail_Stream1 > 19999 THEN Timer_Fail_Stream1 = 19999
+        IF Timer_Fail_Stream1 > 30600 THEN Timer_Fail_Stream1 = 30600
 
         'temp1_stream2 variables
         IF srt_warmup = 1 THEN Timer_Fail_Stream2 = Timer_Fail_Stream2 + 1
         IF MediaSource2Time <> 0 THEN Timer_Fail_Stream2 = 0: Timer_Fail = 0 'SRT
-        IF Timer_Fail_Stream2 > 19999 THEN Timer_Fail_Stream2 = 19999
+        IF Timer_Fail_Stream2 > 30600 THEN Timer_Fail_Stream2 = 30600
 
         IF Timer_Fail_Stream1 >= Stream_Fail_Delay THEN Control(Timer_Fail_Stream1LB).ForeColor = RED_FAIL ELSE IF Timer_Fail_Stream1 >= 1 THEN Control(Timer_Fail_Stream1LB).ForeColor = RED_WARNING ELSE Control(Timer_Fail_Stream1LB).ForeColor = GREEN_OK
         SetCaption (Timer_Fail_Stream1LB), calc_srt$(Timer_Fail_Stream1, 1)
@@ -2031,11 +2449,23 @@ SUB Timer01
         SetCaption (Uptime_Stream_1LB), calc_srt$(MediaSource1Time, 1) 'SRT
         IF MediaSource2Time <= 2 THEN Control(Uptime_Stream_2LB).ForeColor = RED_FAIL ELSE IF MediaSource2Time >= 3 AND MediaSource2Time <= 10 THEN Control(Uptime_Stream_2LB).ForeColor = RED_WARNING ELSE Control(Uptime_Stream_2LB).ForeColor = GREEN_OK
         SetCaption (Uptime_Stream_2LB), calc_srt$(MediaSource2Time, 1) 'SRT
+
+        IF Timer_Fail_Stream1 = 2 AND CooldownStartup = 0 THEN
+            Timer_Fail_Count1 = Timer_Fail_Count1 + 1
+            Timer_Failed1 = 1
+            IF Timer_Fail_Count1 > 999 THEN Timer_Fail_Count1 = 999
+        END IF
+
+        IF Timer_Fail_Stream2 = 2 AND CooldownStartup = 0 THEN
+            Timer_Fail_Count2 = Timer_Fail_Count2 + 1
+            Timer_Failed2 = 1
+            IF Timer_Fail_Count2 > 999 THEN Timer_Fail_Count2 = 999
+        END IF
     ELSE
         'Stream #1 only
         IF srt_warmup = 1 THEN Timer_Fail_Stream1 = Timer_Fail_Stream1 + 1
         IF MediaSource1Time <> 0 THEN Timer_Fail_Stream1 = 0: Timer_Fail = 0 'SRT
-        IF Timer_Fail_Stream1 > 19999 THEN Timer_Fail_Stream1 = 19999
+        IF Timer_Fail_Stream1 > 30600 THEN Timer_Fail_Stream1 = 30600
 
         IF MediaSource1Time <= 2 THEN Control(Stream_UptimeLB).ForeColor = RED_FAIL ELSE IF MediaSource1Time >= 3 AND MediaSource1Time <= 10 THEN Control(Stream_UptimeLB).ForeColor = RED_WARNING ELSE Control(Stream_UptimeLB).ForeColor = GREEN_OK
         SetCaption (Stream_UptimeLB), calc_srt$(MediaSource1Time, 1) 'SRT
@@ -2067,6 +2497,10 @@ SUB Timer01
         Control(mouseXLB).Hidden = True
         Control(mouseYLB).Hidden = True
         Control(__ERRORLINELB).Hidden = True
+        Control(LowBRTimerLB).Hidden = True
+        Control(br_countdownLB).Hidden = True
+        Control(MSRateLB).Hidden = True
+        Control(ms_playLB).Hidden = True
         Control(PictureBoxLogoBottom).Hidden = False
         SetCaption Debug_TimerLB, "-"
         SetCaption Debug_Timer_SnapshotLB, "-"
@@ -2080,6 +2514,8 @@ SUB Timer01
         SetCaption mouseXVarLB, "-"
         SetCaption mouseYVarLB, "-"
         SetCaption __ERRORLINEVarLB, "-"
+        SetCaption ms_playLB, "-"
+        SetCaption br_countdownLB, "-"
     ELSEIF Debug = 1 THEN
         Control(DebugFrame).Hidden = False
         Control(versionFrame).Hidden = True
@@ -2095,6 +2531,10 @@ SUB Timer01
         Control(mouseXLB).Hidden = False
         Control(mouseYLB).Hidden = False
         Control(__ERRORLINELB).Hidden = False
+        Control(LowBRTimerLB).Hidden = False
+        Control(br_countdownLB).Hidden = False
+        Control(ms_playLB).Hidden = False
+        Control(MSRateLB).Hidden = False
         Control(PictureBoxLogoBottom).Hidden = True
         SetCaption TimerLB, "TIMER" 'TIMER
         SetCaption TimerSnapshotLB, "TIMER (snapshot)"
@@ -2104,6 +2544,9 @@ SUB Timer01
         SetCaption __ERRORLINEVarLB, "_ERRORLINE var"
         TIMEms Debug_Timer#, 0
         SetCaption (Debug_Timer_SnapshotLB), tout + " sec "
+        SetCaption ms_playLB, _TRIM$(STR$((MediaSourceTimeMSOffsetDisplay))) + " ms "
+        SetCaption br_countdownLB, _TRIM$(STR$(CooldownLog)) + " sec "
+
     END IF
 
     IF verCheck$ <> "" THEN
@@ -2118,7 +2561,7 @@ SUB Timer01
         IF returnPreviousSceneTime > 2 THEN returnPreviousSceneTime = 1 ELSE GOTO Exit_returnPreviousSceneCheck
         returnFirstCheck = 1
         SHELL _HIDE "%ComSpec% /C node.exe " + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
-        _DELAY .01
+        _DELAY .001
         ON ERROR GOTO PUT_Fail
         PUT_Refresh = 1
         IF _FILEEXISTS(filePrevious) THEN
@@ -2147,7 +2590,7 @@ SUB Timer01
     IF __MultiCameraSwitch = 0 THEN
         IF MediaSource1Time <> 0 THEN 'SRT
             Timer_Fail = 0
-            Scene_Current$ = Scene_OK
+            IF CooldownLog = 0 THEN Scene_Current$ = Scene_OK
             IF Exe_Fail = 1 THEN
                 Exe_Fail = 0
                 Exe_OK = 1
@@ -2155,6 +2598,7 @@ SUB Timer01
                 SHELL _DONTWAIT _HIDE shell_nodejs_1 + Scene_OK
                 _DELAY .1
                 IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM UP]"
+                IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Now online stream"
             END IF
         ELSE
             IF Timer_Fail >= Stream_Fail_Delay THEN
@@ -2172,6 +2616,7 @@ SUB Timer01
                         SHELL _DONTWAIT _HIDE shell_nodejs_1 + Scene_Fail
                         _DELAY .1
                         IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM DOWN]"
+                        IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] No bandwidth for stream, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times"
                         Timer_Fail_Count = Timer_Fail_Count + 1
                         Timer_Failed = 1
                         IF Timer_Fail_Count > 999 THEN Timer_Fail_Count = 999
@@ -2183,10 +2628,13 @@ SUB Timer01
 
     IF streamsUp$ <> "0" THEN lastStreamUp$ = streamsUp$
 
-    IF streamsUp$ <> "0" AND returnPreviousSceneRemember = 1 THEN
-        IF streamsUp$ = "1" THEN titleScene1 = previousScene$
-        IF streamsUp$ = "2" THEN titleScene2 = previousScene$
-        IF streamsUp$ = "12" THEN titleScene12 = previousScene$
+    'Only set variable if not a Low Bitrate scene
+    IF RIGHT$(previousScene$, 4) <> " LBR" THEN
+        IF streamsUp$ <> "0" AND returnPreviousSceneRemember = 1 THEN
+            IF streamsUp$ = "1" THEN titleScene1 = previousScene$
+            IF streamsUp$ = "2" THEN titleScene2 = previousScene$
+            IF streamsUp$ = "12" THEN titleScene12 = previousScene$
+        END IF
     END IF
 
     IF __MultiCameraSwitch = 1 THEN
@@ -2198,11 +2646,13 @@ SUB Timer01
                     SHELL _DONTWAIT _HIDE shell_nodejs_1 + previousScene$
                     _DELAY .1
                     IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM UP]:[CAMERA #1 UP]:[CAMERA #2 DOWN]"
+                    IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Now online stream #1, now down stream #2"
                 ELSE
                     Scene_Current$ = titleScene1
                     SHELL _DONTWAIT _HIDE shell_nodejs_1 + titleScene1
                     _DELAY .1
                     IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM UP]:[CAMERA #1 UP]"
+                    IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Now online stream #1"
                 END IF
             END IF
             streamsUp$ = "1"
@@ -2216,11 +2666,13 @@ SUB Timer01
                     SHELL _DONTWAIT _HIDE shell_nodejs_1 + previousScene$
                     _DELAY .1
                     IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM UP]:[CAMERA #2 UP]:[CAMERA #1 DOWN]"
+                    IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] Now down stream #1, now online stream #2"
                 ELSE
                     Scene_Current$ = titleScene2
                     SHELL _DONTWAIT _HIDE shell_nodejs_1 + titleScene2
                     _DELAY .1
                     IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM UP]:[CAMERA #2 UP]"
+                    IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Now online stream #2"
                 END IF
             END IF
             streamsUp$ = "2"
@@ -2234,11 +2686,14 @@ SUB Timer01
                     SHELL _DONTWAIT _HIDE shell_nodejs_1 + previousScene$
                     _DELAY .1
                     IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM UP]:[ALL CAMERAS UP]"
+                    IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Now online stream #1, now online stream #2"
                 ELSE
+                    'CooldownLog = CooldownLogTotal
                     Scene_Current$ = titleScene12
-                    SHELL _DONTWAIT _HIDE shell_nodejs_1 + titleScene12
+                    IF CooldownLog AND CooldownStartup = 0 THEN SHELL _DONTWAIT _HIDE shell_nodejs_1 + titleScene12 + " LBR" ELSE SHELL _DONTWAIT _HIDE shell_nodejs_1 + titleScene12
                     _DELAY .1
                     IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM UP]:[ALL CAMERAS UP]"
+                    IF ConnectionsLog AND CooldownLog = 0 THEN statusConnectionsLogToFile "[INFO] Now online stream #1, now online stream #2"
                 END IF
             END IF
             streamsUp$ = "12"
@@ -2258,6 +2713,7 @@ SUB Timer01
                     SHELL _DONTWAIT _HIDE shell_nodejs_1 + Scene_Fail
                     _DELAY .1
                     IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM DOWN]:[ALL CAMERAS DOWN]"
+                    IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] No bandwidth for stream #1, no bandwidth for stream #2"
                     Timer_Fail_Count = Timer_Fail_Count + 1
                     Timer_Failed = 1
                     IF Timer_Fail_Count > 999 THEN Timer_Fail_Count = 999
@@ -2266,7 +2722,7 @@ SUB Timer01
         END IF
     END IF
 
-    IF srt_warmup = 1 AND returnFirstCheck = 1 AND __MultiCameraSwitch = 1 AND previousSceneDisplay$ = "" THEN RefreshDisplayRequest = 1: Error_msg = "- Variable/s for scenes empty, check if OBS is open." + CHR$(10) + "- If OBS is open, check communication is available via Node.js.": Error_msg_2$ = "- If Node.js is installed, check OBS Websockets options are correctly set. (#6)": _DELAY 3
+    IF srt_warmup = 1 AND returnFirstCheck = 1 AND __MultiCameraSwitch = 1 AND previousSceneDisplay$ = "" THEN RefreshDisplayRequest = 1: Error_msg = "- Variable/s for scenes empty, check if OBS is open." + CHR$(10) + "- If OBS is open, check communication is available via Node.js.": Error_msg_2$ = "- If Node.js is installed, check OBS WebSockets options are correctly set. (#6)": _DELAY 3
 
     'temp2 variables
 
@@ -2293,6 +2749,9 @@ SUB Timer01
         Refresh_Request = 0
         RefreshDisplayRequest = 1
     END IF
+
+    CooldownStartup = CooldownStartup - 1
+    IF CooldownStartup < 0 THEN CooldownStartup = 0
 
     IF srt_warmup = 0 THEN srt_warmup = 1
 
