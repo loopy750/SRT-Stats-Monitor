@@ -4,7 +4,7 @@
   
 Latest release available [here](https://github.com/loopy750/SRT-Stats-Monitor/releases/latest).
 
-This is a program to assist with "IRL streaming" for popular streaming websites such as Twitch, using OBS Studio. This program is currently in use by Twitch streamers and has been proven to a be a valuable asset to their stream.
+This is a program to assist with "IRL streaming" for popular streaming websites such as Twitch, using OBS Studio. This program is currently in use by Twitch and YouTube streamers and has been proven to a be a valuable asset to their stream.
 
 SRT is described as an open source video transport protocol that utilises the UDP transport protocol. It has several advantages over the abandoned RTMP protocol, including H.265/HEVC streaming.
 
@@ -20,6 +20,11 @@ Advanced features (**_MultiCameraSwitch=true_**) consider for a two-camera multi
   
   [Example of program being used in a live stream](https://user-images.githubusercontent.com/35911135/116689723-c2803680-a9fb-11eb-99bd-dbc29c6f75f5.mp4)
   
+sprEEEzy's Guide
+================
+
+https://www.youtube.com/watch?v=ql2SizZLCPs
+
 DOWNLOADS
 =========
 
@@ -28,8 +33,12 @@ Programs to download
 OBS Studio (v27 or newer recommended for the best stability with SRT) - [https://obsproject.com/](https://obsproject.com/)  
 OBS Websocket (v4.9.0 or newer required) - [https://github.com/Palakis/obs-websocket/releases/latest](https://github.com/Palakis/obs-websocket/releases/latest)  
 Node.js - [https://nodejs.org/](https://nodejs.org/)  
-VLC 64-bit - [https://www.videolan.org/vlc/download-windows.html](https://www.videolan.org/vlc/download-windows.html)
+VLC 64-bit - [https://www.videolan.org/vlc/download-windows.html](https://www.videolan.org/vlc/download-windows.html)  
+OBS Tablet Remote - [http://t2t2.github.io/obs-tablet-remote/](http://t2t2.github.io/obs-tablet-remote/)
 
+Known OBS SRT issues
+--------------------
+https://github.com/obsproject/obs-studio/issues/4596
 
 INSTALLATION
 ============
@@ -51,6 +60,10 @@ VLC 64-bit
 This will be used in OBS as a **_VLC Video Source_** for the "fallback" streams. It has features not currently available with the default OBS video player.
 
 * See the "Modifications" section below for recommended changes.
+
+OBS Tablet Remote
+-----------------
+Remote access to OBS via OBS WebSocket. Can be used for starting and ending streams, but also recommended in general. Although every effort is made to ensure a smooth experience, issues such as network instability may produce unpredictable results. It is recommended to have remote access of OBS to allow manual control.
 
 
 MODIFICATIONS
