@@ -1,4 +1,4 @@
-Download QB64 v1.4 or newer from: https://www.qb64.org/
+Download QB64 v2.0.1 or newer from: https://www.qb64.org/
 Download InForm v1.3 or newer from: https://www.qb64.org/inform/
 
 Changes to InForm:
