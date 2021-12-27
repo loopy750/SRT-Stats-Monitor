@@ -15,6 +15,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).BackColor = _RGB32(38, 40, 45)
     Control(__UI_NewID).BorderColor = _RGB32(163, 166, 170)
     Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CenteredWindow = True
 
     __UI_NewID = __UI_NewControl(__UI_Type_MenuBar, "FileMenu", 34, 22, 8, 0, 0)
     __UI_RegisterResult = 0
@@ -254,9 +255,9 @@ SUB __UI_LoadForm
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "td_displayVarLB", 85, 21, 237, 340, 0)
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "td_displayLB2", 85, 21, 237, 340, 0)
     __UI_RegisterResult = 0
-    SetCaption __UI_NewID, "td_display var"
+    SetCaption __UI_NewID, "td_display"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(33, 4, 4)
     Control(__UI_NewID).BackColor = _RGB32(195, 4, 4)
@@ -265,9 +266,9 @@ SUB __UI_LoadForm
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "mouseXVarLB", 73, 21, 498, 340, 0)
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "mouseXLB2", 60, 21, 549, 340, 0)
     __UI_RegisterResult = 0
-    SetCaption __UI_NewID, "mouseX var"
+    SetCaption __UI_NewID, "mouseX"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(33, 4, 4)
     Control(__UI_NewID).BackColor = _RGB32(195, 4, 4)
@@ -276,9 +277,9 @@ SUB __UI_LoadForm
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "mouseYVarLB", 72, 21, 571, 340, 0)
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "mouseYLB2", 60, 21, 609, 340, 0)
     __UI_RegisterResult = 0
-    SetCaption __UI_NewID, "mouseY var"
+    SetCaption __UI_NewID, "mouseY"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(33, 4, 4)
     Control(__UI_NewID).BackColor = _RGB32(195, 4, 4)
@@ -287,9 +288,9 @@ SUB __UI_LoadForm
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "__ERRORLINEVarLB", 114, 21, 643, 340, 0)
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "__ERRORLINELB2", 88, 21, 669, 340, 0)
     __UI_RegisterResult = 0
-    SetCaption __UI_NewID, "_ERRORLINE var"
+    SetCaption __UI_NewID, "_ERRORLINE"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(33, 4, 4)
     Control(__UI_NewID).BackColor = _RGB32(195, 4, 4)
@@ -331,7 +332,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "mouseXLB", 73, 21, 498, 362, 0)
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "mouseXLB", 60, 21, 549, 362, 0)
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "mouseX"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf", 12)
@@ -342,7 +343,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "mouseYLB", 72, 21, 571, 362, 0)
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "mouseYLB", 60, 21, 609, 362, 0)
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "mouseY"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf", 12)
@@ -353,7 +354,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "__ERRORLINELB", 114, 21, 643, 362, 0)
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "__ERRORLINELB", 88, 21, 669, 362, 0)
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "_ERRORLINE"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf", 12)
@@ -471,7 +472,16 @@ SUB __UI_LoadForm
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
 
-    __UI_NewID = __UI_NewControl(__UI_Type_MenuItem, "OptionsMenuFullscreen", 145, 20, 0, 4, __UI_GetID("OptionsMenu"))
+    __UI_NewID = __UI_NewControl(__UI_Type_MenuItem, "OptionsMenuRestoreWindowSize", 160, 20, 0, 4, __UI_GetID("OptionsMenu"))
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Restore Window Size"
+    ToolTip(__UI_NewID) = "Restore window to its original size (800x400)"
+    Control(__UI_NewID).ForeColor = _RGB32(1, 1, 2)
+    Control(__UI_NewID).BackColor = _RGB32(254, 254, 255)
+    Control(__UI_NewID).HasBorder = False
+    __UI_RegisterResult = RegisterKeyCombo("F10", __UI_NewID)
+
+    __UI_NewID = __UI_NewControl(__UI_Type_MenuItem, "OptionsMenuFullscreen", 145, 20, 0, 24, __UI_GetID("OptionsMenu"))
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Toggle Full Screen"
     ToolTip(__UI_NewID) = "Runs the program in fullscreen mode"
@@ -480,7 +490,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).HasBorder = False
     __UI_RegisterResult = RegisterKeyCombo("F11", __UI_NewID)
 
-    __UI_NewID = __UI_NewControl(__UI_Type_MenuItem, "OptionsMenuDebug", 130, 20, 0, 24, __UI_GetID("OptionsMenu"))
+    __UI_NewID = __UI_NewControl(__UI_Type_MenuItem, "OptionsMenuDebug", 130, 20, 0, 44, __UI_GetID("OptionsMenu"))
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Toggle Debug-"
     ToolTip(__UI_NewID) = "Toggles debugging info for troubleshooting"
@@ -513,7 +523,7 @@ SUB __UI_LoadForm
     __UI_NewID = __UI_NewControl(__UI_Type_MenuItem, "HelpMenuAbout", 79, 20, 0, 51, __UI_GetID("HelpMenu"))
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "About"
-    ToolTip(__UI_NewID) = "Check the program version"
+    ToolTip(__UI_NewID) = "Display the program version"
     Control(__UI_NewID).ForeColor = _RGB32(1, 1, 2)
     Control(__UI_NewID).BackColor = _RGB32(254, 254, 255)
     Control(__UI_NewID).HasBorder = False
@@ -636,7 +646,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "LowBRTimerLB", 49, 21, 450, 340, 0)
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "LowBRTimerLB", 50, 21, 450, 340, 0)
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Low BR"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf", 12)
@@ -724,7 +734,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
 
-    __UI_NewID = __UI_NewControl(__UI_Type_MenuItem, "OptionsMenuAlwaysOnTop", 129, 20, 0, 51, __UI_GetID("OptionsMenu"))
+    __UI_NewID = __UI_NewControl(__UI_Type_MenuItem, "OptionsMenuAlwaysOnTop", 129, 20, 0, 71, __UI_GetID("OptionsMenu"))
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Always On Top"
     ToolTip(__UI_NewID) = "Forces program to always be on top of others"
@@ -742,6 +752,15 @@ SUB __UI_LoadForm
     Control(__UI_NewID).Align = __UI_Center
     Control(__UI_NewID).VAlign = __UI_Middle
 
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "Stream2LightLB", 175, 20, 568, 300, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "___________________________________"
+    Control(__UI_NewID).ForeColor = _RGB32(38, 40, 45)
+    Control(__UI_NewID).BackStyle = __UI_Transparent
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).Align = __UI_Center
+    Control(__UI_NewID).VAlign = __UI_Middle
+
     __UI_NewID = __UI_NewControl(__UI_Type_Label, "StreamLightLB", 175, 20, 314, 300, 0)
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "___________________________________"
@@ -751,14 +770,27 @@ SUB __UI_LoadForm
     Control(__UI_NewID).Align = __UI_Center
     Control(__UI_NewID).VAlign = __UI_Middle
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "Stream2LightLB", 175, 20, 568, 300, 0)
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "LBRDelayLB", 50, 21, 500, 340, 0)
     __UI_RegisterResult = 0
-    SetCaption __UI_NewID, "___________________________________"
-    Control(__UI_NewID).ForeColor = _RGB32(38, 40, 45)
-    Control(__UI_NewID).BackStyle = __UI_Transparent
+    SetCaption __UI_NewID, "LBR Del"
+    Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf", 12)
+    Control(__UI_NewID).ForeColor = _RGB32(33, 4, 4)
+    Control(__UI_NewID).BackColor = _RGB32(195, 4, 4)
+    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
     Control(__UI_NewID).HasBorder = False
-    Control(__UI_NewID).Align = __UI_Center
     Control(__UI_NewID).VAlign = __UI_Middle
+    Control(__UI_NewID).Padding = 10
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "br_delayLB", 49, 21, 500, 362, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "br_delay"
+    Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf", 12)
+    Control(__UI_NewID).ForeColor = _RGB32(235, 96, 57)
+    Control(__UI_NewID).BackColor = _RGB32(25, 28, 33)
+    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).VAlign = __UI_Middle
+    Control(__UI_NewID).Padding = 10
 
 END SUB
 
@@ -788,10 +820,10 @@ SUB __UI_AssignIDs
     MultiCameraSwitchStatusLB = __UI_GetID("MultiCameraSwitchStatusLB")
     TimerLB = __UI_GetID("TimerLB")
     TimerSnapshotLB = __UI_GetID("TimerSnapshotLB")
-    td_displayVarLB = __UI_GetID("td_displayVarLB")
-    mouseXVarLB = __UI_GetID("mouseXVarLB")
-    mouseYVarLB = __UI_GetID("mouseYVarLB")
-    __ERRORLINEVarLB = __UI_GetID("__ERRORLINEVarLB")
+    td_displayLB2 = __UI_GetID("td_displayLB2")
+    mouseXLB2 = __UI_GetID("mouseXLB2")
+    mouseYLB2 = __UI_GetID("mouseYLB2")
+    __ERRORLINELB2 = __UI_GetID("__ERRORLINELB2")
     Debug_TimerLB = __UI_GetID("Debug_TimerLB")
     Debug_Timer_SnapshotLB = __UI_GetID("Debug_Timer_SnapshotLB")
     td_displayLB = __UI_GetID("td_displayLB")
@@ -808,6 +840,7 @@ SUB __UI_AssignIDs
     failLB2 = __UI_GetID("failLB2")
     Uptime_Stream_2LB = __UI_GetID("Uptime_Stream_2LB")
     Timer_Fail_Stream2LB = __UI_GetID("Timer_Fail_Stream2LB")
+    OptionsMenuRestoreWindowSize = __UI_GetID("OptionsMenuRestoreWindowSize")
     OptionsMenuFullscreen = __UI_GetID("OptionsMenuFullscreen")
     OptionsMenuDebug = __UI_GetID("OptionsMenuDebug")
     HelpMenuVisitWebsite = __UI_GetID("HelpMenuVisitWebsite")
@@ -835,6 +868,8 @@ SUB __UI_AssignIDs
     ms_playLB2 = __UI_GetID("ms_playLB2")
     OptionsMenuAlwaysOnTop = __UI_GetID("OptionsMenuAlwaysOnTop")
     Stream1LightLB = __UI_GetID("Stream1LightLB")
-    StreamLightLB = __UI_GetID("StreamLightLB")
     Stream2LightLB = __UI_GetID("Stream2LightLB")
+    StreamLightLB = __UI_GetID("StreamLightLB")
+    LBRDelayLB = __UI_GetID("LBRDelayLB")
+    br_delayLB = __UI_GetID("br_delayLB")
 END SUB

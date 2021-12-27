@@ -10,6 +10,9 @@ DIM SHARED LoopySRTMonitor AS LONG
 DIM SHARED Stream1LightLB AS LONG
 DIM SHARED StreamLightLB AS LONG
 DIM SHARED Stream2LightLB AS LONG
+DIM SHARED LBRDelayLB AS LONG
+DIM SHARED br_delayLB AS LONG
+DIM SHARED OptionsMenuRestoreWindowSize AS LONG
 DIM SHARED OptionsMenuAlwaysOnTop AS LONG
 DIM SHARED FileMenu AS LONG
 DIM SHARED OptionsMenu AS LONG
@@ -35,10 +38,10 @@ DIM SHARED Stream_Fail_DelayLB AS LONG
 DIM SHARED MultiCameraSwitchStatusLB AS LONG
 DIM SHARED TimerLB AS LONG
 DIM SHARED TimerSnapshotLB AS LONG
-DIM SHARED td_displayVarLB AS LONG
-DIM SHARED mouseXVarLB AS LONG
-DIM SHARED mouseYVarLB AS LONG
-DIM SHARED __ERRORLINEVarLB AS LONG
+DIM SHARED td_displayLB2 AS LONG
+DIM SHARED mouseXLB2 AS LONG
+DIM SHARED mouseYLB2 AS LONG
+DIM SHARED __ERRORLINELB2 AS LONG
 DIM SHARED Debug_TimerLB AS LONG
 DIM SHARED Debug_Timer_SnapshotLB AS LONG
 DIM SHARED td_displayLB AS LONG
@@ -164,6 +167,12 @@ COMMON SHARED SettingsMissing AS _BYTE
 COMMON SHARED tmpFileError AS _BYTE
 COMMON SHARED tmpFileRestore AS _BYTE
 COMMON SHARED t1 AS SINGLE
+COMMON SHARED LBR_Delay AS INTEGER
+COMMON SHARED LBR_Delay_Minus AS INTEGER
+COMMON SHARED LBR_Delay_Plus AS INTEGER
+COMMON SHARED LBR_Delay_Total AS INTEGER
+COMMON SHARED Scene_LBR_Delay_Total AS STRING
+COMMON SHARED Allow_Resize AS STRING
 
 COMMON SHARED image_data() AS _UNSIGNED LONG
 COMMON SHARED Scene_OK AS STRING
@@ -200,6 +209,9 @@ COMMON SHARED obs_get_media1_scene AS STRING
 COMMON SHARED obs_get_media2 AS STRING
 COMMON SHARED obs_get_media2_scene AS STRING
 COMMON SHARED obs_check_websocket AS STRING
+COMMON SHARED websocketOK AS _BYTE
+COMMON SHARED websocketVersion AS _BYTE
+COMMON SHARED checkWebSocketVersion AS STRING
 COMMON SHARED filePrevious AS STRING
 COMMON SHARED filePrevious_ms AS STRING
 COMMON SHARED fileCheckVersion AS STRING
@@ -310,6 +322,7 @@ COMMON SHARED td_display#
 'UNDOCUMENTED
 COMMON SHARED MediaSourceTime AS STRING
 COMMON SHARED CooldownTotal AS STRING
+COMMON SHARED ForceDebugOnStartup AS STRING
 
 'Misc
 COMMON SHARED file4_var AS STRING
@@ -399,6 +412,10 @@ GREEN_OK = _RGB32(123, 151, 163)
 
 q = _EXIT
 
+websocketVersion = 5
+checkWebSocketVersion = "unknown"
+websocketOK = 0
+
 PUT_Fail:
 IF ERR THEN CLS: _PRINTSTRING (20, 30), "ERR, _ERRORLINE:" + STR$(ERR) + "," + STR$(_ERRORLINE): _AUTODISPLAY: _DELAY 3: IF PUT_Refresh = 1 THEN PUT_Refresh = 0: Refresh_Request = 1: RESUME NEXT ELSE RESUME NEXT
 'Added after InForm entry - END
@@ -418,14 +435,15 @@ SUB __UI_BeforeInit
     $VERSIONINFO:FILEVERSION#=0,9,5,0
     $VERSIONINFO:ProductVersion=0,9,5,0
     $CHECKING:ON
-    $RESIZE:OFF
+    $RESIZE:SMOOTH
+
     IF ERR = 0 THEN
         $EXEICON:'.\icon.ico'
         _TITLE "Loopy SRT Monitor - loopy750"
     END IF
     Ver = "0.9.5"
-    VerBeta = ""
-    VerDate = "10/21"
+    VerBeta = "0.9.6"
+    VerDate = "12/21"
 END SUB
 
 SUB __UI_OnLoad
@@ -466,10 +484,10 @@ SUB __UI_OnLoad
     'Debug titles
     SetCaption TimerLB, "-"
     SetCaption TimerSnapshotLB, "-"
-    SetCaption td_displayVarLB, "-"
-    SetCaption mouseXVarLB, "-"
-    SetCaption mouseYVarLB, "-"
-    SetCaption __ERRORLINEVarLB, "-"
+    SetCaption td_displayLB2, "-"
+    SetCaption mouseXLB2, "-"
+    SetCaption mouseYLB2, "-"
+    SetCaption __ERRORLINELB2, "-"
     'Stream #1 only
     SetCaption Stream_UptimeLB, "-"
     SetCaption Stream_Fail_TimerLB, "-"
@@ -484,14 +502,14 @@ SUB __UI_OnLoad
     nodejs_dir = _DIR$("documents") + "Loopy SRT Monitor\js"
     temp_dir = _DIR$("documents") + "Loopy SRT Monitor\Temp"
     config_main = config_dir + "\config.ini"
-    obs_change_scene = config_dir + "\js\obs_change_scene.js"
-    obs_get_scene = config_dir + "\js\obs_get_scene.js"
-    obs_get_scene_list = config_dir + "\js\obs_get_scene_list.js"
-    obs_get_media1 = config_dir + "\js\obs_get_media1.js"
-    obs_get_media1_scene = config_dir + "\js\obs_get_media1_scene.js"
-    obs_get_media2 = config_dir + "\js\obs_get_media2.js"
-    obs_get_media2_scene = config_dir + "\js\obs_get_media2_scene.js"
-    obs_check_websocket = config_dir + "\js\obs_check_websocket.js"
+    obs_change_scene = config_dir + "\js\obs_change_scene.mjs" '5.x.x
+    obs_get_scene = config_dir + "\js\obs_get_scene.mjs"
+    obs_get_scene_list = config_dir + "\js\obs_get_scene_list.mjs"
+    obs_get_media1 = config_dir + "\js\obs_get_media1.mjs"
+    obs_get_media1_scene = config_dir + "\js\obs_get_media1_scene.mjs"
+    obs_get_media2 = config_dir + "\js\obs_get_media2.mjs"
+    obs_get_media2_scene = config_dir + "\js\obs_get_media2_scene.mjs"
+    obs_check_websocket = config_dir + "\js\obs_check_websocket.mjs"
     filePrevious = temp_dir + "\returnPreviousScene.tmp"
     filePrevious_ms = temp_dir + "\returnPreviousSource.tmp"
     fileCheckVersion = temp_dir + "\checkversion.txt"
@@ -526,7 +544,7 @@ SUB __UI_OnLoad
     filePrevious_ms_fs = strReplace$
 
     ON ERROR GOTO PUT_Fail
-    _DELAY .25
+    _DELAY 0.25
     IF VerBeta <> "" THEN _TITLE "Loopy SRT Monitor v" + VerBeta + "beta" ELSE _TITLE "Loopy SRT Monitor v" + Ver
     IF _DIREXISTS(config_dir) THEN IF NOT _DIREXISTS(temp_dir) THEN MKDIR temp_dir
     IF _FILEEXISTS(filePrevious) THEN KILL filePrevious
@@ -597,8 +615,10 @@ SUB __UI_OnLoad
                     IF file4_var$ = "filestatusoutput" THEN FileStatusOutput = file4_val$
                     IF file4_var$ = "connectionslog" THEN ConnectionsLog_Check = file4_val$
                     IF file4_var$ = "scenelbrenabled" THEN Scene_LBR_Enabled = file4_val$
+                    IF file4_var$ = "scenelbrdelay" THEN Scene_LBR_Delay_Total = file4_val$
                     IF file4_var$ = "scene2lbrdisabled" THEN Scene2_LBR_Disabled = file4_val$
                     IF file4_var$ = "nodejsfilesystem" THEN NodejsFileSystem = file4_val$
+                    IF file4_var$ = "allowresize" THEN Allow_Resize = file4_val$
                     IF file4_var$ = "checkupdateonstartup" THEN CheckUpdateOnStartup = file4_val$
                     IF file4_var$ = "multicameraswitch" THEN MultiCameraSwitch$ = file4_val$
                     IF file4_var$ = "titlescene1" THEN titleScene1 = file4_val$
@@ -609,6 +629,7 @@ SUB __UI_OnLoad
                     'UNDOCUMENTED
                     IF file4_var$ = "mediasourcetime" THEN MediaSourceTime = file4_val$
                     IF file4_var$ = "cooldowntotal" THEN CooldownTotal = file4_val$
+                    IF file4_var$ = "forcedebugonstartup" THEN ForceDebugOnStartup = file4_val$
 
                 END IF
             END IF
@@ -625,8 +646,10 @@ SUB __UI_OnLoad
             CASE FileStatusOutput: SettingsMissing = 1
             CASE ConnectionsLog_Check: SettingsMissing = 1
             CASE Scene_LBR_Enabled: SettingsMissing = 1
+            CASE Scene_LBR_Delay_Total: SettingsMissing = 1
             CASE Scene2_LBR_Disabled: SettingsMissing = 1
             CASE NodejsFileSystem: SettingsMissing = 1
+            CASE Allow_Resize: SettingsMissing = 1
             CASE CheckUpdateOnStartup: SettingsMissing = 1
             CASE MultiCameraSwitch$: SettingsMissing = 1
             CASE titleScene1: SettingsMissing = 1
@@ -652,33 +675,37 @@ SUB __UI_OnLoad
         END IF
 
         Scene_LBR = Scene_OK + " LBR"
+        IF Allow_Resize <> "true" THEN Allow_Resize = "false": _RESIZE OFF , _SMOOTH: Control(OptionsMenuRestoreWindowSize).Hidden = True
 
         'Set variables for low bitrate detection
         CooldownStartup = 10
         IF ConnectionsLog_Check = "true" THEN ConnectionsLog = 1 ELSE ConnectionsLog = 0
         CooldownLogTotal = 8
         MediaSourceTimeLB = 800
+        LBR_Delay_Total = VAL(Scene_LBR_Delay_Total)
+        IF LBR_Delay_Total < 0 THEN LBR_Delay_Total = 0
+        IF LBR_Delay_Total > 10 THEN LBR_Delay_Total = 10
 
         'UNDOCUMENTED
         IF MediaSourceTime <> "" THEN MediaSourceTimeLB = VAL(MediaSourceTime)
         IF CooldownTotal <> "" THEN CooldownLogTotal = VAL(CooldownTotal)
-        IF MediaSourceTimeLB < 10 THEN MediaSourceTimeLB = 10
-        IF MediaSourceTimeLB > 5000 THEN MediaSourceTimeLB = 5000
-        IF CooldownLogTotal < 1 THEN CooldownLogTotal = 1
-        IF CooldownLogTotal > 90 THEN CooldownLogTotal = 90
+        IF MediaSourceTimeLB < 100 THEN MediaSourceTimeLB = 100
+        IF MediaSourceTimeLB > 950 THEN MediaSourceTimeLB = 950
+        IF CooldownLogTotal < 3 THEN CooldownLogTotal = 3
+        IF CooldownLogTotal > 15 THEN CooldownLogTotal = 15
 
         CMD_EXE = "%ComSpec% /C node.exe "
 
         'NEW
         '---
-        'SceneBypass=none
-        'Scene2LBRDisabled=false
-        'NodejsFileSystem=0
+        'SceneLBRDelay=0
+        'AllowResize=false
         '
         'UNDOCUMENTED
         '------------
         'MediaSourceTime=800
         'CooldownTotal=8
+        'ForceDebugOnStartup=false
         '''''''''''''
 
         CooldownLog = CooldownLogTotal
@@ -755,6 +782,17 @@ SUB __UI_OnLoad
     shell_nodejs_1 = CMD_EXE + c34 + obs_change_scene + c34 + " "
     shell_nodejs_2 = ""
 
+    '4.x.x
+    obs_change_scene = config_dir + "\js\obs_change_scene.js"
+    obs_get_scene = config_dir + "\js\obs_get_scene.js"
+    obs_get_scene_list = config_dir + "\js\obs_get_scene_list.js"
+    obs_get_media1 = config_dir + "\js\obs_get_media1.js"
+    obs_get_media1_scene = config_dir + "\js\obs_get_media1_scene.js"
+    obs_get_media2 = config_dir + "\js\obs_get_media2.js"
+    obs_get_media2_scene = config_dir + "\js\obs_get_media2_scene.js"
+    obs_check_websocket = config_dir + "\js\obs_check_websocket.js"
+
+    '4.x.x
     OPEN obs_change_scene FOR OUTPUT AS #64
     PRINT #64, "// This file has been automatically generated"
     PRINT #64, "// Any changes made will be lost"
@@ -783,7 +821,6 @@ SUB __UI_OnLoad
     PRINT #64, ".then(() => { return obs.send('GetSceneList'); })"
     PRINT #64, ".then(data => { data.scenes.forEach(scene => {"
     PRINT #64, "        if (scene.name !== data.currentScene) {"
-    PRINT #64, "            // console.log(`${scene.name}`);"
     PRINT #64, "            obs.send('SetCurrentScene', {"
     PRINT #64, "                'scene-name': sceneName_1 + sceneName_2 + sceneName_3 + sceneName_4 + sceneName_5 + sceneName_6 + sceneName_7 + sceneName_8"
     PRINT #64, "            });"
@@ -818,7 +855,6 @@ SUB __UI_OnLoad
     PRINT #76, "const WebsocketPassword = " + c34 + OBS_PW + c34 + ";"
     PRINT #76, "var timer3 = setTimeout(function() { obs.disconnect(); }, 3000);"
     PRINT #76, "obs.connect({ address: WebsocketAddress, password: WebsocketPassword })"
-
     PRINT #76, ".then(() => {"
     PRINT #76, "        return obs.send('GetMediaTime', {"
     PRINT #76, "                  'sourceName': " + c34 + MediaSource1 + c34
@@ -827,7 +863,6 @@ SUB __UI_OnLoad
     PRINT #76, ".then((data) => {"
     PRINT #76, "    console.log(`${data.timestamp}`);"
     PRINT #76, "})"
-
     PRINT #76, ".then(() => { obs.disconnect(); clearTimeout(timer3); });"
     CLOSE #76
 
@@ -841,7 +876,6 @@ SUB __UI_OnLoad
     PRINT #80, "const WebsocketPassword = " + c34 + OBS_PW + c34 + ";"
     PRINT #80, "var timer4 = setTimeout(function() { obs.disconnect(); }, 3000);"
     PRINT #80, "obs.connect({ address: WebsocketAddress, password: WebsocketPassword })"
-
     PRINT #80, ".then(() => {"
     PRINT #80, "        return obs.send('GetMediaTime', {"
     PRINT #80, "                  'sourceName': " + c34 + MediaSource1 + c34
@@ -858,7 +892,6 @@ SUB __UI_OnLoad
     PRINT #80, ".then((data) => {"
     PRINT #80, "    console.log(`${data.timestamp}`);"
     PRINT #80, "})"
-
     PRINT #80, ".then(() => { obs.disconnect(); clearTimeout(timer4); });"
     CLOSE #80
 
@@ -872,8 +905,10 @@ SUB __UI_OnLoad
     PRINT #82, "const WebsocketPassword = " + c34 + OBS_PW + c34 + ";"
     PRINT #82, "var timer5 = setTimeout(function() { obs.disconnect(); }, 3000);"
     PRINT #82, "obs.connect({ address: WebsocketAddress, password: WebsocketPassword })"
-    PRINT #82, ".then(() => {"
+    PRINT #82, ".then(() => { return obs.send('GetVersion'); })"
+    PRINT #82, ".then(name => {"
     PRINT #82, "    console.log(`OK`);"
+    PRINT #82, "    console.log(`${name.obsWebsocketVersion}`);"
     PRINT #82, "})"
     PRINT #82, ".then(() => { obs.disconnect(); clearTimeout(timer5); });"
     CLOSE #82
@@ -1037,12 +1072,286 @@ SUB __UI_OnLoad
     PRINT #88, "});"
     CLOSE #88
 
+    '5.x.x
+    obs_change_scene = config_dir + "\js\obs_change_scene.mjs"
+    obs_get_scene = config_dir + "\js\obs_get_scene.mjs"
+    obs_get_scene_list = config_dir + "\js\obs_get_scene_list.mjs"
+    obs_get_media1 = config_dir + "\js\obs_get_media1.mjs"
+    obs_get_media1_scene = config_dir + "\js\obs_get_media1_scene.mjs"
+    obs_get_media2 = config_dir + "\js\obs_get_media2.mjs"
+    obs_get_media2_scene = config_dir + "\js\obs_get_media2_scene.mjs"
+    obs_check_websocket = config_dir + "\js\obs_check_websocket.mjs"
+
+    '5.x.x
+    OPEN obs_change_scene FOR OUTPUT AS #164
+    PRINT #164, "// This file has been automatically generated"
+    PRINT #164, "// Any changes made will be lost"
+    PRINT #164, "// https://github.com/loopy750/SRT-Stats-Monitor"
+    PRINT #164, "import OBSWebSocket from 'obs-websocket-js/msgpack'"
+    PRINT #164, "var timer1 = setTimeout(function() { obs.disconnect(); }, 2000);"
+    PRINT #164, "var sceneName_1 = process.argv[2];"
+    PRINT #164, "var sceneName_2 = process.argv[3];"
+    PRINT #164, "var sceneName_3 = process.argv[4];"
+    PRINT #164, "var sceneName_4 = process.argv[5];"
+    PRINT #164, "var sceneName_5 = process.argv[6];"
+    PRINT #164, "var sceneName_6 = process.argv[7];"
+    PRINT #164, "var sceneName_7 = process.argv[8];"
+    PRINT #164, "var sceneName_8 = process.argv[9];"
+    PRINT #164, "if (sceneName_2 === undefined) { var sceneName_2 = '' } else { var sceneName_1 = sceneName_1 + " + c34 + " " + c34 + " }"
+    PRINT #164, "if (sceneName_3 === undefined) { var sceneName_3 = '' } else { var sceneName_2 = sceneName_2 + " + c34 + " " + c34 + " }"
+    PRINT #164, "if (sceneName_4 === undefined) { var sceneName_4 = '' } else { var sceneName_3 = sceneName_3 + " + c34 + " " + c34 + " }"
+    PRINT #164, "if (sceneName_5 === undefined) { var sceneName_5 = '' } else { var sceneName_4 = sceneName_4 + " + c34 + " " + c34 + " }"
+    PRINT #164, "if (sceneName_6 === undefined) { var sceneName_6 = '' } else { var sceneName_5 = sceneName_5 + " + c34 + " " + c34 + " }"
+    PRINT #164, "if (sceneName_7 === undefined) { var sceneName_7 = '' } else { var sceneName_6 = sceneName_6 + " + c34 + " " + c34 + " }"
+    PRINT #164, "if (sceneName_8 === undefined) { var sceneName_8 = '' } else { var sceneName_7 = sceneName_7 + " + c34 + " " + c34 + " }"
+    PRINT #164, "const obs = new OBSWebSocket();"
+    PRINT #164, "await obs.connect('ws://" + OBS_URL + "', '" + OBS_PW + "')"
+    PRINT #164, ".then(() => { return obs.call('GetSceneList'); })"
+    PRINT #164, ".then(data => { data.scenes.forEach(scene => {"
+    PRINT #164, "        if (scene.sceneName !== data.currentProgramSceneName) {"
+    PRINT #164, "            obs.call('SetCurrentProgramScene', {"
+    PRINT #164, "                'sceneName': sceneName_1 + sceneName_2 + sceneName_3 + sceneName_4 + sceneName_5 + sceneName_6 + sceneName_7 + sceneName_8"
+    PRINT #164, "            });"
+    PRINT #164, "        }"
+    PRINT #164, "    });"
+    PRINT #164, "})"
+    PRINT #164, ".then(() => { obs.disconnect(); clearTimeout(timer1); });"
+    CLOSE #164
+
+    OPEN obs_get_scene FOR OUTPUT AS #172
+    PRINT #172, "// This file has been automatically generated"
+    PRINT #172, "// Any changes made will be lost"
+    PRINT #172, "// https://github.com/loopy750/SRT-Stats-Monitor"
+    PRINT #172, "import OBSWebSocket from 'obs-websocket-js/msgpack'"
+    PRINT #172, "var timer2 = setTimeout(function() { obs.disconnect(); }, 2000);"
+    PRINT #172, "const obs = new OBSWebSocket();"
+    PRINT #172, "await obs.connect('ws://" + OBS_URL + "', '" + OBS_PW + "')"
+    PRINT #172, ".then(() => { return obs.call('GetCurrentProgramScene'); })"
+    PRINT #172, ".then(name => { console.log(`${name.currentProgramSceneName}`); })"
+    PRINT #172, ".then(() => { obs.disconnect(); clearTimeout(timer2); });"
+    CLOSE #172
+
+    OPEN obs_get_media1 FOR OUTPUT AS #176
+    PRINT #176, "// This file has been automatically generated"
+    PRINT #176, "// Any changes made will be lost"
+    PRINT #176, "// https://github.com/loopy750/SRT-Stats-Monitor"
+    PRINT #176, "import OBSWebSocket from 'obs-websocket-js/msgpack'"
+    PRINT #176, "var timer3 = setTimeout(function() { obs.disconnect(); }, 2000);"
+    PRINT #176, "const obs = new OBSWebSocket();"
+    PRINT #176, "await obs.connect('ws://" + OBS_URL + "', '" + OBS_PW + "')"
+    PRINT #176, ".then(() => {"
+    PRINT #176, "        return obs.call('GetMediaInputStatus', {"
+    PRINT #176, "                  'inputName': " + c34 + MediaSource1 + c34
+    PRINT #176, "        })"
+    PRINT #176, "    })"
+    PRINT #176, ".then((data) => {"
+    PRINT #176, "    console.log(`${data.mediaCursor}`);"
+    PRINT #176, "})"
+    PRINT #176, ".then(() => { obs.disconnect(); clearTimeout(timer3); });"
+    CLOSE #176
+
+    OPEN obs_get_media2 FOR OUTPUT AS #180
+    PRINT #180, "// This file has been automatically generated"
+    PRINT #180, "// Any changes made will be lost"
+    PRINT #180, "// https://github.com/loopy750/SRT-Stats-Monitor"
+    PRINT #180, "import OBSWebSocket from 'obs-websocket-js/msgpack'"
+    PRINT #180, "var timer4 = setTimeout(function() { obs.disconnect(); }, 2000);"
+    PRINT #180, "const obs = new OBSWebSocket();"
+    PRINT #180, "await obs.connect('ws://" + OBS_URL + "', '" + OBS_PW + "')"
+    PRINT #180, ".then(() => {"
+    PRINT #180, "        return obs.call('GetMediaInputStatus', {"
+    PRINT #180, "                  'inputName': " + c34 + MediaSource1 + c34
+    PRINT #180, "        })"
+    PRINT #180, "    })"
+    PRINT #180, ".then((data) => {"
+    PRINT #180, "    console.log(`${data.mediaCursor}`);"
+    PRINT #180, "})"
+    PRINT #180, ".then(() => {"
+    PRINT #180, "        return obs.call('GetMediaInputStatus', {"
+    PRINT #180, "                  'inputName': " + c34 + MediaSource2 + c34
+    PRINT #180, "        })"
+    PRINT #180, "})"
+    PRINT #180, ".then((data) => {"
+    PRINT #180, "    console.log(`${data.mediaCursor}`);"
+    PRINT #180, "})"
+    PRINT #180, ".then(() => { obs.disconnect(); clearTimeout(timer4); });"
+    CLOSE #180
+
+    OPEN obs_check_websocket FOR OUTPUT AS #182
+    PRINT #182, "// This file has been automatically generated"
+    PRINT #182, "// Any changes made will be lost"
+    PRINT #182, "// https://github.com/loopy750/SRT-Stats-Monitor"
+    PRINT #182, "import OBSWebSocket from 'obs-websocket-js/msgpack'"
+    PRINT #182, "var timer5 = setTimeout(function() { obs.disconnect(); }, 2000);"
+    PRINT #182, "const obs = new OBSWebSocket();"
+    PRINT #182, "await obs.connect('ws://" + OBS_URL + "', '" + OBS_PW + "')"
+    PRINT #182, ".then(() => { return obs.call('GetVersion'); })"
+    PRINT #182, ".then(name => {"
+    PRINT #182, "    console.log(`OK`);"
+    PRINT #182, "    console.log(`${name.obsWebSocketVersion}`);"
+    PRINT #182, "})"
+    PRINT #182, ".then(() => { obs.disconnect(); clearTimeout(timer5); });"
+    CLOSE #182
+
+    OPEN obs_get_scene_list FOR OUTPUT AS #184
+    PRINT #184, "// This file has been automatically generated"
+    PRINT #184, "// Any changes made will be lost"
+    PRINT #184, "// https://github.com/loopy750/SRT-Stats-Monitor"
+    PRINT #184, "import OBSWebSocket from 'obs-websocket-js/msgpack'"
+    PRINT #184, "var timer6 = setTimeout(function() { obs.disconnect(); }, 2000);"
+    PRINT #184, "const obs = new OBSWebSocket();"
+    PRINT #184, "await obs.connect('ws://" + OBS_URL + "', '" + OBS_PW + "')"
+    PRINT #184, ".then(() => { return obs.call('GetCurrentProgramScene'); })"
+    PRINT #184, ".then(name => { console.log(`${name.currentProgramSceneName}`); })"
+    PRINT #184, ".then(() => { return obs.call('GetSceneList'); })"
+    PRINT #184, ".then(data => {"
+    PRINT #184, "    data.scenes.forEach(scene => {"
+    PRINT #184, "        if (scene.sceneName !== data.currentProgramSceneName) {"
+    PRINT #184, "            console.log(`${scene.sceneName}`);"
+    PRINT #184, "        }"
+    PRINT #184, "    });"
+    PRINT #184, "})"
+    PRINT #184, ".then(() => { obs.disconnect(); clearTimeout(timer6); });"
+    CLOSE #184
+
+    OPEN obs_get_media1_scene FOR OUTPUT AS #186
+    PRINT #186, "// This file has been automatically generated"
+    PRINT #186, "// Any changes made will be lost"
+    PRINT #186, "// https://github.com/loopy750/SRT-Stats-Monitor"
+    PRINT #186, "import * as fs from 'fs';"
+    PRINT #186, "import OBSWebSocket from 'obs-websocket-js/msgpack'"
+    PRINT #186, "const obs = new OBSWebSocket();"
+    PRINT #186, "var myTimerFunction;"
+    PRINT #186, "var myTimerConnect;"
+    PRINT #186, ""
+    PRINT #186, "repeatConnect();"
+    PRINT #186, ""
+    PRINT #186, "async function repeatConnect() {"
+    PRINT #186, "    console.log(`Connecting...`);"
+    PRINT #186, "    obs.disconnect();"
+    PRINT #186, ""
+    PRINT #186, "    await obs.connect('ws://" + OBS_URL + "', '" + OBS_PW + "')"
+    PRINT #186, "    .then(() => {"
+    PRINT #186, "        console.log(`OK`);"
+    PRINT #186, "        clearInterval(myTimerConnect);"
+    PRINT #186, "        clearTimeout(myTimerConnect);"
+    PRINT #186, "        myTimerFunction = setInterval(repeatFunction, 1000);"
+    PRINT #186, "    })"
+    PRINT #186, "}"
+    PRINT #186, ""
+    PRINT #186, "async function repeatFunction() {"
+    PRINT #186, "    console.clear();"
+    PRINT #186, "    return obs.call('GetMediaInputStatus', {"
+    PRINT #186, "        'inputName': " + c34 + MediaSource1 + c34
+    PRINT #186, "    })"
+    PRINT #186, "    .then((data) => {"
+    PRINT #186, "        fs.writeFile(" + c34 + filePrevious_ms_fs + c34 + ", `${data.mediaCursor}`, function (err) {"
+    PRINT #186, "            if (err) return console.log(err);"
+    PRINT #186, "            console.log(`${data.mediaCursor}`);"
+    PRINT #186, "        });"
+    PRINT #186, "    })"
+    PRINT #186, "    .then(() => { return obs.call('GetCurrentProgramScene'); })"
+    PRINT #186, "    .then(name => {"
+    PRINT #186, "        fs.writeFile(" + c34 + filePrevious_fs + c34 + ", `${name.currentProgramSceneName}`, function (err) {"
+    PRINT #186, "            if (err) return console.log(err);"
+    PRINT #186, "            console.log(`${name.currentProgramSceneName}`);"
+    PRINT #186, "        })"
+    PRINT #186, "    })"
+    PRINT #186, "    .then((data) => {"
+    PRINT #186, "        clearInterval(myTimerConnect);"
+    PRINT #186, "        clearTimeout(myTimerConnect);"
+    PRINT #186, "    })"
+    PRINT #186, "}"
+    PRINT #186, ""
+    PRINT #186, "process.on('uncaughtException', function (err) {"
+    PRINT #186, "    console.log(`Error`, err);"
+    PRINT #186, "    obs.disconnect();"
+    PRINT #186, "    clearInterval(myTimerFunction);"
+    PRINT #186, "    clearTimeout(myTimerFunction);"
+    PRINT #186, "    clearInterval(myTimerConnect);"
+    PRINT #186, "    clearTimeout(myTimerConnect);"
+    PRINT #186, "    myTimerConnect = setTimeout(repeatConnect, 2000);"
+    PRINT #186, "});"
+    CLOSE #186
+
+    OPEN obs_get_media2_scene FOR OUTPUT AS #188
+    PRINT #188, "// This file has been automatically generated"
+    PRINT #188, "// Any changes made will be lost"
+    PRINT #188, "// https://github.com/loopy750/SRT-Stats-Monitor"
+    PRINT #188, "import * as fs from 'fs';"
+    PRINT #188, "import OBSWebSocket from 'obs-websocket-js/msgpack'"
+    PRINT #188, "const obs = new OBSWebSocket();"
+    PRINT #188, "var myTimerFunction;"
+    PRINT #188, "var myTimerConnect;"
+    PRINT #188, "var dataStream1;"
+    PRINT #188, "var dataStream2;"
+    PRINT #188, ""
+    PRINT #188, "repeatConnect();"
+    PRINT #188, ""
+    PRINT #188, "async function repeatConnect() {"
+    PRINT #188, "    console.log(`Connecting...`);"
+    PRINT #188, "    obs.disconnect();"
+    PRINT #188, ""
+    PRINT #188, "    await obs.connect('ws://" + OBS_URL + "', '" + OBS_PW + "')"
+    PRINT #188, "    .then(() => {"
+    PRINT #188, "        console.log(`OK`);"
+    PRINT #188, "        clearInterval(myTimerConnect);"
+    PRINT #188, "        clearTimeout(myTimerConnect);"
+    PRINT #188, "        myTimerFunction = setInterval(repeatFunction, 1000);"
+    PRINT #188, "    })"
+    PRINT #188, "}"
+    PRINT #188, ""
+    PRINT #188, "async function repeatFunction() {"
+    PRINT #188, "    console.clear();"
+    PRINT #188, "    return obs.call('GetMediaInputStatus', {"
+    PRINT #188, "        'inputName': " + c34 + MediaSource1 + c34
+    PRINT #188, "    })"
+    PRINT #188, "    .then((data) => {"
+    PRINT #188, "        dataStream1 = `${data.mediaCursor}` + '\n';"
+    PRINT #188, "        console.log(`${data.mediaCursor}`);"
+    PRINT #188, "    })"
+    PRINT #188, "    .then(() => {"
+    PRINT #188, "        return obs.call('GetMediaInputStatus', {"
+    PRINT #188, "            'inputName': " + c34 + MediaSource2 + c34
+    PRINT #188, "        })"
+    PRINT #188, "    })"
+    PRINT #188, "    .then((data) => {"
+    PRINT #188, "        dataStream2 = dataStream1 + `${data.mediaCursor}`"
+    PRINT #188, "        fs.writeFile(" + c34 + filePrevious_ms_fs + c34 + ", dataStream2, function (err) {"
+    PRINT #188, "            if (err) return console.log(err);"
+    PRINT #188, "            console.log(`${data.mediaCursor}`);"
+    PRINT #188, "        });"
+    PRINT #188, "    })"
+    PRINT #188, "    .then(() => { return obs.call('GetCurrentProgramScene'); })"
+    PRINT #188, "    .then(name => {"
+    PRINT #188, "        fs.writeFile(" + c34 + filePrevious_fs + c34 + ", `${name.currentProgramSceneName}`, function (err) {"
+    PRINT #188, "            if (err) return console.log(err);"
+    PRINT #188, "            console.log(`${name.currentProgramSceneName}`);"
+    PRINT #188, "        })"
+    PRINT #188, "    })"
+    PRINT #188, "    .then((data) => {"
+    PRINT #188, "        clearInterval(myTimerConnect);"
+    PRINT #188, "        clearTimeout(myTimerConnect);"
+    PRINT #188, "    })"
+    PRINT #188, "}"
+    PRINT #188, ""
+    PRINT #188, "process.on('uncaughtException', function (err) {"
+    PRINT #188, "    console.log(`Error`, err);"
+    PRINT #188, "    obs.disconnect();"
+    PRINT #188, "    clearInterval(myTimerFunction);"
+    PRINT #188, "    clearTimeout(myTimerFunction);"
+    PRINT #188, "    clearInterval(myTimerConnect);"
+    PRINT #188, "    clearTimeout(myTimerConnect);"
+    PRINT #188, "    myTimerConnect = setTimeout(repeatConnect, 2000);"
+    PRINT #188, "});"
+    CLOSE #188
+
     IF CheckUpdateOnStartup = "true" AND iniFeatures = 0 THEN
         file224$ = ""
         updateResult$ = ""
-        _DELAY .25
+        _DELAY 0.25
         SHELL _HIDE "%ComSpec% /C curl -H " + c34 + "Cache-Control: no-cache" + c34 + " https://raw.githubusercontent.com/loopy750/SRT-Stats-Monitor-Version/master/checkversion.txt > " + c34 + fileCheckVersion + c34 + ""
-        _DELAY .25
+        _DELAY 0.25
         IF _FILEEXISTS(fileCheckVersion) THEN
             OPEN fileCheckVersion FOR INPUT AS #224
             DO UNTIL EOF(224)
@@ -1084,8 +1393,17 @@ SUB __UI_OnLoad
 
     'Test #6
     IF ErrorTestRunOnce = 1 THEN
+        'Check for 5.x.x else fall back to 4.x.x. If 4.x.x also fails then error
+        websocketVersion = 5
+
+        'File variables for 5.x.x
+        obs_check_websocket = config_dir + "\js\obs_check_websocket.mjs"
+        obs_change_scene = config_dir + "\js\obs_change_scene.mjs"
+        shell_nodejs_1 = CMD_EXE + c34 + obs_change_scene + c34 + " "
+        shell_nodejs_2 = ""
+
         SHELL _HIDE CMD_EXE + c34 + obs_check_websocket + c34 + " > " + c34 + filePrevious_ms + c34
-        _DELAY .1
+        _DELAY 0.1
         IF _FILEEXISTS(filePrevious_ms) THEN
             OPEN filePrevious_ms FOR INPUT AS #90
             IF EOF(90) OR LOF(90) = 0 THEN
@@ -1093,26 +1411,102 @@ SUB __UI_OnLoad
                 ON ERROR GOTO PUT_Fail
                 IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
                 ON ERROR GOTO 0
-                Error_msg = "- OBS " + c34 + "WebSockets Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + CHR$(10) + "- If configuration is correct, check " + c34 + "WebSockets Server" + c34 + " is running in OBS, and " + c34 + "Node.js" + c34 + " is installed. OBS WebSocket 5.x.x is unsupported."
-                ErrorDisplay (6)
+                'Check for 4.x.x else error
+                websocketOK = 0
+            ELSE
+                websocketOK = 1
             END IF
 
-            LINE INPUT #90, file90$
-            CLOSE #90
+            IF websocketOK = 1 THEN LINE INPUT #90, file90$
             IF file90$ <> "OK" THEN
                 CLOSE #90
                 IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
-                Error_msg = "- OBS " + c34 + "WebSockets Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + CHR$(10) + "- If configuration is correct, check " + c34 + "WebSockets Server" + c34 + " is running in OBS, and " + c34 + "Node.js" + c34 + " is installed. OBS WebSocket 5.x.x is unsupported."
-                ErrorDisplay (6)
+                'Check for 4.x.x else error
+                websocketOK = 0
+            ELSE
+                websocketOK = 1
+                IF EOF(90) OR LOF(90) = 0 THEN
+                    CLOSE #90
+                ELSE
+                    LINE INPUT #90, checkWebSocketVersion$
+                    CLOSE #90
+                END IF
             END IF
         END IF
+
+        IF websocketOK = 0 THEN
+            websocketVersion = 4
+
+            'File variables for 4.x.x
+            obs_check_websocket = config_dir + "\js\obs_check_websocket.js"
+            obs_change_scene = config_dir + "\js\obs_change_scene.js"
+            shell_nodejs_1 = CMD_EXE + c34 + obs_change_scene + c34 + " "
+            shell_nodejs_2 = ""
+
+            SHELL _HIDE CMD_EXE + c34 + obs_check_websocket + c34 + " > " + c34 + filePrevious_ms + c34
+            _DELAY 0.1
+            IF _FILEEXISTS(filePrevious_ms) THEN
+                OPEN filePrevious_ms FOR INPUT AS #90
+                IF EOF(90) OR LOF(90) = 0 THEN
+                    CLOSE #90
+                    ON ERROR GOTO PUT_Fail
+                    IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
+                    ON ERROR GOTO 0
+                    websocketOK = 0
+                    Error_msg = "- OBS " + c34 + "WebSockets Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + CHR$(10) + "- If configuration is correct, check " + c34 + "WebSockets Server" + c34 + " is running in OBS, and " + c34 + "Node.js" + c34 + " is installed."
+                    ErrorDisplay (6)
+                ELSE
+                    websocketOK = 1
+                END IF
+
+                LINE INPUT #90, file90$
+                IF file90$ <> "OK" THEN
+                    CLOSE #90
+                    IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
+                    websocketOK = 0
+                    Error_msg = "- OBS " + c34 + "WebSockets Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + CHR$(10) + "- If configuration is correct, check " + c34 + "WebSockets Server" + c34 + " is running in OBS, and " + c34 + "Node.js" + c34 + " is installed."
+                    ErrorDisplay (6)
+                ELSE
+                    websocketOK = 1
+                    IF EOF(90) OR LOF(90) = 0 THEN
+                        CLOSE #90
+                    ELSE
+                        LINE INPUT #90, checkWebSocketVersion$
+                        CLOSE #90
+                    END IF
+                END IF
+            END IF
+        END IF
+        checkWebSocketVersion$ = LEFT$(checkWebSocketVersion$, 20)
+        SELECT CASE websocketVersion
+            CASE 5
+                '5.x.x
+                obs_change_scene = config_dir + "\js\obs_change_scene.mjs"
+                obs_get_scene = config_dir + "\js\obs_get_scene.mjs"
+                obs_get_scene_list = config_dir + "\js\obs_get_scene_list.mjs"
+                obs_get_media1 = config_dir + "\js\obs_get_media1.mjs"
+                obs_get_media1_scene = config_dir + "\js\obs_get_media1_scene.mjs"
+                obs_get_media2 = config_dir + "\js\obs_get_media2.mjs"
+                obs_get_media2_scene = config_dir + "\js\obs_get_media2_scene.mjs"
+                obs_check_websocket = config_dir + "\js\obs_check_websocket.mjs"
+            CASE 4
+                '4.x.x
+                obs_change_scene = config_dir + "\js\obs_change_scene.js"
+                obs_get_scene = config_dir + "\js\obs_get_scene.js"
+                obs_get_scene_list = config_dir + "\js\obs_get_scene_list.js"
+                obs_get_media1 = config_dir + "\js\obs_get_media1.js"
+                obs_get_media1_scene = config_dir + "\js\obs_get_media1_scene.js"
+                obs_get_media2 = config_dir + "\js\obs_get_media2.js"
+                obs_get_media2_scene = config_dir + "\js\obs_get_media2_scene.js"
+                obs_check_websocket = config_dir + "\js\obs_check_websocket.js"
+        END SELECT
     END IF
 
     'Test #7
     IF ErrorTestRunOnce = 1 THEN
         IF __MultiCameraSwitch = 0 THEN
             SHELL _HIDE CMD_EXE + c34 + obs_get_media1 + c34 + " > " + c34 + filePrevious_ms + c34
-            _DELAY .1
+            _DELAY 0.1
             IF _FILEEXISTS(filePrevious_ms) THEN
                 OPEN filePrevious_ms FOR INPUT AS #90
                 IF EOF(90) OR LOF(90) = 0 THEN
@@ -1122,7 +1516,7 @@ SUB __UI_OnLoad
                     ErrorDisplay (7)
                 END IF
 
-                'LINE INPUT #90, file90$
+                'No more lines to be read, so just close file
                 CLOSE #90
             END IF
         END IF
@@ -1132,7 +1526,7 @@ SUB __UI_OnLoad
     IF ErrorTestRunOnce = 1 THEN
         IF __MultiCameraSwitch = 1 THEN
             SHELL _HIDE CMD_EXE + c34 + obs_get_media2 + c34 + " > " + c34 + filePrevious_ms + c34
-            _DELAY .1
+            _DELAY 0.1
             IF _FILEEXISTS(filePrevious_ms) THEN
                 OPEN filePrevious_ms FOR INPUT AS #90
                 IF EOF(90) OR LOF(90) = 0 THEN
@@ -1157,7 +1551,7 @@ SUB __UI_OnLoad
     'Test #9
     IF ErrorTestRunOnce = 1 THEN
         SHELL _HIDE CMD_EXE + c34 + obs_get_scene_list + c34 + " > " + c34 + filePrevious_ms + c34
-        _DELAY .1
+        _DELAY 0.1
         IF _FILEEXISTS(filePrevious_ms) THEN
             OPEN filePrevious_ms FOR INPUT AS #90
             IF EOF(90) OR LOF(90) = 0 THEN
@@ -1197,7 +1591,7 @@ SUB __UI_OnLoad
     IF ErrorTestRunOnce = 1 THEN
         IF __MultiCameraSwitch = 1 THEN
             SHELL _HIDE CMD_EXE + c34 + obs_get_scene_list + c34 + " > " + c34 + filePrevious_ms + c34
-            _DELAY .1
+            _DELAY 0.1
             IF _FILEEXISTS(filePrevious_ms) THEN
                 OPEN filePrevious_ms FOR INPUT AS #90
                 IF EOF(90) OR LOF(90) = 0 THEN
@@ -1247,10 +1641,10 @@ SUB __UI_OnLoad
         SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene12
     END IF
 
-    _DELAY .25
+    _DELAY 0.25
     _TITLE "Loopy SRT Monitor"
 
-    IF VerBeta <> "" THEN
+    IF VerBeta <> "" OR ForceDebugOnStartup = "true" THEN
         Debug = 1
         Control(DebugFrame).Hidden = False
         Control(versionFrame).Hidden = True
@@ -1291,10 +1685,10 @@ SUB __UI_OnLoad
     LoadImageMEM Control(PictureBoxLogoBottom), "srt_logo_bottom.png"
     Control(TimerLB).Hidden = True
     Control(TimerSnapshotLB).Hidden = True
-    Control(td_displayVarLB).Hidden = True
-    Control(mouseXVarLB).Hidden = True
-    Control(mouseYVarLB).Hidden = True
-    Control(__ERRORLINEVarLB).Hidden = True
+    Control(td_displayLB2).Hidden = True
+    Control(mouseXLB2).Hidden = True
+    Control(mouseYLB2).Hidden = True
+    Control(__ERRORLINELB2).Hidden = True
     Control(Debug_TimerLB).Hidden = True
     Control(Debug_Timer_SnapshotLB).Hidden = True
     Control(td_displayLB).Hidden = True
@@ -1307,6 +1701,8 @@ SUB __UI_OnLoad
     Control(MSRateLB2).Hidden = True
     Control(ms_playLB).Hidden = True
     Control(ms_playLB2).Hidden = True
+    Control(LBRDelayLB).Hidden = True
+    Control(br_delayLB).Hidden = True
     Control(PictureBoxLogoBottom).Hidden = False
     IF VerBeta = "" THEN SetCaption (versionFrame), "v" + Ver ELSE SetCaption (versionFrame), "v" + VerBeta + "beta"
 
@@ -1343,7 +1739,7 @@ SUB __UI_BeforeUpdateDisplay
         END IF
         _PRINTSTRING (20, 20 * 18), "Program will resume shortly"
         _DISPLAY
-        IF NodejsFileSystem = "2" THEN _DELAY .05 ELSE _DELAY 10
+        IF NodejsFileSystem = "2" THEN _DELAY 0.05 ELSE _DELAY 10
         Error_msg = ""
         Error_msg_2$ = ""
         CLS , BG
@@ -1415,6 +1811,19 @@ END SUB
 
 SUB __UI_Click (id AS LONG)
     SELECT CASE id
+        CASE OptionsMenuRestoreWindowSize
+            IF Allow_Resize = "true" THEN
+                _DELAY 0.25
+                _RESIZE OFF , _SMOOTH
+                _DELAY 0.5
+                _RESIZE ON , _SMOOTH
+                _DELAY 0.25
+            END IF
+
+        CASE LBRDelayLB
+
+        CASE br_delayLB
+
         CASE Stream1LightLB
 
         CASE StreamLightLB
@@ -1477,13 +1886,13 @@ SUB __UI_Click (id AS LONG)
 
         CASE TimerSnapshotLB
 
-        CASE td_displayVarLB
+        CASE td_displayLB2
 
-        CASE mouseXVarLB
+        CASE mouseXLB2
 
-        CASE mouseYVarLB
+        CASE mouseYLB2
 
-        CASE __ERRORLINEVarLB
+        CASE __ERRORLINELB2
 
         CASE Debug_TimerLB
 
@@ -1550,9 +1959,9 @@ SUB __UI_Click (id AS LONG)
             SetCaption StatusLB, verCheck$
             file224$ = ""
             updateResult$ = ""
-            _DELAY .25
+            _DELAY 0.25
             SHELL _HIDE "%ComSpec% /C curl -H " + c34 + "Cache-Control: no-cache" + c34 + " https://raw.githubusercontent.com/loopy750/SRT-Stats-Monitor-Version/master/checkversion.txt > " + c34 + fileCheckVersion + c34 + ""
-            _DELAY .25
+            _DELAY 0.25
             IF _FILEEXISTS(fileCheckVersion) THEN
                 OPEN fileCheckVersion FOR INPUT AS #224
                 DO UNTIL EOF(224)
@@ -1584,9 +1993,9 @@ SUB __UI_Click (id AS LONG)
 
         CASE HelpMenuAbout
             IF VerBeta = "" THEN
-                Answer = MessageBox("Loopy SRT Stats Monitor v" + Ver + " (" + VerDate + ") \nby loopy750\n\nGitHub: https://www.github.com/loopy750", "About", MsgBox_OkOnly + MsgBox_Information)
+                Answer = MessageBox("Loopy SRT Stats Monitor v" + Ver + " (" + VerDate + ") \nby loopy750\n\nOBS WebSocket version:" + checkWebSocketVersion$ + "\n\nGitHub: https://www.github.com/loopy750", "About", MsgBox_OkOnly + MsgBox_Information)
             ELSE
-                Answer = MessageBox("Loopy SRT Stats Monitor v" + VerBeta + "beta (" + VerDate + ") \nby loopy750\n\nGitHub: https://www.github.com/loopy750", "About", MsgBox_OkOnly + MsgBox_Information)
+                Answer = MessageBox("Loopy SRT Stats Monitor v" + VerBeta + "beta (" + VerDate + ") \nby loopy750\n\nOBS WebSocket version: " + checkWebSocketVersion$ + "\n\nGitHub: https://www.github.com/loopy750", "About", MsgBox_OkOnly + MsgBox_Information)
             END IF
 
         CASE StatusLB
@@ -1632,6 +2041,12 @@ END SUB
 
 SUB __UI_MouseEnter (id AS LONG)
     SELECT CASE id
+        CASE OptionsMenuRestoreWindowSize
+
+        CASE LBRDelayLB
+
+        CASE br_delayLB
+
         CASE Stream1LightLB
 
         CASE StreamLightLB
@@ -1690,13 +2105,13 @@ SUB __UI_MouseEnter (id AS LONG)
 
         CASE TimerSnapshotLB
 
-        CASE td_displayVarLB
+        CASE td_displayLB2
 
-        CASE mouseXVarLB
+        CASE mouseXLB2
 
-        CASE mouseYVarLB
+        CASE mouseYLB2
 
-        CASE __ERRORLINEVarLB
+        CASE __ERRORLINELB2
 
         CASE Debug_TimerLB
 
@@ -1785,6 +2200,12 @@ END SUB
 
 SUB __UI_MouseLeave (id AS LONG)
     SELECT CASE id
+        CASE OptionsMenuRestoreWindowSize
+
+        CASE LBRDelayLB
+
+        CASE br_delayLB
+
         CASE Stream1LightLB
 
         CASE StreamLightLB
@@ -1843,13 +2264,13 @@ SUB __UI_MouseLeave (id AS LONG)
 
         CASE TimerSnapshotLB
 
-        CASE td_displayVarLB
+        CASE td_displayLB2
 
-        CASE mouseXVarLB
+        CASE mouseXLB2
 
-        CASE mouseYVarLB
+        CASE mouseYLB2
 
-        CASE __ERRORLINEVarLB
+        CASE __ERRORLINELB2
 
         CASE Debug_TimerLB
 
@@ -1952,6 +2373,12 @@ END SUB
 
 SUB __UI_MouseDown (id AS LONG)
     SELECT CASE id
+        CASE OptionsMenuRestoreWindowSize
+
+        CASE LBRDelayLB
+
+        CASE br_delayLB
+
         CASE Stream1LightLB
 
         CASE StreamLightLB
@@ -2010,13 +2437,13 @@ SUB __UI_MouseDown (id AS LONG)
 
         CASE TimerSnapshotLB
 
-        CASE td_displayVarLB
+        CASE td_displayLB2
 
-        CASE mouseXVarLB
+        CASE mouseXLB2
 
-        CASE mouseYVarLB
+        CASE mouseYLB2
 
-        CASE __ERRORLINEVarLB
+        CASE __ERRORLINELB2
 
         CASE Debug_TimerLB
 
@@ -2105,6 +2532,12 @@ END SUB
 
 SUB __UI_MouseUp (id AS LONG)
     SELECT CASE id
+        CASE OptionsMenuRestoreWindowSize
+
+        CASE LBRDelayLB
+
+        CASE br_delayLB
+
         CASE Stream1LightLB
 
         CASE StreamLightLB
@@ -2163,13 +2596,13 @@ SUB __UI_MouseUp (id AS LONG)
 
         CASE TimerSnapshotLB
 
-        CASE td_displayVarLB
+        CASE td_displayLB2
 
-        CASE mouseXVarLB
+        CASE mouseXLB2
 
-        CASE mouseYVarLB
+        CASE mouseYLB2
 
-        CASE __ERRORLINEVarLB
+        CASE __ERRORLINELB2
 
         CASE Debug_TimerLB
 
@@ -2443,9 +2876,9 @@ SUB ErrorDisplay (ErrorTestVal)
         END IF
         _PRINTSTRING (20, 20 * 18), "Program will exit shortly or press any key to exit now..."
         _DISPLAY
-        _DELAY .5
+        _DELAY 0.5
         FOR Error_Exit = 1 TO 60
-            _DELAY .5
+            _DELAY 0.5
             IF _EXIT THEN SYSTEM
             IF INKEY$ <> "" THEN SYSTEM
         NEXT
@@ -2484,7 +2917,7 @@ SUB Timer01
         SELECT CASE NodejsFileSystem
             CASE "0"
                 SHELL _HIDE CMD_EXE + c34 + obs_get_media1 + c34 + " > " + c34 + filePrevious_ms + c34
-                _DELAY .001
+                _DELAY 0.001
             CASE "1"
                 _DEST _CONSOLE
                 IF FullScreen THEN
@@ -2493,7 +2926,7 @@ SUB Timer01
                     SHELL CMD_EXE + c34 + obs_get_media1 + c34 + " > " + c34 + filePrevious_ms + c34
                 END IF
                 _DEST 0
-                _DELAY .001
+                _DELAY 0.001
             CASE "2"
                 IF srt_warmup_file_media = 0 THEN
                     srt_warmup_file_media = 1
@@ -2512,14 +2945,13 @@ SUB Timer01
 
             tmpFileError = 0
             IF EOF(92) THEN
-                IF NodejsFileSystem = "2" THEN 'There is an increased chanced an empty tmp file might be read at any time when the external node.js window is used
-                    'RefreshDisplayRequest = 1
+                IF NodejsFileSystem = "2" THEN 'There is an increased chance an empty tmp file might be read at any time when the external node.js window is used
+                    'RefreshDisplayRequest not used here
                     Error_msg = "- Unable to read tmp file. (#11)"
                     Error_msg_2$ = ""
-                    'SOUND 2000, 3
                     tmpFileError = 1 'LBR will be falsely triggered because of an empty tmp file unless corrected
                     tmpFileRestore = 1
-                    _DELAY .05
+                    _DELAY 0.05
                     GOTO LOF92
                 ELSE
                     RefreshDisplayRequest = 1
@@ -2545,7 +2977,10 @@ SUB Timer01
         MediaSource1TimeMSOffset = MediaSource1TimeMS - MediaSource1TimeLog
         IF MediaSource1TimeMSOffset < 0 THEN MediaSource1TimeMSOffset = 0
 
-        IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 AND CooldownLog = 0 THEN
+
+        'Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
+        IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 AND CooldownLog = 0 AND LBR_Delay >= LBR_Delay_Total THEN
+
             CooldownActive = 1
             ConnectionsLog1Count = ConnectionsLog1Count + 1
             IF ConnectionsLog1Count > 999 THEN ConnectionsLog1Count = 999
@@ -2560,8 +2995,23 @@ SUB Timer01
                 IF __FileStatusOutput = 1 THEN statusOutputToFile "[LOW BANDWIDTH]:[STREAM]"
                 IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] Insufficient bandwidth for stream, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times": CooldownLog = CooldownLogTotal
             END IF
+
+
         END IF
-        IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 THEN CooldownLog = CooldownLogTotal: IF CooldownLog > CooldownLogTotal THEN CooldownLog = CooldownLogTotal
+
+
+        IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 THEN
+            'LBR_Delay
+            IF LBR_Delay >= LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: IF CooldownLog > CooldownLogTotal THEN CooldownLog = CooldownLogTotal
+            LBR_Delay = LBR_Delay + 1: IF LBR_Delay > LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total
+        END IF
+        SELECT CASE MediaSource1TimeMSOffset
+            CASE 960 TO 1040, 0
+                LBR_Delay = LBR_Delay - 1: IF LBR_Delay <= 0 THEN LBR_Delay = 0
+        END SELECT
+
+
+
         IF CooldownActive = 1 AND CooldownLog = 0 THEN
             CooldownActive = 0
 
@@ -2602,7 +3052,7 @@ SUB Timer01
         SELECT CASE NodejsFileSystem
             CASE "0"
                 SHELL _HIDE CMD_EXE + c34 + obs_get_media2 + c34 + " > " + c34 + filePrevious_ms + c34
-                _DELAY .001
+                _DELAY 0.001
             CASE "1"
                 _DEST _CONSOLE
                 IF FullScreen THEN
@@ -2611,7 +3061,7 @@ SUB Timer01
                     SHELL CMD_EXE + c34 + obs_get_media2 + c34 + " > " + c34 + filePrevious_ms + c34
                 END IF
                 _DEST 0
-                _DELAY .001
+                _DELAY 0.001
             CASE "2"
                 IF srt_warmup_file_media = 0 THEN
                     srt_warmup_file_media = 1
@@ -2630,14 +3080,13 @@ SUB Timer01
 
             tmpFileError = 0
             IF EOF(92) THEN
-                IF NodejsFileSystem = "2" THEN 'There is an increased chanced an empty tmp file might be read at any time when the external node.js window is used
-                    'RefreshDisplayRequest = 1
+                IF NodejsFileSystem = "2" THEN 'There is an increased chance an empty tmp file might be read at any time when the external node.js window is used
+                    'RefreshDisplayRequest not used here
                     Error_msg = "- Unable to read tmp file. (#11)"
                     Error_msg_2$ = ""
-                    'SOUND 2000, 3
                     tmpFileError = 1 'LBR will be falsely triggered because of an empty tmp file unless corrected
                     tmpFileRestore = 1
-                    _DELAY .05
+                    _DELAY 0.05
                     GOTO LOF922
                 ELSE
                     RefreshDisplayRequest = 1
@@ -2669,7 +3118,8 @@ SUB Timer01
         MediaSource2TimeMSOffset = MediaSource2TimeMS - MediaSource2TimeLog
         IF MediaSource2TimeMSOffset < 0 THEN MediaSource2TimeMSOffset = 0
 
-        IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 AND CooldownLog = 0 THEN
+        'Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
+        IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 AND CooldownLog = 0 AND LBR_Delay >= LBR_Delay_Total THEN
             CooldownActive = 1
             ConnectionsLog1Count = ConnectionsLog1Count + 1
             IF ConnectionsLog1Count > 999 THEN ConnectionsLog1Count = 999
@@ -2686,7 +3136,6 @@ SUB Timer01
                     IF Scene_Current$ = titleScene1 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene1 + " LBR"
                     IF Scene_Current$ = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene12 + " LBR"
                 END IF
-                'IF Scene_Current$ <> Scene_Fail AND RIGHT$(Scene_Current$, 4) <> " LBR" AND RIGHT$(titleScene1, 4) <> " LBR" AND RIGHT$(titleScene2, 4) <> " LBR" THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + previousSceneDisplay$ + " LBR"
 
             END IF
             ON ERROR GOTO 0
@@ -2697,7 +3146,11 @@ SUB Timer01
             END IF
         END IF
 
-        IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 THEN CooldownLog = CooldownLogTotal: IF CooldownLog > CooldownLogTotal THEN CooldownLog = CooldownLogTotal
+        IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 THEN
+            'LBR_Delay
+            IF LBR_Delay >= LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: IF CooldownLog > CooldownLogTotal THEN CooldownLog = CooldownLogTotal
+            LBR_Delay_Plus = 1
+        END IF
 
         IF CooldownActive = 1 AND CooldownLog = 0 THEN
             CooldownActive = 0
@@ -2725,7 +3178,8 @@ SUB Timer01
             CooldownDuration = 0
         END IF
 
-        IF MediaSource2TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream2 = 0 AND CooldownLog = 0 AND Scene2LBInactive = 0 THEN
+        'Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
+        IF MediaSource2TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream2 = 0 AND CooldownLog = 0 AND LBR_Delay >= LBR_Delay_Total AND Scene2LBInactive = 0 THEN
             CooldownActive = 2
             ConnectionsLog2Count = ConnectionsLog2Count + 1
             IF ConnectionsLog2Count > 999 THEN ConnectionsLog2Count = 999
@@ -2751,7 +3205,63 @@ SUB Timer01
         END IF
 
         'Disable Scene #2 LBR is Scene2LBRDisabled is true
-        IF MediaSource2TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream2 = 0 AND Scene2LBInactive = 0 THEN CooldownLog = CooldownLogTotal: IF CooldownLog > CooldownLogTotal THEN CooldownLog = CooldownLogTotal
+        IF MediaSource2TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream2 = 0 AND Scene2LBInactive = 0 THEN
+            'LBR_Delay
+            IF LBR_Delay >= LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: IF CooldownLog > CooldownLogTotal THEN CooldownLog = CooldownLogTotal
+            LBR_Delay_Plus = 1
+        END IF
+
+
+
+        IF Timer_Fail_Stream1 = 0 AND Timer_Fail_Stream2 = 0 THEN
+
+            'LBR_Delay streams 1+2
+
+            SELECT CASE MediaSource1TimeMSOffset
+                CASE 960 TO 1040, 0
+                    LBR_Delay_Minus = 1
+            END SELECT
+            SELECT CASE MediaSource2TimeMSOffset
+                CASE 960 TO 1040, 0
+                    LBR_Delay_Minus = 1
+            END SELECT
+
+            IF LBR_Delay_Plus = 1 THEN
+                LBR_Delay = LBR_Delay + 1: IF LBR_Delay > LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total
+            ELSEIF LBR_Delay_Minus = 1 THEN
+                LBR_Delay = LBR_Delay - 1: IF LBR_Delay <= 0 THEN LBR_Delay = 0
+            END IF
+
+
+        ELSE
+
+            'LBR_Delay stream 1 or 2
+
+            IF Timer_Fail_Stream1 = 0 THEN
+                SELECT CASE MediaSource1TimeMSOffset
+                    CASE 960 TO 1040, 0
+                        LBR_Delay_Minus = 1
+                END SELECT
+            END IF
+
+            IF Timer_Fail_Stream2 = 0 THEN
+                SELECT CASE MediaSource2TimeMSOffset
+                    CASE 960 TO 1040, 0
+                        LBR_Delay_Minus = 1
+                END SELECT
+            END IF
+
+            IF LBR_Delay_Plus = 1 THEN LBR_Delay = LBR_Delay + 1: IF LBR_Delay > LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total
+            IF LBR_Delay_Minus = 1 THEN LBR_Delay = LBR_Delay - 1: IF LBR_Delay <= 0 THEN LBR_Delay = 0
+
+        END IF
+
+
+
+
+        LBR_Delay_Minus = 0
+        LBR_Delay_Plus = 0
+
 
         IF CooldownActive = 2 AND CooldownLog = 0 THEN
             CooldownActive = 0
@@ -2863,7 +3373,6 @@ SUB Timer01
 
     SetCaption (Stream_Fail_DelayLB), calc_srt$(Stream_Fail_Delay, 1) + calc_srt_sec$
     IF __MultiCameraSwitch = 0 THEN SetCaption (MultiCameraSwitchStatusLB), "Disabled" ELSE SetCaption (MultiCameraSwitchStatusLB), "Enabled"
-    'IF __returnPreviousScene = 1 THEN SetCaption (Scene_CurrentLB), LEFT$(previousSceneDisplay$, 20) ELSE SetCaption (Scene_CurrentLB), LEFT$(Scene_Current$, 20)
     IF __MultiCameraSwitch = 1 THEN SetCaption (Scene_CurrentLB), LEFT$(previousSceneDisplay$, 20) ELSE SetCaption (Scene_CurrentLB), LEFT$(Scene_Current$, 20)
 
     IF __MultiCameraSwitch = 1 THEN
@@ -2941,10 +3450,10 @@ SUB Timer01
         Control(versionFrame).Hidden = False
         Control(TimerLB).Hidden = True
         Control(TimerSnapshotLB).Hidden = True
-        Control(td_displayVarLB).Hidden = True
-        Control(mouseXVarLB).Hidden = True
-        Control(mouseYVarLB).Hidden = True
-        Control(__ERRORLINEVarLB).Hidden = True
+        Control(td_displayLB2).Hidden = True
+        Control(mouseXLB2).Hidden = True
+        Control(mouseYLB2).Hidden = True
+        Control(__ERRORLINELB2).Hidden = True
         Control(Debug_TimerLB).Hidden = True
         Control(Debug_Timer_SnapshotLB).Hidden = True
         Control(td_displayLB).Hidden = True
@@ -2957,6 +3466,8 @@ SUB Timer01
         Control(MSRateLB2).Hidden = True
         Control(ms_playLB).Hidden = True
         Control(ms_playLB2).Hidden = True
+        Control(LBRDelayLB).Hidden = True
+        Control(br_delayLB).Hidden = True
         Control(PictureBoxLogoBottom).Hidden = False
         SetCaption Debug_TimerLB, "-"
         SetCaption Debug_Timer_SnapshotLB, "-"
@@ -2966,10 +3477,10 @@ SUB Timer01
         SetCaption __ERRORLINELB, "-"
         SetCaption TimerLB, "-" 'TIMER
         SetCaption TimerSnapshotLB, "-"
-        SetCaption td_displayVarLB, "-"
-        SetCaption mouseXVarLB, "-"
-        SetCaption mouseYVarLB, "-"
-        SetCaption __ERRORLINEVarLB, "-"
+        SetCaption td_displayLB2, "-"
+        SetCaption mouseXLB2, "-"
+        SetCaption mouseYLB2, "-"
+        SetCaption __ERRORLINELB2, "-"
         SetCaption ms_playLB, "-"
         SetCaption ms_playLB2, "-"
         SetCaption br_countdownLB, "-"
@@ -2978,10 +3489,10 @@ SUB Timer01
         Control(versionFrame).Hidden = True
         Control(TimerLB).Hidden = False
         Control(TimerSnapshotLB).Hidden = False
-        Control(td_displayVarLB).Hidden = False
-        Control(mouseXVarLB).Hidden = False
-        Control(mouseYVarLB).Hidden = False
-        Control(__ERRORLINEVarLB).Hidden = False
+        Control(td_displayLB2).Hidden = False
+        Control(mouseXLB2).Hidden = False
+        Control(mouseYLB2).Hidden = False
+        Control(__ERRORLINELB2).Hidden = False
         Control(Debug_TimerLB).Hidden = False
         Control(Debug_Timer_SnapshotLB).Hidden = False
         Control(td_displayLB).Hidden = False
@@ -2994,19 +3505,23 @@ SUB Timer01
         Control(br_countdownLB).Hidden = False
         Control(MSRateLB).Hidden = False
         Control(MSRateLB2).Hidden = False
+        Control(LBRDelayLB).Hidden = False
+        Control(br_delayLB).Hidden = False
         Control(PictureBoxLogoBottom).Hidden = True
         SetCaption TimerLB, "TIMER" 'TIMER
         SetCaption TimerSnapshotLB, "TIMER (snapshot)"
-        SetCaption td_displayVarLB, "td_display var"
-        SetCaption mouseXVarLB, "mouseX var"
-        SetCaption mouseYVarLB, "mouseY var"
-        SetCaption __ERRORLINEVarLB, "_ERRORLINE var"
+        SetCaption td_displayLB2, "td_display"
+        SetCaption LBRDelayLB, "LBR Del"
+        SetCaption mouseXLB2, "mouseX"
+        SetCaption mouseYLB2, "mouseY"
+        SetCaption __ERRORLINELB2, "_ERRORLINE"
         TIMEms Debug_Timer#, 0
         SetCaption (Debug_Timer_SnapshotLB), tout + " sec "
         'MS rate
         SetCaption ms_playLB, _TRIM$(STR$((MediaSourceTimeMSOffsetDisplay))) + " ms "
         SetCaption ms_playLB2, _TRIM$(STR$((MediaSource2TimeMSOffsetDisplay))) + " ms "
         SetCaption br_countdownLB, _TRIM$(STR$(CooldownLog)) + " sec "
+        SetCaption br_delayLB, _TRIM$(STR$(LBR_Delay)) + " sec "
 
     END IF
 
@@ -3018,7 +3533,6 @@ SUB Timer01
 
     'Get OBS scene -------------------------
     GetOBSScene:
-    'IF __returnPreviousScene = 1 AND Scene_Bypass <> Scene_Bypass_Check THEN
     IF Scene_Bypass <> Scene_Bypass_Check THEN
         returnPreviousSceneTime = returnPreviousSceneTime + 1
         IF returnPreviousSceneTime > 2 THEN returnPreviousSceneTime = 1 ELSE GOTO Exit_returnPreviousSceneCheck
@@ -3028,7 +3542,7 @@ SUB Timer01
         SELECT CASE NodejsFileSystem
             CASE "0"
                 SHELL _HIDE CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
-                _DELAY .001
+                _DELAY 0.001
             CASE "1"
                 _DEST _CONSOLE
                 IF FullScreen THEN
@@ -3037,7 +3551,7 @@ SUB Timer01
                     SHELL CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
                 END IF
                 _DEST 0
-                _DELAY .001
+                _DELAY 0.001
             CASE "2"
                 IF srt_warmup_file_scene = 0 THEN
                     srt_warmup_file_scene = 1
@@ -3071,18 +3585,18 @@ SUB Timer01
             SELECT CASE NodejsFileSystem
                 CASE "0"
                     SHELL _HIDE CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
-                    _DELAY .001
+                    _DELAY 0.001
                 CASE "1"
                     _DEST _CONSOLE
                     IF FullScreen THEN
                         SHELL _HIDE CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
-                        _DELAY .001
+                        _DELAY 0.001
                     ELSE
                         SHELL CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
-                        _DELAY .001
+                        _DELAY 0.001
                     END IF
                     _DEST 0
-                    _DELAY .001
+                    _DELAY 0.001
             END SELECT
 
             ON ERROR GOTO PUT_Fail
@@ -3135,7 +3649,7 @@ SUB Timer01
                 Exe_OK = 1
                 LoadImageMEM Control(PictureBox1), "tick.png"
                 SHELL _HIDE _DONTWAIT shell_nodejs_1 + Scene_OK
-                _DELAY .1
+                _DELAY 0.1
                 IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM UP]"
                 IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Now online stream"
             END IF
@@ -3149,11 +3663,11 @@ SUB Timer01
                         Exe_Fail_First = 1
                         Scene_Current$ = Scene_Intro
                         SHELL _HIDE _DONTWAIT shell_nodejs_1 + Scene_Intro
-                        _DELAY .1
+                        _DELAY 0.1
                     ELSE
                         Scene_Current$ = Scene_Fail
                         SHELL _HIDE _DONTWAIT shell_nodejs_1 + Scene_Fail
-                        _DELAY .1
+                        _DELAY 0.1
                         IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM DOWN]"
                         IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] No bandwidth for stream, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times"
                         Timer_Fail_Count = Timer_Fail_Count + 1
@@ -3183,13 +3697,13 @@ SUB Timer01
                     IF lastStreamUp$ <> "1" THEN previousScene$ = titleScene1
                     Scene_Current$ = previousScene$
                     SHELL _HIDE _DONTWAIT shell_nodejs_1 + previousScene$
-                    _DELAY .1
+                    _DELAY 0.1
                     IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM UP]:[CAMERA #1 UP]:[CAMERA #2 DOWN]"
                     IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Now online stream #1, now down stream #2"
                 ELSE
                     Scene_Current$ = titleScene1
                     SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene1
-                    _DELAY .1
+                    _DELAY 0.1
                     IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM UP]:[CAMERA #1 UP]"
                     IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Now online stream #1"
                 END IF
@@ -3203,13 +3717,13 @@ SUB Timer01
                     IF lastStreamUp$ <> "2" THEN previousScene$ = titleScene2
                     Scene_Current$ = previousScene$
                     SHELL _HIDE _DONTWAIT shell_nodejs_1 + previousScene$
-                    _DELAY .1
+                    _DELAY 0.1
                     IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM UP]:[CAMERA #2 UP]:[CAMERA #1 DOWN]"
                     IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] Now down stream #1, now online stream #2"
                 ELSE
                     Scene_Current$ = titleScene2
                     SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene2
-                    _DELAY .1
+                    _DELAY 0.1
                     IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM UP]:[CAMERA #2 UP]"
                     IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Now online stream #2"
                 END IF
@@ -3223,7 +3737,7 @@ SUB Timer01
                     IF lastStreamUp$ <> "12" THEN previousScene$ = titleScene12
                     Scene_Current$ = previousScene$
                     SHELL _HIDE _DONTWAIT shell_nodejs_1 + previousScene$
-                    _DELAY .1
+                    _DELAY 0.1
                     IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM UP]:[ALL CAMERAS UP]"
                     IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Now online stream #1, now online stream #2"
                 ELSE
@@ -3239,7 +3753,7 @@ SUB Timer01
                     ELSE
                         SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene12
                     END IF
-                    _DELAY .1
+                    _DELAY 0.1
                     IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM UP]:[ALL CAMERAS UP]"
                     IF ConnectionsLog AND CooldownLog = 0 THEN statusConnectionsLogToFile "[INFO] Now online stream #1, now online stream #2"
                 END IF
@@ -3255,11 +3769,11 @@ SUB Timer01
                     Exe_Fail_First = 1
                     Scene_Current$ = Scene_Intro
                     SHELL _HIDE _DONTWAIT shell_nodejs_1 + Scene_Intro
-                    _DELAY .1
+                    _DELAY 0.1
                 ELSE
                     Scene_Current$ = Scene_Fail
                     SHELL _HIDE _DONTWAIT shell_nodejs_1 + Scene_Fail
-                    _DELAY .1
+                    _DELAY 0.1
                     IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM DOWN]:[ALL CAMERAS DOWN]"
                     IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] No bandwidth for stream #1, no bandwidth for stream #2"
                     Timer_Fail_Count = Timer_Fail_Count + 1
