@@ -11,7 +11,7 @@ AllowResize=false
 
 The 'readme.txt' file explains in depth how these function.
 
-- Added support for OBS WebSocket 5.x.x (requires lastest build available from https://github.com/obsproject/obs-websocket/actions)
+- Added support for OBS WebSocket 5.x.x (requires latest build available from https://github.com/obsproject/obs-websocket/actions)
 - Added 'SceneLBRDelay' configuration - see readme.txt for instructions
 - Added 'AllowResize' configuration - see readme.txt for instructions
 
