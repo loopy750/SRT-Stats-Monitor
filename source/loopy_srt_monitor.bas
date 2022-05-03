@@ -683,6 +683,16 @@ SUB __UI_OnLoad
             CASE returnPreviousSceneRemember$: SettingsMissing = 1
         END SELECT
 
+        IF Scene_Bypass = "" THEN Scene_Bypass = "none"
+        IF Scene_Bypass_2 = "" THEN Scene_Bypass_2 = "none"
+        IF Scene_Bypass_3 = "" THEN Scene_Bypass_3 = "none"
+        IF Scene_Bypass_4 = "" THEN Scene_Bypass_4 = "none"
+        IF Scene_Bypass_5 = "" THEN Scene_Bypass_5 = "none"
+        IF Scene_Bypass_6 = "" THEN Scene_Bypass_6 = "none"
+        IF Scene_Bypass_7 = "" THEN Scene_Bypass_7 = "none"
+        IF Scene_Bypass_8 = "" THEN Scene_Bypass_8 = "none"
+        IF Scene_Bypass_9 = "" THEN Scene_Bypass_9 = "none"
+
         IF SettingsMissing THEN
             verCheck$ = "Settings missing in 'config.ini' file, check 'readme.txt'..."
             iniFeatures = 1
@@ -3605,7 +3615,7 @@ SUB Timer01
 
     ELSE
 
-        IF Scene_Bypass <> "none" THEN
+        IF Scene_Bypass <> "none" OR Scene_Bypass_2 <> "none" OR Scene_Bypass_3 <> "none" OR Scene_Bypass_4 <> "none" OR Scene_Bypass_5 <> "none" OR Scene_Bypass_6 <> "none" OR Scene_Bypass_7 <> "none" OR Scene_Bypass_8 <> "none" OR Scene_Bypass_9 <> "none" THEN
 
             SELECT CASE NodejsFileSystem
                 CASE "0"
@@ -3649,7 +3659,7 @@ SUB Timer01
     PUT_Refresh = 0
 
     'Check if any of the 9 bypass scenes equal the current scene
-    IF Scene_Bypass <> "none" THEN
+    IF Scene_Bypass_Check <> "none" THEN 'In case user has scene name equals "none", which will break the program
         IF Scene_Bypass = Scene_Bypass_Check OR Scene_Bypass_2 = Scene_Bypass_Check OR Scene_Bypass_3 = Scene_Bypass_Check OR Scene_Bypass_4 = Scene_Bypass_Check OR Scene_Bypass_5 = Scene_Bypass_Check OR Scene_Bypass_6 = Scene_Bypass_Check OR Scene_Bypass_7 = Scene_Bypass_Check OR Scene_Bypass_8 = Scene_Bypass_Check OR Scene_Bypass_9 = Scene_Bypass_Check THEN
             SetCaption (Scene_CurrentLB), "[ PAUSE ]"
             IF Scene_Bypass_Log = 0 THEN
