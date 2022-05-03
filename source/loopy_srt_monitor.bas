@@ -183,6 +183,14 @@ COMMON SHARED NodejsFileSystem AS STRING
 COMMON SHARED Scene_Fail AS STRING
 COMMON SHARED Scene_Intro AS STRING
 COMMON SHARED Scene_Bypass AS STRING
+COMMON SHARED Scene_Bypass_2 AS STRING
+COMMON SHARED Scene_Bypass_3 AS STRING
+COMMON SHARED Scene_Bypass_4 AS STRING
+COMMON SHARED Scene_Bypass_5 AS STRING
+COMMON SHARED Scene_Bypass_6 AS STRING
+COMMON SHARED Scene_Bypass_7 AS STRING
+COMMON SHARED Scene_Bypass_8 AS STRING
+COMMON SHARED Scene_Bypass_9 AS STRING
 COMMON SHARED Scene_Bypass_Check AS STRING
 COMMON SHARED Scene_Bypass_Log AS INTEGER
 COMMON SHARED OBS_URL AS STRING
@@ -299,6 +307,14 @@ COMMON SHARED Scene_OK
 COMMON SHARED Scene_Fail
 COMMON SHARED Scene_Intro
 COMMON SHARED Scene_Bypass
+COMMON SHARED Scene_Bypass_2
+COMMON SHARED Scene_Bypass_3
+COMMON SHARED Scene_Bypass_4
+COMMON SHARED Scene_Bypass_5
+COMMON SHARED Scene_Bypass_6
+COMMON SHARED Scene_Bypass_7
+COMMON SHARED Scene_Bypass_8
+COMMON SHARED Scene_Bypass_9
 COMMON SHARED Scene_Bypass_Check
 COMMON SHARED Exe_OK
 COMMON SHARED Scene_Current$
@@ -587,10 +603,10 @@ SUB __UI_OnLoad
     Stream_Fail_Delay = 10
     Desktop_Width_Position = 160
     Desktop_Height_Position = 100
-    IF NOT _FILEEXISTS(config_main) THEN RefreshDisplayRequest = 1: Error_msg = "- Unable to read config file in the " + c34 + "Documents\Loopy SRT Monitor" + c34 + " folder" + CHR$(10) + "- File " + c34 + config_main + c34 + " cannot be accessed, check if it exists. (#1)": _DELAY 3
+    IF NOT _FILEEXISTS(config_main) THEN RefreshDisplayRequest = 1: Error_msg = "- Unable to read config file in the " + c34 + "Documents\Loopy SRT Monitor" + c34 + " folder" + CHR$(10) + "- File " + c34 + config_main + c34 + " cannot be accessed, check if it exists. (Error: #1)": _DELAY 3
     IF _FILEEXISTS(config_main) THEN
         OPEN config_main FOR INPUT AS #4 'Basic INI management, nothing fancy needed
-        IF EOF(4) THEN RefreshDisplayRequest = 1: Error_msg = "- Unable to read config file in the " + c34 + "Documents\Loopy SRT Monitor" + c34 + " folder" + CHR$(10) + "- File " + c34 + config_main + c34 + " cannot be accessed, check if it exists. (#10)": _DELAY 3
+        IF EOF(4) THEN RefreshDisplayRequest = 1: Error_msg = "- Unable to read config file in the " + c34 + "Documents\Loopy SRT Monitor" + c34 + " folder" + CHR$(10) + "- File " + c34 + config_main + c34 + " cannot be accessed, check if it exists. (Error: #10)": _DELAY 3
         DO
             IF NOT EOF(4) THEN LINE INPUT #4, file4$
             IF LEFT$(file4$, 1) <> "#" AND LEFT$(file4$, 1) <> ";" AND LEFT$(file4$, 1) <> "" THEN
@@ -608,6 +624,14 @@ SUB __UI_OnLoad
                     IF file4_var$ = "scenefail" THEN Scene_Fail = file4_val$
                     IF file4_var$ = "sceneintro" THEN Scene_Intro = file4_val$
                     IF file4_var$ = "scenebypass" THEN Scene_Bypass = file4_val$
+                    IF file4_var$ = "scenebypass2" THEN Scene_Bypass_2 = file4_val$
+                    IF file4_var$ = "scenebypass3" THEN Scene_Bypass_3 = file4_val$
+                    IF file4_var$ = "scenebypass4" THEN Scene_Bypass_4 = file4_val$
+                    IF file4_var$ = "scenebypass5" THEN Scene_Bypass_5 = file4_val$
+                    IF file4_var$ = "scenebypass6" THEN Scene_Bypass_6 = file4_val$
+                    IF file4_var$ = "scenebypass7" THEN Scene_Bypass_7 = file4_val$
+                    IF file4_var$ = "scenebypass8" THEN Scene_Bypass_8 = file4_val$
+                    IF file4_var$ = "scenebypass9" THEN Scene_Bypass_9 = file4_val$
                     IF file4_var$ = "mediasource1" THEN MediaSource1 = file4_val$
                     IF file4_var$ = "mediasource2" THEN MediaSource2 = file4_val$
                     IF file4_var$ = "websocketaddress" THEN OBS_URL = file4_val$
@@ -667,7 +691,7 @@ SUB __UI_OnLoad
         IF NodejsFileSystem <> "1" AND NodejsFileSystem <> "2" THEN NodejsFileSystem = "0"
 
         IF NodejsFileSystem = "1" THEN
-            'Console will appear regerdless
+            'Console will appear regardless
             $CONSOLE
             _CONSOLETITLE "Loopy SRT Monitor [Console]"
         ELSE
@@ -731,7 +755,7 @@ SUB __UI_OnLoad
 
     'ReturnPreviousScene slightly bugged when LBR enabled
     IF Scene_LBR_Enabled = "true" THEN SceneLBActive = 1
-    'Disable Scene #2 LBR is Scene2LBRDisabled is true
+    'Disable Scene #2 LBR if Scene2LBRDisabled is true
     IF Scene2_LBR_Disabled = "true" THEN Scene2LBInactive = 1
 
     SELECT CASE SceneLBActive
@@ -747,7 +771,7 @@ SUB __UI_OnLoad
             END IF
     END SELECT
 
-    IF NOT _DIREXISTS(nodejs_dir) THEN Error_msg = "- Folder " + c34 + nodejs_dir + c34 + " cannot be accessed, check if it exists. (#2)"
+    IF NOT _DIREXISTS(nodejs_dir) THEN Error_msg = "- Folder " + c34 + nodejs_dir + c34 + " cannot be accessed, check if it exists. (Error: #2)"
     'ErrorDisplay:
     IF Error_msg <> "" THEN
         _DELAY 1
@@ -1626,7 +1650,7 @@ SUB __UI_OnLoad
         END IF
     END IF
 
-    IF Scene_OK = "" OR Scene_Fail = "" OR Scene_Intro = "" OR OBS_URL = "" THEN RefreshDisplayRequest = 1: Error_msg = "- Variable/s for scenes empty, check if " + c34 + config_main + c34 + " exists. (#3)": _DELAY 3
+    IF Scene_OK = "" OR Scene_Fail = "" OR Scene_Intro = "" OR OBS_URL = "" THEN RefreshDisplayRequest = 1: Error_msg = "- Variable/s for scenes empty, check if " + c34 + config_main + c34 + " exists. (Error: #3)": _DELAY 3
 
     IF ConnectionsLog THEN statusConnectionsLogToFile ""
     IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Program launched"
@@ -2947,7 +2971,7 @@ SUB Timer01
             IF EOF(92) THEN
                 IF NodejsFileSystem = "2" THEN 'There is an increased chance an empty tmp file might be read at any time when the external node.js window is used
                     'RefreshDisplayRequest not used here
-                    Error_msg = "- Unable to read tmp file. (#11)"
+                    Error_msg = "- Unable to read tmp file. (Error: #11)"
                     Error_msg_2$ = ""
                     tmpFileError = 1 'LBR will be falsely triggered because of an empty tmp file unless corrected
                     tmpFileRestore = 1
@@ -2955,7 +2979,7 @@ SUB Timer01
                     GOTO LOF92
                 ELSE
                     RefreshDisplayRequest = 1
-                    Error_msg = "- Unable to read " + c34 + "SceneOK" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + CHR$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + CHR$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSockets options are correctly set. (#9)"
+                    Error_msg = "- Unable to read " + c34 + "SceneOK" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + CHR$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + CHR$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSockets options are correctly set. (Error: #9)"
                     _DELAY 3
                     GOTO LOF92
                 END IF
@@ -3082,7 +3106,7 @@ SUB Timer01
             IF EOF(92) THEN
                 IF NodejsFileSystem = "2" THEN 'There is an increased chance an empty tmp file might be read at any time when the external node.js window is used
                     'RefreshDisplayRequest not used here
-                    Error_msg = "- Unable to read tmp file. (#11)"
+                    Error_msg = "- Unable to read tmp file. (Error: #11)"
                     Error_msg_2$ = ""
                     tmpFileError = 1 'LBR will be falsely triggered because of an empty tmp file unless corrected
                     tmpFileRestore = 1
@@ -3090,7 +3114,7 @@ SUB Timer01
                     GOTO LOF922
                 ELSE
                     RefreshDisplayRequest = 1
-                    Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + CHR$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + CHR$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSockets options are correctly set. (#7)"
+                    Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + CHR$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + CHR$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSockets options are correctly set. (Error: #7)"
                     _DELAY 3
                     GOTO LOF922
                 END IF
@@ -3100,7 +3124,7 @@ SUB Timer01
             LINE INPUT #92, file92$
             MediaSource1TimeMS = VAL(file92$)
             MediaSource1Time = MediaSource1TimeMS / 1000
-            IF EOF(92) THEN RefreshDisplayRequest = 1: Error_msg = "- Unable to read " + c34 + "MediaSource2" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + CHR$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + CHR$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSockets options are correctly set. (#8)": _DELAY 3: GOTO LOF922
+            IF EOF(92) THEN RefreshDisplayRequest = 1: Error_msg = "- Unable to read " + c34 + "MediaSource2" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + CHR$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + CHR$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSockets options are correctly set. (Error: #8)": _DELAY 3: GOTO LOF922
             LINE INPUT #92, file92$
             MediaSource2TimeMS = VAL(file92$)
             MediaSource2Time = MediaSource2TimeMS / 1000
@@ -3355,12 +3379,13 @@ SUB Timer01
 
     TIMEms tIPPingOut#, 0
     IF VAL(tout) >= .3 THEN Control(tIPPingOutLB).ForeColor = RED_WARNING ELSE Control(tIPPingOutLB).ForeColor = GREEN_OK
-    IF ConnectionsLog AND VAL(tout) >= .1 AND CooldownLog = 0 THEN statusConnectionsLogToFile "[WARN] IP ping exceeding 100ms": CooldownLog = CooldownLogTotal
+    IF ConnectionsLog AND VAL(tout) >= .15 AND CooldownLog = 0 THEN statusConnectionsLogToFile "[WARN] IP ping exceeding 150ms": CooldownLog = CooldownLogTotal
     SetCaption (tIPPingOutLB), LTRIM$(STR$(VAL(tout) * 1000)) + " ms"
 
     TIMEms tPingOut#, 0
-    IF VAL(tout) >= .3 THEN Control(tPingOutLB).ForeColor = RED_WARNING ELSE Control(tPingOutLB).ForeColor = GREEN_OK
-    IF ConnectionsLog AND VAL(tout) >= .5 AND CooldownLog = 0 THEN statusConnectionsLogToFile "[WARN] WebSocket ping exceeding 500ms": CooldownLog = CooldownLogTotal
+    IF VAL(tout) >= .35 THEN Control(tPingOutLB).ForeColor = RED_WARNING ELSE Control(tPingOutLB).ForeColor = GREEN_OK
+    IF ConnectionsLog AND VAL(tout) >= .55 AND CooldownLog = 0 THEN statusConnectionsLogToFile "[WARN] WebSocket ping exceeding 550ms": CooldownLog = CooldownLogTotal
+    IF VAL(tout) >= .55 AND CooldownLog = 0 THEN SetCaption StatusLB, "WebSocket ping high, try another " + c34 + "NodejsFileSystem" + c34: updateDisplay = 1 'Display error if WebSocket ping is too high
     SetCaption (tPingOutLB), LTRIM$(STR$(VAL(tout) * 1000)) + " ms"
 
     IF srt_warmup = 1 THEN
@@ -3436,7 +3461,7 @@ SUB Timer01
         SetCaption (Stream_Fail_TimerLB), calc_srt$(Timer_Fail_Stream1, 1) + calc_srt_sec$
     END IF
 
-    IF Scene_OK = "" OR Scene_Fail = "" OR Scene_Intro = "" THEN RefreshDisplayRequest = 1: Error_msg = "- Variable/s for scenes empty, check if " + c34 + config_main + c34 + " exists. (#5)": _DELAY 3
+    IF Scene_OK = "" OR Scene_Fail = "" OR Scene_Intro = "" THEN RefreshDisplayRequest = 1: Error_msg = "- Variable/s for scenes empty, check if " + c34 + config_main + c34 + " exists. (Error: #5)": _DELAY 3
 
     IF Timer_Fail >= 1 AND Exe_OK = 1 AND streamsUp$ <> "0" THEN
         LoadImageMEM Control(PictureBox1), "tick_warning.png"
@@ -3533,55 +3558,14 @@ SUB Timer01
 
     'Get OBS scene -------------------------
     GetOBSScene:
-    IF Scene_Bypass <> Scene_Bypass_Check THEN
-        returnPreviousSceneTime = returnPreviousSceneTime + 1
-        IF returnPreviousSceneTime > 2 THEN returnPreviousSceneTime = 1 ELSE GOTO Exit_returnPreviousSceneCheck
-        returnFirstCheck = 1
+    'Check if any of the 9 bypass scenes equal the current scene
+    IF Scene_Bypass <> "none" THEN
+        IF Scene_Bypass <> Scene_Bypass_Check AND Scene_Bypass_2 <> Scene_Bypass_Check AND Scene_Bypass_3 <> Scene_Bypass_Check AND Scene_Bypass_4 <> Scene_Bypass_Check AND Scene_Bypass_5 <> Scene_Bypass_Check AND Scene_Bypass_6 <> Scene_Bypass_Check AND Scene_Bypass_7 <> Scene_Bypass_Check AND Scene_Bypass_8 <> Scene_Bypass_Check AND Scene_Bypass_9 <> Scene_Bypass_Check THEN
+            returnPreviousSceneTime = returnPreviousSceneTime + 1
+            IF returnPreviousSceneTime > 2 THEN returnPreviousSceneTime = 1 ELSE GOTO Exit_returnPreviousSceneCheck
+            returnFirstCheck = 1
 
-        'NodeJSFileSystem selection controls this
-        SELECT CASE NodejsFileSystem
-            CASE "0"
-                SHELL _HIDE CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
-                _DELAY 0.001
-            CASE "1"
-                _DEST _CONSOLE
-                IF FullScreen THEN
-                    SHELL _HIDE CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
-                ELSE
-                    SHELL CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
-                END IF
-                _DEST 0
-                _DELAY 0.001
-            CASE "2"
-                IF srt_warmup_file_scene = 0 THEN
-                    srt_warmup_file_scene = 1
-                    'No need to load another node.exe here because the .js file checks scene
-                    y& = SetWindowPos&(Myhwnd, -1, 0, 0, 0, 0, &H2 + &H1 + &H40)
-                    _DELAY 3.5
-                    y& = SetWindowPos&(Myhwnd, -2, 0, 0, 0, 0, &H2 + &H1 + &H40)
-                END IF
-        END SELECT
-
-        ON ERROR GOTO PUT_Fail
-        PUT_Refresh = 1
-        IF _FILEEXISTS(filePrevious) THEN
-            OPEN filePrevious FOR INPUT AS #96
-            'LOCK #96
-            DO UNTIL EOF(96)
-                IF LOF(96) = 0 THEN NoKill = 1: EXIT DO 'Overkill with EOF checking, but just being safe
-                IF EOF(96) THEN EXIT DO
-                LINE INPUT #96, file96$
-                Scene_Bypass_Check = file96$
-                IF streamsUp$ <> "0" THEN previousScene$ = file96$
-                previousSceneDisplay$ = file96$
-                EXIT DO 'Output to previousScene$
-            LOOP
-        END IF
-
-    ELSE
-
-        IF Scene_Bypass <> "none" THEN
-
+            'NodeJSFileSystem selection controls this
             SELECT CASE NodejsFileSystem
                 CASE "0"
                     SHELL _HIDE CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
@@ -3590,13 +3574,19 @@ SUB Timer01
                     _DEST _CONSOLE
                     IF FullScreen THEN
                         SHELL _HIDE CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
-                        _DELAY 0.001
                     ELSE
                         SHELL CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
-                        _DELAY 0.001
                     END IF
                     _DEST 0
                     _DELAY 0.001
+                CASE "2"
+                    IF srt_warmup_file_scene = 0 THEN
+                        srt_warmup_file_scene = 1
+                        'No need to load another node.exe here because the .js file checks scene
+                        y& = SetWindowPos&(Myhwnd, -1, 0, 0, 0, 0, &H2 + &H1 + &H40)
+                        _DELAY 3.5
+                        y& = SetWindowPos&(Myhwnd, -2, 0, 0, 0, 0, &H2 + &H1 + &H40)
+                    END IF
             END SELECT
 
             ON ERROR GOTO PUT_Fail
@@ -3609,12 +3599,50 @@ SUB Timer01
                     IF EOF(96) THEN EXIT DO
                     LINE INPUT #96, file96$
                     Scene_Bypass_Check = file96$
+                    IF streamsUp$ <> "0" THEN previousScene$ = file96$
+                    previousSceneDisplay$ = file96$
                     EXIT DO 'Output to previousScene$
                 LOOP
             END IF
 
-        END IF
+        ELSE
 
+            IF Scene_Bypass <> "none" THEN
+
+                SELECT CASE NodejsFileSystem
+                    CASE "0"
+                        SHELL _HIDE CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
+                        _DELAY 0.001
+                    CASE "1"
+                        _DEST _CONSOLE
+                        IF FullScreen THEN
+                            SHELL _HIDE CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
+                            _DELAY 0.001
+                        ELSE
+                            SHELL CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
+                            _DELAY 0.001
+                        END IF
+                        _DEST 0
+                        _DELAY 0.001
+                END SELECT
+
+                ON ERROR GOTO PUT_Fail
+                PUT_Refresh = 1
+                IF _FILEEXISTS(filePrevious) THEN
+                    OPEN filePrevious FOR INPUT AS #96
+                    'LOCK #96
+                    DO UNTIL EOF(96)
+                        IF LOF(96) = 0 THEN NoKill = 1: EXIT DO 'Overkill with EOF checking, but just being safe
+                        IF EOF(96) THEN EXIT DO
+                        LINE INPUT #96, file96$
+                        Scene_Bypass_Check = file96$
+                        EXIT DO 'Output to previousScene$
+                    LOOP
+                END IF
+
+            END IF
+
+        END IF
     END IF
     CLOSE #96
 
@@ -3623,15 +3651,18 @@ SUB Timer01
     ON ERROR GOTO 0
     PUT_Refresh = 0
 
-    IF Scene_Bypass = Scene_Bypass_Check THEN
-        SetCaption (Scene_CurrentLB), "[ PAUSE ]"
-        IF Scene_Bypass_Log = 0 THEN
-            Scene_Bypass_Log = 1
-            IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM PAUSED]"
-            IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Stream manually paused"
+    'Check if any of the 9 bypass scenes equal the current scene
+    IF Scene_Bypass <> "none" THEN
+        IF Scene_Bypass = Scene_Bypass_Check OR Scene_Bypass_2 = Scene_Bypass_Check OR Scene_Bypass_3 = Scene_Bypass_Check OR Scene_Bypass_4 = Scene_Bypass_Check OR Scene_Bypass_5 = Scene_Bypass_Check OR Scene_Bypass_6 = Scene_Bypass_Check OR Scene_Bypass_7 = Scene_Bypass_Check OR Scene_Bypass_8 = Scene_Bypass_Check OR Scene_Bypass_9 = Scene_Bypass_Check THEN
+            SetCaption (Scene_CurrentLB), "[ PAUSE ]"
+            IF Scene_Bypass_Log = 0 THEN
+                Scene_Bypass_Log = 1
+                IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM PAUSED]"
+                IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Stream manually paused"
+            END IF
+            _DELAY 1
+            GOTO GetOBSScene
         END IF
-        _DELAY 1
-        GOTO GetOBSScene
     END IF
 
     Exit_returnPreviousSceneCheck:
@@ -3784,7 +3815,7 @@ SUB Timer01
         END IF
     END IF
 
-    IF srt_warmup = 1 AND returnFirstCheck = 1 AND __MultiCameraSwitch = 1 AND previousSceneDisplay$ = "" THEN RefreshDisplayRequest = 1: Error_msg = "- Variable/s for scenes empty, check if OBS is open." + CHR$(10) + "- If OBS is open, check communication is available via Node.js.": Error_msg_2$ = "- If Node.js is installed, check OBS WebSockets options are correctly set. (#6)": _DELAY 3
+    IF srt_warmup = 1 AND returnFirstCheck = 1 AND __MultiCameraSwitch = 1 AND previousSceneDisplay$ = "" THEN RefreshDisplayRequest = 1: Error_msg = "- Variable/s for scenes empty, check if OBS is open." + CHR$(10) + "- If OBS is open, check communication is available via Node.js.": Error_msg_2$ = "- If Node.js is installed, check OBS WebSockets options are correctly set. (Error: #6)": _DELAY 3
 
     'temp2 variables
 
