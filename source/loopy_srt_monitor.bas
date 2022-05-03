@@ -3558,14 +3558,55 @@ SUB Timer01
 
     'Get OBS scene -------------------------
     GetOBSScene:
-    'Check if any of the 9 bypass scenes equal the current scene
-    IF Scene_Bypass <> "none" THEN
-        IF Scene_Bypass <> Scene_Bypass_Check AND Scene_Bypass_2 <> Scene_Bypass_Check AND Scene_Bypass_3 <> Scene_Bypass_Check AND Scene_Bypass_4 <> Scene_Bypass_Check AND Scene_Bypass_5 <> Scene_Bypass_Check AND Scene_Bypass_6 <> Scene_Bypass_Check AND Scene_Bypass_7 <> Scene_Bypass_Check AND Scene_Bypass_8 <> Scene_Bypass_Check AND Scene_Bypass_9 <> Scene_Bypass_Check THEN
-            returnPreviousSceneTime = returnPreviousSceneTime + 1
-            IF returnPreviousSceneTime > 2 THEN returnPreviousSceneTime = 1 ELSE GOTO Exit_returnPreviousSceneCheck
-            returnFirstCheck = 1
+    IF Scene_Bypass <> Scene_Bypass_Check AND Scene_Bypass_2 <> Scene_Bypass_Check AND Scene_Bypass_3 <> Scene_Bypass_Check AND Scene_Bypass_4 <> Scene_Bypass_Check AND Scene_Bypass_5 <> Scene_Bypass_Check AND Scene_Bypass_6 <> Scene_Bypass_Check AND Scene_Bypass_7 <> Scene_Bypass_Check AND Scene_Bypass_8 <> Scene_Bypass_Check AND Scene_Bypass_9 <> Scene_Bypass_Check THEN
+        returnPreviousSceneTime = returnPreviousSceneTime + 1
+        IF returnPreviousSceneTime > 2 THEN returnPreviousSceneTime = 1 ELSE GOTO Exit_returnPreviousSceneCheck
+        returnFirstCheck = 1
 
-            'NodeJSFileSystem selection controls this
+        'NodeJSFileSystem selection controls this
+        SELECT CASE NodejsFileSystem
+            CASE "0"
+                SHELL _HIDE CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
+                _DELAY 0.001
+            CASE "1"
+                _DEST _CONSOLE
+                IF FullScreen THEN
+                    SHELL _HIDE CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
+                ELSE
+                    SHELL CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
+                END IF
+                _DEST 0
+                _DELAY 0.001
+            CASE "2"
+                IF srt_warmup_file_scene = 0 THEN
+                    srt_warmup_file_scene = 1
+                    'No need to load another node.exe here because the .js file checks scene
+                    y& = SetWindowPos&(Myhwnd, -1, 0, 0, 0, 0, &H2 + &H1 + &H40)
+                    _DELAY 3.5
+                    y& = SetWindowPos&(Myhwnd, -2, 0, 0, 0, 0, &H2 + &H1 + &H40)
+                END IF
+        END SELECT
+
+        ON ERROR GOTO PUT_Fail
+        PUT_Refresh = 1
+        IF _FILEEXISTS(filePrevious) THEN
+            OPEN filePrevious FOR INPUT AS #96
+            'LOCK #96
+            DO UNTIL EOF(96)
+                IF LOF(96) = 0 THEN NoKill = 1: EXIT DO 'Overkill with EOF checking, but just being safe
+                IF EOF(96) THEN EXIT DO
+                LINE INPUT #96, file96$
+                Scene_Bypass_Check = file96$
+                IF streamsUp$ <> "0" THEN previousScene$ = file96$
+                previousSceneDisplay$ = file96$
+                EXIT DO 'Output to previousScene$
+            LOOP
+        END IF
+
+    ELSE
+
+        IF Scene_Bypass <> "none" THEN
+
             SELECT CASE NodejsFileSystem
                 CASE "0"
                     SHELL _HIDE CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
@@ -3574,19 +3615,13 @@ SUB Timer01
                     _DEST _CONSOLE
                     IF FullScreen THEN
                         SHELL _HIDE CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
+                        _DELAY 0.001
                     ELSE
                         SHELL CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
+                        _DELAY 0.001
                     END IF
                     _DEST 0
                     _DELAY 0.001
-                CASE "2"
-                    IF srt_warmup_file_scene = 0 THEN
-                        srt_warmup_file_scene = 1
-                        'No need to load another node.exe here because the .js file checks scene
-                        y& = SetWindowPos&(Myhwnd, -1, 0, 0, 0, 0, &H2 + &H1 + &H40)
-                        _DELAY 3.5
-                        y& = SetWindowPos&(Myhwnd, -2, 0, 0, 0, 0, &H2 + &H1 + &H40)
-                    END IF
             END SELECT
 
             ON ERROR GOTO PUT_Fail
@@ -3599,50 +3634,12 @@ SUB Timer01
                     IF EOF(96) THEN EXIT DO
                     LINE INPUT #96, file96$
                     Scene_Bypass_Check = file96$
-                    IF streamsUp$ <> "0" THEN previousScene$ = file96$
-                    previousSceneDisplay$ = file96$
                     EXIT DO 'Output to previousScene$
                 LOOP
             END IF
 
-        ELSE
-
-            IF Scene_Bypass <> "none" THEN
-
-                SELECT CASE NodejsFileSystem
-                    CASE "0"
-                        SHELL _HIDE CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
-                        _DELAY 0.001
-                    CASE "1"
-                        _DEST _CONSOLE
-                        IF FullScreen THEN
-                            SHELL _HIDE CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
-                            _DELAY 0.001
-                        ELSE
-                            SHELL CMD_EXE + c34 + obs_get_scene + c34 + " > " + c34 + filePrevious + c34
-                            _DELAY 0.001
-                        END IF
-                        _DEST 0
-                        _DELAY 0.001
-                END SELECT
-
-                ON ERROR GOTO PUT_Fail
-                PUT_Refresh = 1
-                IF _FILEEXISTS(filePrevious) THEN
-                    OPEN filePrevious FOR INPUT AS #96
-                    'LOCK #96
-                    DO UNTIL EOF(96)
-                        IF LOF(96) = 0 THEN NoKill = 1: EXIT DO 'Overkill with EOF checking, but just being safe
-                        IF EOF(96) THEN EXIT DO
-                        LINE INPUT #96, file96$
-                        Scene_Bypass_Check = file96$
-                        EXIT DO 'Output to previousScene$
-                    LOOP
-                END IF
-
-            END IF
-
         END IF
+
     END IF
     CLOSE #96
 
