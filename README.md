@@ -11,11 +11,13 @@ AllowResize=false
 
 The 'readme.txt' file explains in depth how these function.
 
-- Added support for OBS WebSocket 5.x.x
+- Added support for OBS WebSocket 5.0.0
 - Added 'SceneLBRDelay' configuration - see readme.txt for instructions
 - Added 'AllowResize' configuration - see readme.txt for instructions
+- Released version for Linux
 
 Assets
 ---
 
 📁 [loopy_srt_monitor_v0.9.6_beta_setup.exe](https://github.com/loopy750/SRT-Stats-Monitor/raw/beta/loopy_srt_monitor_v0.9.6_beta_setup.exe)
+🐧 [loopy_srt_monitor_v0.9.6_beta_linux.exe](https://github.com/loopy750/SRT-Stats-Monitor/raw/beta/loopy_srt_monitor_v0.9.6_beta_linux.tar.xz)
