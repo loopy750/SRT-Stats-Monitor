@@ -20,4 +20,4 @@ Assets
 ---
 
 📁 [loopy_srt_monitor_v0.9.6_beta_setup.exe](https://github.com/loopy750/SRT-Stats-Monitor/raw/beta/loopy_srt_monitor_v0.9.6_beta_setup.exe)   
-🐧 [loopy_srt_monitor_v0.9.6_beta_linux.exe](https://github.com/loopy750/SRT-Stats-Monitor/raw/beta/loopy_srt_monitor_v0.9.6_beta_linux.tar.xz)
+🐧 [loopy_srt_monitor_v0.9.6_beta_linux.tar.xz](https://github.com/loopy750/SRT-Stats-Monitor/raw/beta/loopy_srt_monitor_v0.9.6_beta_linux.tar.xz)
