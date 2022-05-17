@@ -174,6 +174,14 @@ COMMON SHARED LBR_Delay_Total AS INTEGER
 COMMON SHARED Scene_LBR_Delay_Total AS STRING
 COMMON SHARED Allow_Resize AS STRING
 
+'RIST mode
+COMMON SHARED RIST_Fail_Mode_1 AS STRING
+COMMON SHARED RIST_Fail_Mode_2 AS STRING
+COMMON SHARED RIST_MediaSource1Time AS DOUBLE
+COMMON SHARED RIST_MediaSource1Time_Count AS DOUBLE
+COMMON SHARED RIST_MediaSource2Time AS DOUBLE
+COMMON SHARED RIST_MediaSource2Time_Count AS DOUBLE
+
 COMMON SHARED image_data() AS _UNSIGNED LONG
 COMMON SHARED Scene_OK AS STRING
 COMMON SHARED Scene_LBR AS STRING
@@ -226,6 +234,7 @@ COMMON SHARED fileCheckVersion AS STRING
 
 'Forward slash file location
 COMMON SHARED s AS STRING
+COMMON SHARED sr AS STRING
 COMMON SHARED sreplace AS STRING
 COMMON SHARED new AS STRING
 COMMON SHARED strReplace AS STRING
@@ -335,6 +344,14 @@ COMMON SHARED Timer_Fail_First_Stream
 COMMON SHARED Timer_Fail_First_Stream2
 COMMON SHARED td_display#
 
+'RIST mode
+COMMON SHARED RIST_Fail_Mode_1
+COMMON SHARED RIST_Fail_Mode_2
+COMMON SHARED RIST_MediaSource1Time
+COMMON SHARED RIST_MediaSource1Time_Count
+COMMON SHARED RIST_MediaSource2Time
+COMMON SHARED RIST_MediaSource2Time_Count
+
 'UNDOCUMENTED
 COMMON SHARED MediaSourceTime AS STRING
 COMMON SHARED CooldownTotal AS STRING
@@ -345,24 +362,8 @@ COMMON SHARED file4_var AS STRING
 COMMON SHARED file4_val AS STRING
 COMMON SHARED BSOD AS LONG
 COMMON SHARED AlwaysOnTop AS INTEGER
-COMMON SHARED About AS INTEGER
 COMMON SHARED Answer AS INTEGER
-COMMON SHARED Pt AS LONG
-COMMON SHARED x2 AS INTEGER
-COMMON SHARED Px AS INTEGER
-COMMON SHARED Py AS INTEGER
 COMMON SHARED NULL AS INTEGER
-COMMON SHARED xHeader1 AS STRING
-COMMON SHARED xHeader2 AS STRING
-COMMON SHARED xHeader3 AS STRING
-COMMON SHARED xHeader4 AS STRING
-COMMON SHARED xHeader5 AS STRING
-COMMON SHARED xHeader6 AS STRING
-COMMON SHARED xHeader7 AS STRING
-COMMON SHARED xHeader8 AS STRING
-COMMON SHARED xHeader9 AS STRING
-COMMON SHARED x AS STRING
-COMMON SHARED l AS INTEGER
 
 'OnLoad
 COMMON SHARED config_dir
@@ -418,9 +419,20 @@ COMMON SHARED RED_WARNING AS _UNSIGNED LONG
 COMMON SHARED RED_FAIL AS _UNSIGNED LONG
 COMMON SHARED GREEN_OK AS _UNSIGNED LONG
 
+'Linux only
+COMMON SHARED DIR_documents AS STRING
+COMMON SHARED OS AS STRING
+
 'Always on top
 DIM SHARED Myhwnd AS LONG
+'Windows only
 DIM SHARED y&
+
+'Linux only
+IF MID$(_OS$, 2, 5) = "LINUX" THEN OS = "LINUX" ELSE OS = "WINDOWS"
+
+'Set OS variables
+IF OS = "LINUX" THEN s = "/" ELSE s = "\"
 
 RED_WARNING = _RGB32(205, 64, 32)
 RED_FAIL = _RGB32(255, 32, 16)
@@ -459,11 +471,12 @@ SUB __UI_BeforeInit
     END IF
     Ver = "0.9.5"
     VerBeta = "0.9.6"
-    VerDate = "12/21"
+    VerDate = "05/22"
 END SUB
 
 SUB __UI_OnLoad
     'Always on top : ------------------------------------------------------------------
+    'Windows only
     DECLARE DYNAMIC LIBRARY "user32"
         FUNCTION SetWindowPos& (BYVAL hWnd AS LONG, BYVAL hWndInsertAfter AS _OFFSET, BYVAL X AS INTEGER, BYVAL Y AS INTEGER, BYVAL cx AS INTEGER, BYVAL cy AS INTEGER, BYVAL uFlags AS _OFFSET)
     END DECLARE
@@ -513,36 +526,47 @@ SUB __UI_OnLoad
     BG = _RGB(32, 32, 32)
     Exe_OK = 1
 
+    'Linux only
+    DIR_documents = _CWD$
+
     'File variables
-    config_dir = _DIR$("documents") + "Loopy SRT Monitor"
-    nodejs_dir = _DIR$("documents") + "Loopy SRT Monitor\js"
-    temp_dir = _DIR$("documents") + "Loopy SRT Monitor\Temp"
-    config_main = config_dir + "\config.ini"
-    obs_change_scene = config_dir + "\js\obs_change_scene.mjs" '5.x.x
-    obs_get_scene = config_dir + "\js\obs_get_scene.mjs"
-    obs_get_scene_list = config_dir + "\js\obs_get_scene_list.mjs"
-    obs_get_media1 = config_dir + "\js\obs_get_media1.mjs"
-    obs_get_media1_scene = config_dir + "\js\obs_get_media1_scene.mjs"
-    obs_get_media2 = config_dir + "\js\obs_get_media2.mjs"
-    obs_get_media2_scene = config_dir + "\js\obs_get_media2_scene.mjs"
-    obs_check_websocket = config_dir + "\js\obs_check_websocket.mjs"
-    filePrevious = temp_dir + "\returnPreviousScene.tmp"
-    filePrevious_ms = temp_dir + "\returnPreviousSource.tmp"
-    fileCheckVersion = temp_dir + "\checkversion.txt"
-    outputBitrateFile = temp_dir + "\outputBitrate.txt"
-    outputStatusFile = temp_dir + "\outputStatus.txt"
-    outputConnectionsLogFile = temp_dir + "\outputConnections.log"
-    outputLB1 = config_dir + "\outputLB1."
-    outputLB2 = config_dir + "\outputLB2."
-    outputLB_Temp1 = config_dir + "\_outputLB1."
-    outputLB_Temp2 = config_dir + "\_outputLB2."
+    'Set OS variables
+    SELECT CASE OS
+        CASE "WINDOWS"
+            config_dir = _DIR$("documents") + "Loopy SRT Monitor"
+            nodejs_dir = _DIR$("documents") + "Loopy SRT Monitor\js"
+            temp_dir = _DIR$("documents") + "Loopy SRT Monitor\Temp"
+        CASE "LINUX"
+            config_dir = DIR_documents + ""
+            nodejs_dir = DIR_documents + "/js"
+            temp_dir = DIR_documents + "/Temp"
+    END SELECT
+    config_main = config_dir + s + "config.ini"
+    obs_change_scene = config_dir + s + "js" + s + "obs_change_scene.mjs" '5.x.x
+    obs_get_scene = config_dir + s + "js" + s + "obs_get_scene.mjs"
+    obs_get_scene_list = config_dir + s + "js" + s + "obs_get_scene_list.mjs"
+    obs_get_media1 = config_dir + s + "js" + s + "obs_get_media1.mjs"
+    obs_get_media1_scene = config_dir + s + "js" + s + "obs_get_media1_scene.mjs"
+    obs_get_media2 = config_dir + s + "js" + s + "obs_get_media2.mjs"
+    obs_get_media2_scene = config_dir + s + "js" + s + "obs_get_media2_scene.mjs"
+    obs_check_websocket = config_dir + s + "js" + s + "obs_check_websocket.mjs"
+    filePrevious = temp_dir + s + "returnPreviousScene.tmp"
+    filePrevious_ms = temp_dir + s + "returnPreviousSource.tmp"
+    fileCheckVersion = temp_dir + s + "checkversion.txt"
+    outputBitrateFile = temp_dir + s + "outputBitrate.txt"
+    outputStatusFile = temp_dir + s + "outputStatus.txt"
+    outputConnectionsLogFile = temp_dir + s + "outputConnections.log"
+    outputLB1 = config_dir + s + "outputLB1."
+    outputLB2 = config_dir + s + "outputLB2."
+    outputLB_Temp1 = config_dir + s + "_outputLB1."
+    outputLB_Temp2 = config_dir + s + "_outputLB2."
 
     'Convert forward slash to backslash for filePrevious_fs
     sreplace$ = "\"
     new$ = "/"
-    s$ = filePrevious
-    strReplace$ = s$
-    p = INSTR(s$, sreplace$)
+    sr$ = filePrevious
+    strReplace$ = sr$
+    p = INSTR(sr$, sreplace$)
     WHILE p
         strReplace$ = MID$(strReplace$, 1, p - 1) + new$ + MID$(strReplace$, p + LEN(sreplace$))
         p = INSTR(p + LEN(new$), strReplace$, sreplace$)
@@ -550,9 +574,9 @@ SUB __UI_OnLoad
     filePrevious_fs = strReplace$
 
     'Convert forward slash to backslash for filePrevious_ms_fs
-    s$ = filePrevious_ms
-    strReplace$ = s$
-    p = INSTR(s$, sreplace$)
+    sr$ = filePrevious_ms
+    strReplace$ = sr$
+    p = INSTR(sr$, sreplace$)
     WHILE p
         strReplace$ = MID$(strReplace$, 1, p - 1) + new$ + MID$(strReplace$, p + LEN(sreplace$))
         p = INSTR(p + LEN(new$), strReplace$, sreplace$)
@@ -572,7 +596,13 @@ SUB __UI_OnLoad
 
     'Set font for error screen
     ON ERROR GOTO PUT_Fail
-    _FONT _LOADFONT(ENVIRON$("SYSTEMROOT") + "\fonts\seguisb.ttf", 12)
+    'Set OS variables
+    SELECT CASE OS
+        CASE "WINDOWS"
+            IF _FILEEXISTS(ENVIRON$("SYSTEMROOT") + "\fonts\seguisb.ttf") THEN _FONT _LOADFONT(ENVIRON$("SYSTEMROOT") + "\fonts\seguisb.ttf", 12)
+        CASE "LINUX"
+            IF _FILEEXISTS("seguisb.ttf") THEN _FONT _LOADFONT("seguisb.ttf", 12)
+    END SELECT
     ON ERROR GOTO 0
 
     'Test #1
@@ -593,10 +623,19 @@ SUB __UI_OnLoad
 
     'Test #3
     IF ErrorTestRunOnce = 1 THEN
-        IF NOT _DIREXISTS(nodejs_dir + "\node_modules\obs-websocket-js") AND NOT _DIREXISTS(nodejs_dir + "\obs-websocket-js") THEN
-            Error_msg = "- " + c34 + "obs-websocket-js" + c34 + " not found, check if it exists in " + c34 + "\js\node_modules\obs-websocket-js" + c34 + " folder." + CHR$(10) + "- Install node.js from https://nodejs.org/ and then run install.cmd in the settings folder."
-            ErrorDisplay (3)
-        END IF
+        'Set OS variables
+        SELECT CASE OS
+            CASE "WINDOWS"
+                IF NOT _DIREXISTS(nodejs_dir + "\node_modules\obs-websocket-js") AND NOT _DIREXISTS(nodejs_dir + "\obs-websocket-js") THEN
+                    Error_msg = "- " + c34 + "obs-websocket-js" + c34 + " not found, check if it exists in " + c34 + "\js\node_modules\obs-websocket-js" + c34 + " folder." + CHR$(10) + "- Install node.js from https://nodejs.org/ and then run install.cmd in the settings folder."
+                    ErrorDisplay (3)
+                END IF
+            CASE "LINUX"
+                IF NOT _DIREXISTS(nodejs_dir + "/node_modules/obs-websocket-js") AND NOT _DIREXISTS(nodejs_dir + "/obs-websocket-js") THEN
+                    Error_msg = "- " + c34 + "obs-websocket-js" + c34 + " not found, check if it exists in " + c34 + "/js/node_modules/obs-websocket-js" + c34 + " folder." + CHR$(10) + "- Install node.js from Terminal."
+                    ErrorDisplay (3)
+                END IF
+        END SELECT
     END IF
 
     'Check config
@@ -642,6 +681,8 @@ SUB __UI_OnLoad
                     IF file4_var$ = "scenelbrdelay" THEN Scene_LBR_Delay_Total = file4_val$
                     IF file4_var$ = "scene2lbrdisabled" THEN Scene2_LBR_Disabled = file4_val$
                     IF file4_var$ = "nodejsfilesystem" THEN NodejsFileSystem = file4_val$
+                    IF file4_var$ = "ristfailmode1" THEN RIST_Fail_Mode_1 = file4_val$ 'RIST mode
+                    IF file4_var$ = "ristfailmode2" THEN RIST_Fail_Mode_2 = file4_val$ 'RIST mode - Source 2
                     IF file4_var$ = "allowresize" THEN Allow_Resize = file4_val$
                     IF file4_var$ = "checkupdateonstartup" THEN CheckUpdateOnStartup = file4_val$
                     IF file4_var$ = "multicameraswitch" THEN MultiCameraSwitch$ = file4_val$
@@ -673,6 +714,8 @@ SUB __UI_OnLoad
             CASE Scene_LBR_Delay_Total: SettingsMissing = 1
             CASE Scene2_LBR_Disabled: SettingsMissing = 1
             CASE NodejsFileSystem: SettingsMissing = 1
+            CASE RIST_Fail_Mode_1: SettingsMissing = 1 'RIST mode
+            CASE RIST_Fail_Mode_2: SettingsMissing = 1 'RIST mode - Source 2
             CASE Allow_Resize: SettingsMissing = 1
             CASE CheckUpdateOnStartup: SettingsMissing = 1
             CASE MultiCameraSwitch$: SettingsMissing = 1
@@ -728,8 +771,15 @@ SUB __UI_OnLoad
         IF CooldownLogTotal < 3 THEN CooldownLogTotal = 3
         IF CooldownLogTotal > 15 THEN CooldownLogTotal = 15
 
-        CMD_EXE = "%ComSpec% /C node.exe "
+        'Set OS variables
+        SELECT CASE OS
+            CASE "WINDOWS"
+                CMD_EXE = "%ComSpec% /C node.exe "
+            CASE "LINUX"
+                CMD_EXE = "node "
+        END SELECT
 
+        ''''''''''''''''''''''''''
         'NEW
         '---
         'SceneLBRDelay=0
@@ -740,7 +790,7 @@ SUB __UI_OnLoad
         'MediaSourceTime=800
         'CooldownTotal=8
         'ForceDebugOnStartup=false
-        '''''''''''''
+        ''''''''''''''''''''''''''
 
         CooldownLog = CooldownLogTotal
 
@@ -817,14 +867,15 @@ SUB __UI_OnLoad
     shell_nodejs_2 = ""
 
     '4.x.x
-    obs_change_scene = config_dir + "\js\obs_change_scene.js"
-    obs_get_scene = config_dir + "\js\obs_get_scene.js"
-    obs_get_scene_list = config_dir + "\js\obs_get_scene_list.js"
-    obs_get_media1 = config_dir + "\js\obs_get_media1.js"
-    obs_get_media1_scene = config_dir + "\js\obs_get_media1_scene.js"
-    obs_get_media2 = config_dir + "\js\obs_get_media2.js"
-    obs_get_media2_scene = config_dir + "\js\obs_get_media2_scene.js"
-    obs_check_websocket = config_dir + "\js\obs_check_websocket.js"
+    'Set OS variables
+    obs_change_scene = config_dir + s + "js" + s + "obs_change_scene.js"
+    obs_get_scene = config_dir + s + "js" + s + "obs_get_scene.js"
+    obs_get_scene_list = config_dir + s + "js" + s + "obs_get_scene_list.js"
+    obs_get_media1 = config_dir + s + "js" + s + "obs_get_media1.js"
+    obs_get_media1_scene = config_dir + s + "js" + s + "obs_get_media1_scene.js"
+    obs_get_media2 = config_dir + s + "js" + s + "obs_get_media2.js"
+    obs_get_media2_scene = config_dir + s + "js" + s + "obs_get_media2_scene.js"
+    obs_check_websocket = config_dir + s + "js" + s + "obs_check_websocket.js"
 
     '4.x.x
     OPEN obs_change_scene FOR OUTPUT AS #64
@@ -1107,14 +1158,15 @@ SUB __UI_OnLoad
     CLOSE #88
 
     '5.x.x
-    obs_change_scene = config_dir + "\js\obs_change_scene.mjs"
-    obs_get_scene = config_dir + "\js\obs_get_scene.mjs"
-    obs_get_scene_list = config_dir + "\js\obs_get_scene_list.mjs"
-    obs_get_media1 = config_dir + "\js\obs_get_media1.mjs"
-    obs_get_media1_scene = config_dir + "\js\obs_get_media1_scene.mjs"
-    obs_get_media2 = config_dir + "\js\obs_get_media2.mjs"
-    obs_get_media2_scene = config_dir + "\js\obs_get_media2_scene.mjs"
-    obs_check_websocket = config_dir + "\js\obs_check_websocket.mjs"
+    'Set OS variables
+    obs_change_scene = config_dir + s + "js" + s + "obs_change_scene.mjs"
+    obs_get_scene = config_dir + s + "js" + s + "obs_get_scene.mjs"
+    obs_get_scene_list = config_dir + s + "js" + s + "obs_get_scene_list.mjs"
+    obs_get_media1 = config_dir + s + "js" + s + "obs_get_media1.mjs"
+    obs_get_media1_scene = config_dir + s + "js" + s + "obs_get_media1_scene.mjs"
+    obs_get_media2 = config_dir + s + "js" + s + "obs_get_media2.mjs"
+    obs_get_media2_scene = config_dir + s + "js" + s + "obs_get_media2_scene.mjs"
+    obs_check_websocket = config_dir + s + "js" + s + "obs_check_websocket.mjs"
 
     '5.x.x
     OPEN obs_change_scene FOR OUTPUT AS #164
@@ -1384,7 +1436,13 @@ SUB __UI_OnLoad
         file224$ = ""
         updateResult$ = ""
         _DELAY 0.25
-        SHELL _HIDE "%ComSpec% /C curl -H " + c34 + "Cache-Control: no-cache" + c34 + " https://raw.githubusercontent.com/loopy750/SRT-Stats-Monitor-Version/master/checkversion.txt > " + c34 + fileCheckVersion + c34 + ""
+        'Set OS variables
+        SELECT CASE OS
+            CASE "WINDOWS"
+                SHELL _HIDE "%ComSpec% /C curl -H " + c34 + "Cache-Control: no-cache" + c34 + " https://raw.githubusercontent.com/loopy750/SRT-Stats-Monitor-Version/master/checkversion.txt > " + c34 + fileCheckVersion + c34 + ""
+            CASE "LINUX"
+                SHELL _HIDE "curl -H " + c34 + "Cache-Control: no-cache" + c34 + " https://raw.githubusercontent.com/loopy750/SRT-Stats-Monitor-Version/master/checkversion.txt > " + c34 + fileCheckVersion + c34 + ""
+        END SELECT
         _DELAY 0.25
         IF _FILEEXISTS(fileCheckVersion) THEN
             OPEN fileCheckVersion FOR INPUT AS #224
@@ -1431,8 +1489,9 @@ SUB __UI_OnLoad
         websocketVersion = 5
 
         'File variables for 5.x.x
-        obs_check_websocket = config_dir + "\js\obs_check_websocket.mjs"
-        obs_change_scene = config_dir + "\js\obs_change_scene.mjs"
+        'Set OS variables
+        obs_check_websocket = config_dir + s + "js" + s + "obs_check_websocket.mjs"
+        obs_change_scene = config_dir + s + "js" + s + "obs_change_scene.mjs"
         shell_nodejs_1 = CMD_EXE + c34 + obs_change_scene + c34 + " "
         shell_nodejs_2 = ""
 
@@ -1472,8 +1531,9 @@ SUB __UI_OnLoad
             websocketVersion = 4
 
             'File variables for 4.x.x
-            obs_check_websocket = config_dir + "\js\obs_check_websocket.js"
-            obs_change_scene = config_dir + "\js\obs_change_scene.js"
+            'Set OS variables
+            obs_check_websocket = config_dir + s + "js" + s + "obs_check_websocket.js"
+            obs_change_scene = config_dir + s + "js" + s + "obs_change_scene.js"
             shell_nodejs_1 = CMD_EXE + c34 + obs_change_scene + c34 + " "
             shell_nodejs_2 = ""
 
@@ -1513,26 +1573,27 @@ SUB __UI_OnLoad
         END IF
         checkWebSocketVersion$ = LEFT$(checkWebSocketVersion$, 20)
         SELECT CASE websocketVersion
+            'Set OS variables
             CASE 5
                 '5.x.x
-                obs_change_scene = config_dir + "\js\obs_change_scene.mjs"
-                obs_get_scene = config_dir + "\js\obs_get_scene.mjs"
-                obs_get_scene_list = config_dir + "\js\obs_get_scene_list.mjs"
-                obs_get_media1 = config_dir + "\js\obs_get_media1.mjs"
-                obs_get_media1_scene = config_dir + "\js\obs_get_media1_scene.mjs"
-                obs_get_media2 = config_dir + "\js\obs_get_media2.mjs"
-                obs_get_media2_scene = config_dir + "\js\obs_get_media2_scene.mjs"
-                obs_check_websocket = config_dir + "\js\obs_check_websocket.mjs"
+                obs_change_scene = config_dir + s + "js" + s + "obs_change_scene.mjs"
+                obs_get_scene = config_dir + s + "js" + s + "obs_get_scene.mjs"
+                obs_get_scene_list = config_dir + s + "js" + s + "obs_get_scene_list.mjs"
+                obs_get_media1 = config_dir + s + "js" + s + "obs_get_media1.mjs"
+                obs_get_media1_scene = config_dir + s + "js" + s + "obs_get_media1_scene.mjs"
+                obs_get_media2 = config_dir + s + "js" + s + "obs_get_media2.mjs"
+                obs_get_media2_scene = config_dir + s + "js" + s + "obs_get_media2_scene.mjs"
+                obs_check_websocket = config_dir + s + "js" + s + "obs_check_websocket.mjs"
             CASE 4
                 '4.x.x
-                obs_change_scene = config_dir + "\js\obs_change_scene.js"
-                obs_get_scene = config_dir + "\js\obs_get_scene.js"
-                obs_get_scene_list = config_dir + "\js\obs_get_scene_list.js"
-                obs_get_media1 = config_dir + "\js\obs_get_media1.js"
-                obs_get_media1_scene = config_dir + "\js\obs_get_media1_scene.js"
-                obs_get_media2 = config_dir + "\js\obs_get_media2.js"
-                obs_get_media2_scene = config_dir + "\js\obs_get_media2_scene.js"
-                obs_check_websocket = config_dir + "\js\obs_check_websocket.js"
+                obs_change_scene = config_dir + s + "js" + s + "obs_change_scene.js"
+                obs_get_scene = config_dir + s + "js" + s + "obs_get_scene.js"
+                obs_get_scene_list = config_dir + s + "js" + s + "obs_get_scene_list.js"
+                obs_get_media1 = config_dir + s + "js" + s + "obs_get_media1.js"
+                obs_get_media1_scene = config_dir + s + "js" + s + "obs_get_media1_scene.js"
+                obs_get_media2 = config_dir + s + "js" + s + "obs_get_media2.js"
+                obs_get_media2_scene = config_dir + s + "js" + s + "obs_get_media2_scene.js"
+                obs_check_websocket = config_dir + s + "js" + s + "obs_check_websocket.js"
         END SELECT
     END IF
 
@@ -1963,10 +2024,12 @@ SUB __UI_Click (id AS LONG)
         CASE OptionsMenuAlwaysOnTop
             IF AlwaysOnTop <> 1 THEN
                 AlwaysOnTop = 1
+                'Windows only
                 y& = SetWindowPos&(Myhwnd, -1, 0, 0, 0, 0, &H2 + &H1 + &H40)
                 SetRadioButtonValue OptionsMenuAlwaysOnTop
             ELSE
                 AlwaysOnTop = 0
+                'Windows only
                 y& = SetWindowPos&(Myhwnd, -2, 0, 0, 0, 0, &H2 + &H1 + &H40)
                 SetRadioButtonValue OptionsMenuAlwaysOnTop
             END IF
@@ -1986,7 +2049,13 @@ SUB __UI_Click (id AS LONG)
             END IF
 
         CASE HelpMenuVisitWebsite
-            SHELL _HIDE _DONTWAIT "%ComSpec% /C START " + c34 + c34 + " /B https://github.com/loopy750/SRT-Stats-Monitor"
+            'Set OS variables
+            SELECT CASE OS
+                CASE "WINDOWS"
+                    SHELL _HIDE _DONTWAIT "%ComSpec% /C START " + c34 + c34 + " /B https://github.com/loopy750/SRT-Stats-Monitor"
+                CASE "LINUX"
+                    SHELL _HIDE _DONTWAIT "xdg-open https://github.com/loopy750/SRT-Stats-Monitor"
+            END SELECT
 
         CASE HelpMenuCheckForUpdates
             verCheck$ = "Checking for new version..."
@@ -1994,7 +2063,13 @@ SUB __UI_Click (id AS LONG)
             file224$ = ""
             updateResult$ = ""
             _DELAY 0.25
-            SHELL _HIDE "%ComSpec% /C curl -H " + c34 + "Cache-Control: no-cache" + c34 + " https://raw.githubusercontent.com/loopy750/SRT-Stats-Monitor-Version/master/checkversion.txt > " + c34 + fileCheckVersion + c34 + ""
+            'Set OS variables
+            SELECT CASE OS
+                CASE "WINDOWS"
+                    SHELL _HIDE "%ComSpec% /C curl -H " + c34 + "Cache-Control: no-cache" + c34 + " https://raw.githubusercontent.com/loopy750/SRT-Stats-Monitor-Version/master/checkversion.txt > " + c34 + fileCheckVersion + c34 + ""
+                CASE "LINUX"
+                    SHELL _HIDE "curl -H " + c34 + "Cache-Control: no-cache" + c34 + " https://raw.githubusercontent.com/loopy750/SRT-Stats-Monitor-Version/master/checkversion.txt > " + c34 + fileCheckVersion + c34 + ""
+            END SELECT
             _DELAY 0.25
             IF _FILEEXISTS(fileCheckVersion) THEN
                 OPEN fileCheckVersion FOR INPUT AS #224
@@ -2964,10 +3039,18 @@ SUB Timer01
             CASE "2"
                 IF srt_warmup_file_media = 0 THEN
                     srt_warmup_file_media = 1
-                    SHELL _DONTWAIT "node.exe " + c34 + obs_get_media1_scene + c34 + " > " + c34 + filePrevious_ms + c34
+                    'Set OS variables
+                    SELECT CASE OS
+                        CASE "WINDOWS"
+                            SHELL _DONTWAIT "node.exe " + c34 + obs_get_media1_scene + c34 + " > " + c34 + filePrevious_ms + c34
+                        CASE "LINUX"
+                            SHELL _DONTWAIT "node " + c34 + obs_get_media1_scene + c34 + " > " + c34 + filePrevious_ms + c34
+                    END SELECT
                     _DELAY 1
+                    'Windows only
                     y& = SetWindowPos&(Myhwnd, -1, 0, 0, 0, 0, &H2 + &H1 + &H40)
                     _DELAY 3.5
+                    'Windows only
                     y& = SetWindowPos&(Myhwnd, -2, 0, 0, 0, 0, &H2 + &H1 + &H40)
                 END IF
         END SELECT
@@ -2998,8 +3081,28 @@ SUB Timer01
             IF LOF(92) = 0 THEN NoKill = 1: GOTO LOF92 'Overkill with EOF checking, but just being safe
             IF EOF(92) THEN GOTO LOF92
             LINE INPUT #92, file92$
+
+            RIST_MediaSource1Time = MediaSource1TimeMS 'RIST mode
+
             MediaSource1TimeMS = VAL(file92$)
+
+            'RIST mode
+            SELECT CASE RIST_Fail_Mode_1
+                CASE "false"
+                    RIST_MediaSource1Time_Count = 0
+                CASE "true"
+                    IF MediaSource1TimeMS <> 0 THEN
+                        IF RIST_MediaSource1Time = MediaSource1TimeMS THEN
+                            RIST_MediaSource1Time_Count = RIST_MediaSource1Time_Count + 1 'Scene_Fail will be triggered at 5 seconds, the same as SRT timeout
+                            IF RIST_MediaSource1Time_Count > 99 THEN RIST_MediaSource1Time_Count = 99 'No need for it to count up forever
+                        ELSE
+                            RIST_MediaSource1Time_Count = 0
+                        END IF
+                    END IF
+            END SELECT
+
             MediaSource1Time = MediaSource1TimeMS / 1000
+
             LOF92:
         END IF
         CLOSE #92
@@ -3099,10 +3202,18 @@ SUB Timer01
             CASE "2"
                 IF srt_warmup_file_media = 0 THEN
                     srt_warmup_file_media = 1
-                    SHELL _DONTWAIT "node.exe " + c34 + obs_get_media2_scene + c34 + " > " + c34 + filePrevious_ms + c34
+                    'Set OS variables
+                    SELECT CASE OS
+                        CASE "WINDOWS"
+                            SHELL _DONTWAIT "node.exe " + c34 + obs_get_media2_scene + c34 + " > " + c34 + filePrevious_ms + c34
+                        CASE "LINUX"
+                            SHELL _DONTWAIT "node " + c34 + obs_get_media2_scene + c34 + " > " + c34 + filePrevious_ms + c34
+                    END SELECT
                     _DELAY 1
+                    'Windows only
                     y& = SetWindowPos&(Myhwnd, -1, 0, 0, 0, 0, &H2 + &H1 + &H40)
                     _DELAY 3.5
+                    'Windows only
                     y& = SetWindowPos&(Myhwnd, -2, 0, 0, 0, 0, &H2 + &H1 + &H40)
                 END IF
         END SELECT
@@ -3132,12 +3243,52 @@ SUB Timer01
 
             IF LOF(92) = 0 THEN NoKill = 1: GOTO LOF922 'Overkill with EOF checking, but just being safe
             LINE INPUT #92, file92$
+
+            RIST_MediaSource1Time = MediaSource1TimeMS 'RIST mode
+
             MediaSource1TimeMS = VAL(file92$)
+
+            'RIST mode
+            SELECT CASE RIST_Fail_Mode_1
+                CASE "false"
+                    RIST_MediaSource1Time_Count = 0
+                CASE "true"
+                    IF MediaSource1TimeMS <> 0 THEN
+                        IF RIST_MediaSource1Time = MediaSource1TimeMS THEN
+                            RIST_MediaSource1Time_Count = RIST_MediaSource1Time_Count + 1 'Scene_Fail will be triggered at 5 seconds, the same as SRT timeout
+                            IF RIST_MediaSource1Time_Count > 99 THEN RIST_MediaSource1Time_Count = 99 'No need for it to count up forever
+                        ELSE
+                            RIST_MediaSource1Time_Count = 0
+                        END IF
+                    END IF
+            END SELECT
+
             MediaSource1Time = MediaSource1TimeMS / 1000
+
             IF EOF(92) THEN RefreshDisplayRequest = 1: Error_msg = "- Unable to read " + c34 + "MediaSource2" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + CHR$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + CHR$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSockets options are correctly set. (Error: #8)": _DELAY 3: GOTO LOF922
             LINE INPUT #92, file92$
+
+            RIST_MediaSource2Time = MediaSource2TimeMS 'RIST mode - Source 2
+
             MediaSource2TimeMS = VAL(file92$)
+
+            'RIST mode - Source 2
+            SELECT CASE RIST_Fail_Mode_2
+                CASE "false"
+                    RIST_MediaSource2Time_Count = 0
+                CASE "true"
+                    IF MediaSource2TimeMS <> 0 THEN
+                        IF RIST_MediaSource2Time = MediaSource2TimeMS THEN
+                            RIST_MediaSource2Time_Count = RIST_MediaSource2Time_Count + 1 'Scene_Fail will be triggered at 5 seconds, the same as SRT timeout
+                            IF RIST_MediaSource2Time_Count > 99 THEN RIST_MediaSource2Time_Count = 99 'No need for it to count up forever
+                        ELSE
+                            RIST_MediaSource2Time_Count = 0
+                        END IF
+                    END IF
+            END SELECT
+
             MediaSource2Time = MediaSource2TimeMS / 1000
+
             LOF922:
         END IF
         CLOSE #92
@@ -3352,7 +3503,7 @@ SUB Timer01
     IF Timer_Failed1 = 1 THEN Timer_Failed1 = 0: ToolTip(Timer_Fail_CountLB) = "Last Failed: " + TIME$
     IF Timer_Failed2 = 1 THEN Timer_Failed2 = 0: ToolTip(Timer_Fail_Count_2LB) = "Last Failed: " + TIME$
 
-    IF MediaSource1Time <> 0 OR MediaSource2Time <> 0 THEN Timer_Fail = 0 'SRT
+    IF MediaSource1Time <> 0 OR MediaSource2Time <> 0 AND RIST_MediaSource1Time_Count <= 4 AND RIST_MediaSource2Time_Count <= 4 THEN Timer_Fail = 0 'SRT 'RIST mode
 
     IF MediaSource1Time = 0 AND MediaSource2Time = 0 AND srt_warmup = 1 THEN Timer_Fail = Timer_Fail + 1 'SRT
     IF Timer_Fail > 30600 THEN Timer_Fail = 30600
@@ -3394,8 +3545,8 @@ SUB Timer01
 
     TIMEms tPingOut#, 0
     IF VAL(tout) >= .35 THEN Control(tPingOutLB).ForeColor = RED_WARNING ELSE Control(tPingOutLB).ForeColor = GREEN_OK
-    IF ConnectionsLog AND VAL(tout) >= .55 AND CooldownLog = 0 THEN statusConnectionsLogToFile "[WARN] WebSocket ping exceeding 550ms": CooldownLog = CooldownLogTotal
-    IF VAL(tout) >= .55 AND CooldownLog = 0 THEN SetCaption StatusLB, "WebSocket ping high, try another " + c34 + "NodejsFileSystem" + c34: updateDisplay = 1 'Display error if WebSocket ping is too high
+    IF ConnectionsLog AND VAL(tout) >= .5 AND CooldownLog = 0 THEN statusConnectionsLogToFile "[WARN] WebSocket ping exceeding 500ms": CooldownLog = CooldownLogTotal
+    IF VAL(tout) >= .5 AND CooldownLog = 0 THEN SetCaption StatusLB, "WebSocket ping high, try another " + c34 + "NodejsFileSystem" + c34 + "...": updateDisplay = 1 'Display error if WebSocket ping is too high
     SetCaption (tPingOutLB), LTRIM$(STR$(VAL(tout) * 1000)) + " ms"
 
     IF srt_warmup = 1 THEN
@@ -3413,12 +3564,12 @@ SUB Timer01
     IF __MultiCameraSwitch = 1 THEN
         'temp1_stream1 variables
         IF srt_warmup = 1 THEN Timer_Fail_Stream1 = Timer_Fail_Stream1 + 1
-        IF MediaSource1Time <> 0 THEN Timer_Fail_Stream1 = 0: Timer_Fail = 0 'SRT
+        IF MediaSource1Time <> 0 AND RIST_MediaSource1Time_Count <= 4 THEN Timer_Fail_Stream1 = 0: Timer_Fail = 0 'SRT 'RIST mode
         IF Timer_Fail_Stream1 > 30600 THEN Timer_Fail_Stream1 = 30600
 
         'temp1_stream2 variables
         IF srt_warmup = 1 THEN Timer_Fail_Stream2 = Timer_Fail_Stream2 + 1
-        IF MediaSource2Time <> 0 THEN Timer_Fail_Stream2 = 0: Timer_Fail = 0 'SRT
+        IF MediaSource2Time <> 0 AND RIST_MediaSource2Time_Count <= 4 THEN Timer_Fail_Stream2 = 0: Timer_Fail = 0 'SRT 'RIST mode
         IF Timer_Fail_Stream2 > 30600 THEN Timer_Fail_Stream2 = 30600
 
         IF Timer_Fail_Stream1 >= Stream_Fail_Delay THEN Control(Timer_Fail_Stream1LB).ForeColor = RED_FAIL ELSE IF Timer_Fail_Stream1 >= 1 THEN Control(Timer_Fail_Stream1LB).ForeColor = RED_WARNING ELSE Control(Timer_Fail_Stream1LB).ForeColor = GREEN_OK
@@ -3462,7 +3613,7 @@ SUB Timer01
     ELSE
         'Stream #1 only
         IF srt_warmup = 1 THEN Timer_Fail_Stream1 = Timer_Fail_Stream1 + 1
-        IF MediaSource1Time <> 0 THEN Timer_Fail_Stream1 = 0: Timer_Fail = 0 'SRT
+        IF MediaSource1Time <> 0 AND RIST_MediaSource1Time_Count <= 4 THEN Timer_Fail_Stream1 = 0: Timer_Fail = 0 'SRT 'RIST mode
         IF Timer_Fail_Stream1 > 30600 THEN Timer_Fail_Stream1 = 30600
 
         IF MediaSource1Time <= 2 THEN Control(Stream_UptimeLB).ForeColor = RED_FAIL ELSE IF MediaSource1Time >= 3 AND MediaSource1Time <= 10 THEN Control(Stream_UptimeLB).ForeColor = RED_WARNING ELSE Control(Stream_UptimeLB).ForeColor = GREEN_OK
@@ -3591,8 +3742,10 @@ SUB Timer01
                 IF srt_warmup_file_scene = 0 THEN
                     srt_warmup_file_scene = 1
                     'No need to load another node.exe here because the .js file checks scene
+                    'Windows only
                     y& = SetWindowPos&(Myhwnd, -1, 0, 0, 0, 0, &H2 + &H1 + &H40)
                     _DELAY 3.5
+                    'Windows only
                     y& = SetWindowPos&(Myhwnd, -2, 0, 0, 0, 0, &H2 + &H1 + &H40)
                 END IF
         END SELECT
@@ -3659,7 +3812,7 @@ SUB Timer01
     PUT_Refresh = 0
 
     'Check if any of the 9 bypass scenes equal the current scene
-    IF Scene_Bypass_Check <> "none" THEN 'In case user has scene name equals "none", which will break the program
+    IF Scene_Bypass_Check <> "none" THEN 'In case user has scene name labelled "none", which will break the program
         IF Scene_Bypass = Scene_Bypass_Check OR Scene_Bypass_2 = Scene_Bypass_Check OR Scene_Bypass_3 = Scene_Bypass_Check OR Scene_Bypass_4 = Scene_Bypass_Check OR Scene_Bypass_5 = Scene_Bypass_Check OR Scene_Bypass_6 = Scene_Bypass_Check OR Scene_Bypass_7 = Scene_Bypass_Check OR Scene_Bypass_8 = Scene_Bypass_Check OR Scene_Bypass_9 = Scene_Bypass_Check THEN
             SetCaption (Scene_CurrentLB), "[ PAUSE ]"
             IF Scene_Bypass_Log = 0 THEN
@@ -3679,7 +3832,7 @@ SUB Timer01
 
     'Execute Stream OK
     IF __MultiCameraSwitch = 0 THEN
-        IF MediaSource1Time <> 0 THEN 'SRT
+        IF MediaSource1Time <> 0 AND RIST_MediaSource1Time_Count <= 4 THEN 'SRT 'RIST mode
             Timer_Fail = 0
             IF CooldownLog = 0 THEN Scene_Current$ = Scene_OK
             IF Exe_Fail = 1 THEN
@@ -3692,7 +3845,7 @@ SUB Timer01
                 IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Now online stream"
             END IF
         ELSE
-            IF Timer_Fail >= Stream_Fail_Delay THEN
+            IF Timer_Fail >= Stream_Fail_Delay OR RIST_MediaSource1Time_Count >= 5 THEN 'RIST mode 'Scene_Fail triggered at 5 seconds, the same as SRT timeout
                 IF Exe_OK = 1 THEN
                     Exe_OK = 0
                     Exe_Fail = 1
