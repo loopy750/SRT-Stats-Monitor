@@ -2,7 +2,7 @@
 
 NOTE: If updating from a previous version !!!
 
-This program does not modify 'config.ini', it only reads it. v0.9.6 has two additional features that must be manually added to the [config] section to be enabled:
+This program does not modify 'config.ini', it only reads it. v0.9.6 has four additional features that must be manually added to the [config] section to be enabled:
 
 ```
 SceneLBRDelay=0
