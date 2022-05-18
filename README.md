@@ -2,21 +2,22 @@
 
 ![Loopy SRT Stats Monitor](./srt_stats_monitor.png)
   
-Latest release available [here](https://github.com/loopy750/SRT-Stats-Monitor/releases/latest).
+Latest release available [here](https://github.com/loopy750/SRT-Stats-Monitor/releases/latest).   
+Latest beta release if any are available can be found [here](https://github.com/loopy750/SRT-Stats-Monitor/tree/beta).
 
-This is a program to assist with "IRL streaming" for popular streaming websites such as Twitch, using OBS Studio. This program is currently in use by Twitch and YouTube streamers and has been proven to a be a valuable asset to their stream.
+This is a program to assist with "IRL streaming" for popular streaming websites such as Twitch, using OBS Studio. This program is currently in use by many Twitch and YouTube streamers and has been proven to a be a valuable asset to their stream.
 
 SRT is described as an open source video transport protocol that utilises the UDP transport protocol. It has several advantages over the abandoned RTMP protocol, including H.265/HEVC streaming.
 
-Using a "homemade" solution to SRT stream from your location back to your home PC, this program will automatically switch to a "low bitrate" scene whenever your connection is weak, a "fallback" OBS scene whenever your connection is lost, and is restored when your connection resumes.
+Using a "homemade" solution to SRT and/or RIST stream from your location back to your home PC, this program will automatically switch to a "low bitrate" scene whenever your connection is weak, a "fallback" OBS scene whenever your connection is lost, and is restored when your connection resumes.
 
-Basic features (**_MultiCameraSwitch=false_**) allow a simple two-scene scenario, either "LIVE" or "FALLBACK" scene.
+Basic features `MultiCameraSwitch=false` allow a simple two-scene scenario, either "LIVE" or "FALLBACK" scene.
 
-Advanced features (**_MultiCameraSwitch=true_**) consider for a two-camera multiple-scene scenario, and can alternate between scenes depending on the combination of cameras/streams used, i.e. stream 1, stream 2, and both stream 1&2 simultaneously. See 'readme.txt' for a full description regarding these and other settings.
+Advanced features `MultiCameraSwitch=true` consider for a two-camera multiple-scene scenario, and can alternate between scenes depending on the combination of cameras/streams used, i.e. stream 1, stream 2, and streams 1&2 simultaneously. See 'readme.txt' for a full description regarding these and other settings.
   
   Twitch streamer [sprEEEzy](https://www.twitch.tv/spreeezy) has been a big advocate of high quality IRL streaming at an affordable price, and helping test various equipment. SprEEEzy's [Discord](https://discord.gg/REgDtsTVar) has a channel for IRL streaming and techincal discussion. Both the hardware and software can be confusing at first, but as a community, helping each other, we can iron out all the bugs.
   
-  I also have an (inactive) [Discord](https://discord.gg/HQ23xS3ASt) and [Twitch](https://www.twitch.tv/loopy750) channel that I may or may not make use of one day.
+  I also have a [Discord](https://discord.gg/HQ23xS3ASt) and [Twitch](https://www.twitch.tv/loopy750) channel that I may or may not make use of one day.
   
   [Example of program being used in a live stream](https://user-images.githubusercontent.com/35911135/116689723-c2803680-a9fb-11eb-99bd-dbc29c6f75f5.mp4)
   
@@ -30,15 +31,15 @@ DOWNLOADS
 
 Programs to download
 --------------------
-OBS Studio (v27 or newer recommended for the best stability with SRT) - [https://obsproject.com/](https://obsproject.com/)  
-OBS Websocket (v4.9.0 or newer required) - [https://github.com/Palakis/obs-websocket/releases/latest](https://github.com/Palakis/obs-websocket/releases/latest)  
+OBS Studio - [https://obsproject.com/](https://obsproject.com/)  
+OBS WebSocket - [https://github.com/Palakis/obs-websocket/releases/latest](https://github.com/Palakis/obs-websocket/releases/latest)  
 Node.js - [https://nodejs.org/](https://nodejs.org/)  
-VLC 64-bit - [https://www.videolan.org/vlc/download-windows.html](https://www.videolan.org/vlc/download-windows.html)  
+VLC 64-bit - [https://www.videolan.org/vlc/](https://www.videolan.org/vlc/)  
 OBS Tablet Remote - [http://t2t2.github.io/obs-tablet-remote/](http://t2t2.github.io/obs-tablet-remote/)
 
 Known OBS SRT issues
 --------------------
-https://github.com/obsproject/obs-studio/issues/4596
+* [SRT streams have trouble connecting/reconnecting while Recording is running](https://github.com/obsproject/obs-studio/issues/4596)
 
 INSTALLATION
 ============
@@ -71,7 +72,7 @@ MODIFICATIONS
 
 OBS Studio
 ----------
-Open OBS, and within the "Media Source", configure your SRT stream. Consult the [OBS SRT Wiki](https://obsproject.com/wiki/Streaming-With-SRT-Protocol) for more information. Ensure **_Restart playback when source becomes active_** is disabled. Recommended setting for **_Reconnect Delay_** is 1 second.
+Open OBS, and within the "Media Source", configure your SRT stream. Consult the [OBS SRT & RIST Wiki](https://obsproject.com/wiki/Streaming-With-SRT-Or-RIST-Protocols) for more information. Ensure **_Restart playback when source becomes active_** is disabled. Recommended setting for **_Reconnect Delay_** is 1 second.
 
 VLC 64-bit
 ----------
