@@ -1,7 +1,11 @@
-# Loopy SRT Stats Monitor
+Loopy SRT Stats Monitor
+=======================
 
-![Loopy SRT Stats Monitor](./srt_stats_monitor.png)
-  
+<p>
+    <p><a href="https://github.com/loopy750/SRT-Stats-Monitor/releases/latest"><img src="./srt_stats_monitor.png" alt="Loopy SRT Stats Monitor"></a></p>
+    <a href="https://github.com/loopy750/SRT-Stats-Monitor/releases/latest"><img src="https://img.shields.io/github/v/release/loopy750/SRT-Stats-Monitor?include_prereleases" alt="Download"></a>
+</p>
+
 Latest release available [here](https://github.com/loopy750/SRT-Stats-Monitor/releases/latest).   
 Latest beta release if any are available can be found [here](https://github.com/loopy750/SRT-Stats-Monitor/tree/beta).
 
@@ -11,9 +15,9 @@ SRT is described as an open source video transport protocol that utilises the UD
 
 Using a "homemade" solution to SRT and/or RIST stream from your location back to your home PC, this program will automatically switch to a "low bitrate" scene whenever your connection is weak, a "fallback" OBS scene whenever your connection is lost, and is restored when your connection resumes.
 
-Basic features `MultiCameraSwitch=false` allow a simple two-scene scenario, either "LIVE" or "FALLBACK" scene.
+Basic features `MultiCameraSwitch=false` allow a simple two-scene scenario, either "LIVE" or "FALLBACK" scene, with an optional "LBR" scene.
 
-Advanced features `MultiCameraSwitch=true` consider for a two-camera multiple-scene scenario, and can alternate between scenes depending on the combination of cameras/streams used, i.e. stream 1, stream 2, and streams 1&2 simultaneously. See 'readme.txt' for a full description regarding these and other settings.
+Advanced features `MultiCameraSwitch=true` consider for a two-camera multiple-scene scenario, with an optional "LBR" scene, and can alternate between scenes depending on the combination of cameras/streams used, i.e. stream 1, stream 2, and streams 1&2 simultaneously. See 'readme.txt' for a full description regarding these and other settings.
   
   Twitch streamer [sprEEEzy](https://www.twitch.tv/spreeezy) has been a big advocate of high quality IRL streaming at an affordable price, and helping test various equipment. SprEEEzy's [Discord](https://discord.gg/REgDtsTVar) has a channel for IRL streaming and techincal discussion. Both the hardware and software can be confusing at first, but as a community, helping each other, we can iron out all the bugs.
   
