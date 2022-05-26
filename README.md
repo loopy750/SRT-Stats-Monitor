@@ -9,11 +9,11 @@ Loopy SRT Stats Monitor
 Latest release available [here](https://github.com/loopy750/SRT-Stats-Monitor/releases/latest).   
 Latest beta release if any are available can be found [here](https://github.com/loopy750/SRT-Stats-Monitor/tree/beta).
 
-This is a program to assist with "IRL streaming" for popular streaming websites such as Twitch, using OBS Studio. This program is currently in use by many Twitch and YouTube streamers and has been proven to a be a valuable asset to their stream.
+This is a program to assist with **IRL streaming** for popular streaming websites such as Twitch, using OBS Studio. This program is currently in use by many Twitch and YouTube streamers and has been proven to a be a valuable asset to their stream.
 
 SRT is described as an open source video transport protocol that utilises the UDP transport protocol. It has several advantages over the abandoned RTMP protocol, including H.265/HEVC streaming.
 
-Using a "homemade" solution to SRT and/or RIST stream from your location back to your home PC, this program will automatically switch to a "low bitrate" scene whenever your connection is weak, a "fallback" OBS scene whenever your connection is lost, and is restored when your connection resumes.
+Using a _homemade_ solution to SRT and/or RIST stream from your location back to your home PC, this program will automatically switch to a "low bitrate" scene whenever your connection is weak, a "fallback" OBS scene whenever your connection is lost, and is restored when your connection resumes.
 
 Basic features `MultiCameraSwitch=false` allow a simple two-scene scenario, either "LIVE" or "FALLBACK" scene, with an optional "LBR" scene.
 
