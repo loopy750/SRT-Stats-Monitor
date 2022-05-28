@@ -7,23 +7,6 @@
 ': Controls' IDs: ------------------------------------------------------------------
 OPTION _EXPLICIT
 DIM SHARED LoopySRTMonitor AS LONG
-DIM SHARED LoopySRTMonitorBKG AS LONG
-DIM SHARED DebugFrameTemp AS LONG
-DIM SHARED DebugTemp1LB AS LONG
-DIM SHARED DebugTemp2LB AS LONG
-DIM SHARED DebugTemp3LB AS LONG
-DIM SHARED DebugTemp4LB AS LONG
-DIM SHARED DebugTemp1LB2 AS LONG
-DIM SHARED DebugTemp2LB2 AS LONG
-DIM SHARED DebugTemp3LB2 AS LONG
-DIM SHARED DebugTemp4LB2 AS LONG
-DIM SHARED Stream1LightLB AS LONG
-DIM SHARED StreamLightLB AS LONG
-DIM SHARED Stream2LightLB AS LONG
-DIM SHARED LBRDelayLB AS LONG
-DIM SHARED br_delayLB AS LONG
-DIM SHARED OptionsMenuRestoreWindowSize AS LONG
-DIM SHARED OptionsMenuAlwaysOnTop AS LONG
 DIM SHARED FileMenu AS LONG
 DIM SHARED OptionsMenu AS LONG
 DIM SHARED HelpMenu AS LONG
@@ -68,10 +51,11 @@ DIM SHARED StreamUptimeLB2 AS LONG
 DIM SHARED failLB2 AS LONG
 DIM SHARED Uptime_Stream_2LB AS LONG
 DIM SHARED Timer_Fail_Stream2LB AS LONG
+DIM SHARED OptionsMenuRestoreWindowSize AS LONG
+DIM SHARED OptionsMenuFullscreen AS LONG
 DIM SHARED OptionsMenuDebug AS LONG
 DIM SHARED HelpMenuVisitWebsite AS LONG
 DIM SHARED HelpMenuCheckForUpdates AS LONG
-DIM SHARED OptionsMenuFullscreen AS LONG
 DIM SHARED IndicatorLB AS LONG
 DIM SHARED HelpMenuAbout AS LONG
 DIM SHARED StatusLB AS LONG
@@ -83,8 +67,8 @@ DIM SHARED Stream_Fail_TimerLB AS LONG
 DIM SHARED Timer_Fail_Count_2LB AS LONG
 DIM SHARED IPPingLB AS LONG
 DIM SHARED tIPPingOutLB AS LONG
-DIM SHARED FailCount2LB AS LONG
 DIM SHARED FailCount1LB AS LONG
+DIM SHARED FailCount2LB AS LONG
 DIM SHARED LowBRTimerLB AS LONG
 DIM SHARED br_countdownLB AS LONG
 DIM SHARED MSRateLB AS LONG
@@ -93,6 +77,21 @@ DIM SHARED LowBitrateSceneLB AS LONG
 DIM SHARED Low_Bitrate_StatusLB AS LONG
 DIM SHARED MSRateLB2 AS LONG
 DIM SHARED ms_playLB2 AS LONG
+DIM SHARED OptionsMenuAlwaysOnTop AS LONG
+DIM SHARED Stream1LightLB AS LONG
+DIM SHARED Stream2LightLB AS LONG
+DIM SHARED StreamLightLB AS LONG
+DIM SHARED LBRDelayLB AS LONG
+DIM SHARED br_delayLB AS LONG
+DIM SHARED DebugFrameTemp AS LONG
+DIM SHARED DebugTemp1LB AS LONG
+DIM SHARED DebugTemp2LB AS LONG
+DIM SHARED DebugTemp3LB AS LONG
+DIM SHARED DebugTemp4LB AS LONG
+DIM SHARED DebugTemp1LB2 AS LONG
+DIM SHARED DebugTemp2LB2 AS LONG
+DIM SHARED DebugTemp3LB2 AS LONG
+DIM SHARED DebugTemp4LB2 AS LONG
 
 ' Added after InForm entry - BEGIN
 DEFINT A-Z
@@ -104,8 +103,8 @@ COMMON SHARED VerDate AS STRING
 COMMON SHARED VerPortable AS STRING
 COMMON SHARED bout AS STRING
 COMMON SHARED tout AS STRING
-COMMON SHARED Refresh_Request
-COMMON SHARED RefreshDisplayRequest
+COMMON SHARED Refresh_Request AS INTEGER
+COMMON SHARED RefreshDisplayRequest AS INTEGER
 COMMON SHARED ProgressCounter AS INTEGER
 COMMON SHARED updateResult AS STRING
 COMMON SHARED updateDisplay AS INTEGER
@@ -113,8 +112,8 @@ COMMON SHARED updateDisplayCounter AS INTEGER
 COMMON SHARED verCheck AS STRING
 COMMON SHARED CheckUpdateOnStartup AS STRING
 COMMON SHARED file224 AS STRING
-COMMON SHARED __FileStatusOutput AS _BYTE
 COMMON SHARED FileStatusOutput AS STRING
+COMMON SHARED __FileStatusOutput AS _BYTE
 COMMON SHARED outputBitrateFile AS STRING
 COMMON SHARED outputStatusFile AS STRING
 COMMON SHARED outputConnectionsLogFile AS STRING
@@ -126,7 +125,7 @@ COMMON SHARED iniFeatures AS _BYTE
 COMMON SHARED Debug AS _BYTE
 COMMON SHARED Tooltip_Mouse AS _BYTE
 COMMON SHARED Tooltip_Mouse_Active AS _BYTE
-COMMON SHARED q
+COMMON SHARED q AS INTEGER
 COMMON SHARED Timer_Failed AS _BYTE
 COMMON SHARED Timer_Failed1 AS _BYTE
 COMMON SHARED Timer_Failed2 AS _BYTE
@@ -172,6 +171,7 @@ COMMON SHARED LBR_Delay_Minus AS INTEGER
 COMMON SHARED LBR_Delay_Plus AS INTEGER
 COMMON SHARED LBR_Delay_Total AS INTEGER
 COMMON SHARED Scene_LBR_Delay_Total AS STRING
+COMMON SHARED LoopySRTMonitorBKG AS LONG
 COMMON SHARED Allow_Resize AS STRING
 COMMON SHARED js_Encoding AS STRING
 COMMON SHARED Debug_Temp AS STRING
@@ -206,8 +206,6 @@ COMMON SHARED Scene_Bypass_Check AS STRING
 COMMON SHARED Scene_Bypass_Log AS INTEGER
 COMMON SHARED OBS_URL AS STRING
 COMMON SHARED OBS_PW AS STRING
-COMMON SHARED urlStream1 AS STRING
-COMMON SHARED urlStream2 AS STRING
 COMMON SHARED titleScene1 AS STRING
 COMMON SHARED titleScene2 AS STRING
 COMMON SHARED titleScene12 AS STRING
@@ -254,14 +252,12 @@ COMMON SHARED Exe_Fail_First AS _BYTE
 COMMON SHARED Exe_Fail_First_Stream1 AS _BYTE
 COMMON SHARED Exe_Fail_First_Stream2 AS _BYTE
 
-COMMON SHARED __MultiCameraSwitch AS _BYTE
-
 ' Fail icon
 COMMON SHARED iconStatus AS LONG
 
 ' Timer01
-COMMON SHARED mouseX
-COMMON SHARED mouseY
+COMMON SHARED mouseX AS INTEGER
+COMMON SHARED mouseY AS INTEGER
 COMMON SHARED Timer_Fail AS INTEGER
 COMMON SHARED Timer_Fail_Count AS INTEGER
 COMMON SHARED Timer_Fail_Count1 AS INTEGER
@@ -273,101 +269,43 @@ COMMON SHARED Timer_Fail_Output2 AS INTEGER
 COMMON SHARED Timer_Fail_Output1_Str AS STRING
 COMMON SHARED Timer_Fail_Output2_Str AS STRING
 COMMON SHARED FullScreen AS _BYTE
-COMMON SHARED BG
+COMMON SHARED BG AS LONG
 COMMON SHARED srt_warmup AS _BYTE
 COMMON SHARED srt_warmup_file_media AS _BYTE
 COMMON SHARED srt_warmup_file_scene AS _BYTE
-COMMON SHARED Port_Client$
-COMMON SHARED td_update#
-COMMON SHARED timer1#
-COMMON SHARED Debug_Timer#
-COMMON SHARED __returnPreviousScene
+COMMON SHARED td_update AS DOUBLE
+COMMON SHARED timer1 AS DOUBLE
+COMMON SHARED Debug_Timer AS DOUBLE
+COMMON SHARED __returnPreviousScene AS _BYTE
+COMMON SHARED __returnPreviousSceneRemember AS _BYTE
+COMMON SHARED __MultiCameraSwitch AS _BYTE
 COMMON SHARED returnPreviousSceneTime AS _BYTE
 COMMON SHARED SRR AS _BYTE
-COMMON SHARED returnFirstCheck
-COMMON SHARED filePrevious
-COMMON SHARED App_Refresh
-COMMON SHARED NoKill
-COMMON SHARED file90$
-COMMON SHARED file92$
-COMMON SHARED file96$
-COMMON SHARED findSceneName
-COMMON SHARED findSceneName2
-COMMON SHARED streamsUp$
-COMMON SHARED previousScene$
-COMMON SHARED previousSceneDisplay$
-COMMON SHARED a$
-COMMON SHARED a2$
-COMMON SHARED d$
-COMMON SHARED I
-COMMON SHARED i2
-COMMON SHARED i3
-COMMON SHARED tPing1#
-COMMON SHARED client
-COMMON SHARED tPing2#
-COMMON SHARED tPingOut#
-COMMON SHARED tIPPing1#
-COMMON SHARED tIPPing2#
-COMMON SHARED tIPPingOut#
-COMMON SHARED tPingTimer
-COMMON SHARED EOL$
-COMMON SHARED Timer_GET!
-COMMON SHARED __MultiCameraSwitch
-COMMON SHARED Stream%
-COMMON SHARED multiStream1#
-COMMON SHARED multiStream2#
-COMMON SHARED pos_xml_m&
-COMMON SHARED Kb_Diff#
-COMMON SHARED Stream_Fail_Delay
-COMMON SHARED SD
-COMMON SHARED Kb_Diff_stream1#
-COMMON SHARED multiStream1_temp1#
-COMMON SHARED multiStream1_temp2#
-COMMON SHARED Kb_Diff_stream2#
-COMMON SHARED multiStream2_temp1#
-COMMON SHARED multiStream2_temp2#
-COMMON SHARED Scene_OK
-COMMON SHARED Scene_Fail
-COMMON SHARED Scene_Intro
-COMMON SHARED Scene_Bypass
-COMMON SHARED Scene_Bypass_2
-COMMON SHARED Scene_Bypass_3
-COMMON SHARED Scene_Bypass_4
-COMMON SHARED Scene_Bypass_5
-COMMON SHARED Scene_Bypass_6
-COMMON SHARED Scene_Bypass_7
-COMMON SHARED Scene_Bypass_8
-COMMON SHARED Scene_Bypass_9
-COMMON SHARED Scene_Bypass_Check
-COMMON SHARED Exe_OK
-COMMON SHARED Scene_Current$
-COMMON SHARED Exe_Fail
-COMMON SHARED lastStreamUp$
-COMMON SHARED returnPreviousSceneRemember
-COMMON SHARED titleScene1
-COMMON SHARED titleScene2
-COMMON SHARED titleScene12
-COMMON SHARED titleScene1Temp
-COMMON SHARED titleScene2Temp
-COMMON SHARED titleScene12Temp
-COMMON SHARED OBS_URL
-COMMON SHARED OBS_PW
-COMMON SHARED Exe_Fail_First
-COMMON SHARED Timer_Fail_First
-COMMON SHARED Timer_Fail_First_Stream1
-COMMON SHARED Exe_Fail_First_Stream1
-COMMON SHARED Exe_Fail_First_Stream2
-COMMON SHARED Timer_Fail_First_Stream
-COMMON SHARED Timer_Fail_First_Stream2
-COMMON SHARED td_display#
-
-' RIST mode
-COMMON SHARED RIST_Fail_Mode_1
-COMMON SHARED RIST_Fail_Mode_2
-COMMON SHARED RIST_MediaSource1Time
-COMMON SHARED RIST_MediaSource1Time_Count
-COMMON SHARED RIST_MediaSource2Time
-COMMON SHARED RIST_MediaSource2Time_Count
+COMMON SHARED returnFirstCheck AS INTEGER
+COMMON SHARED App_Refresh AS _BYTE
+COMMON SHARED NoKill AS INTEGER
+COMMON SHARED file90 AS STRING
+COMMON SHARED file92 AS STRING
+COMMON SHARED file96 AS STRING
+COMMON SHARED streamsUp AS STRING
+COMMON SHARED previousScene AS STRING
+COMMON SHARED previousSceneDisplay AS STRING
+COMMON SHARED tPing1 AS DOUBLE
+COMMON SHARED client AS INTEGER
+COMMON SHARED tPing2 AS DOUBLE
+COMMON SHARED tPingOut AS DOUBLE
+COMMON SHARED tIPPing1 AS DOUBLE
+COMMON SHARED tIPPing2 AS DOUBLE
+COMMON SHARED tIPPingOut AS DOUBLE
+COMMON SHARED tPingTimer AS INTEGER
+COMMON SHARED Stream_Fail_Delay AS INTEGER
+COMMON SHARED SD AS INTEGER
+COMMON SHARED Scene_Current AS STRING
+COMMON SHARED lastStreamUp AS STRING
+COMMON SHARED Timer_Fail_First AS INTEGER
+COMMON SHARED Timer_Fail_First_Stream1 AS INTEGER
+COMMON SHARED Timer_Fail_First_Stream2 AS INTEGER
+COMMON SHARED td_display AS DOUBLE
 
 ' UNDOCUMENTED
 COMMON SHARED MediaSourceTime AS STRING
@@ -383,24 +321,15 @@ COMMON SHARED Answer AS INTEGER
 COMMON SHARED NULL AS INTEGER
 
 ' OnLoad
-COMMON SHARED config_dir
-COMMON SHARED config_main
-COMMON SHARED URL
-COMMON SHARED Port
-COMMON SHARED fileStat
-COMMON SHARED Desktop_Width_Position
-COMMON SHARED Desktop_Height_Position
-COMMON SHARED file4$
-COMMON SHARED EqualFound
-COMMON SHARED MultiCameraSwitch$
-COMMON SHARED urlStream1
-COMMON SHARED urlStream2
-COMMON SHARED returnPreviousScene
-COMMON SHARED returnPreviousSceneRemember$
+COMMON SHARED Desktop_Width_Position AS INTEGER
+COMMON SHARED Desktop_Height_Position AS INTEGER
+COMMON SHARED file4 AS STRING
+COMMON SHARED EqualFound AS INTEGER
+COMMON SHARED MultiCameraSwitch AS STRING
+COMMON SHARED returnPreviousSceneRemember AS STRING
 
 ' SUB TIMEms
-COMMON SHARED tout
-COMMON SHARED tout#
+COMMON SHARED tout1#
 COMMON SHARED tout2#
 COMMON SHARED toutint#
 COMMON SHARED toutdec#
@@ -489,8 +418,8 @@ SUB __UI_BeforeInit
     $VERSIONINFO:FileDescription=Loopy SRT Monitor
     $VERSIONINFO:FILEVERSION#=0,9,5,0
     $VERSIONINFO:ProductVersion=0,9,5,0
-    $VERSIONINFO:OriginalFilename=loopy_srt_monitor.exe
     $VERSIONINFO:LegalCopyright=loopy750
+    $VERSIONINFO:OriginalFilename=loopy_srt_monitor.exe
     $CHECKING:ON
 
     IF ERR = 0 THEN
@@ -677,12 +606,12 @@ SUB __UI_OnLoad
         OPEN config_main FOR INPUT AS #4 ' Basic INI management, nothing fancy needed
         IF EOF(4) THEN RefreshDisplayRequest = 1: Error_msg = "- Unable to read config file in the " + c34 + "Documents\Loopy SRT Monitor" + c34 + " folder" + CHR$(10) + "- File " + c34 + config_main + c34 + " cannot be accessed, check if it exists. (Error: #10)": _DELAY 3
         DO
-            IF NOT EOF(4) THEN LINE INPUT #4, file4$
-            IF LEFT$(file4$, 1) <> "#" AND LEFT$(file4$, 1) <> ";" AND LEFT$(file4$, 1) <> "" THEN
-                EqualFound = INSTR(file4$, "=")
+            IF NOT EOF(4) THEN LINE INPUT #4, file4
+            IF LEFT$(file4, 1) <> "#" AND LEFT$(file4, 1) <> ";" AND LEFT$(file4, 1) <> "" THEN
+                EqualFound = INSTR(file4, "=")
                 IF EqualFound THEN
-                    file4_var$ = LEFT$(file4$, INSTR(file4$, "=") - 1)
-                    file4_val$ = MID$(file4$, INSTR(file4$, "=") + 1)
+                    file4_var$ = LEFT$(file4, INSTR(file4, "=") - 1)
+                    file4_val$ = MID$(file4, INSTR(file4, "=") + 1)
                     file4_var$ = LCASE$(file4_var$)
                     IF file4_var$ = "streamfaildelay" THEN Stream_Fail_Delay = VAL(file4_val$)
                     IF file4_var$ = "xwindow" THEN Desktop_Width_Position = VAL(file4_val$)
@@ -716,12 +645,12 @@ SUB __UI_OnLoad
                     IF file4_var$ = "jsencoding" THEN js_Encoding = file4_val$
                     IF file4_var$ = "allowresize" THEN Allow_Resize = file4_val$
                     IF file4_var$ = "checkupdateonstartup" THEN CheckUpdateOnStartup = file4_val$
-                    IF file4_var$ = "multicameraswitch" THEN MultiCameraSwitch$ = file4_val$
+                    IF file4_var$ = "multicameraswitch" THEN MultiCameraSwitch = file4_val$
                     IF file4_var$ = "titlescene1" THEN titleScene1 = file4_val$
                     IF file4_var$ = "titlescene2" THEN titleScene2 = file4_val$
                     IF file4_var$ = "titlescene12" THEN titleScene12 = file4_val$
                     IF file4_var$ = "returnpreviousscene" THEN returnPreviousScene = file4_val$
-                    IF file4_var$ = "returnprevioussceneremember" THEN returnPreviousSceneRemember$ = file4_val$
+                    IF file4_var$ = "returnprevioussceneremember" THEN returnPreviousSceneRemember = file4_val$
                     ' UNDOCUMENTED
                     IF file4_var$ = "mediasourcetime" THEN MediaSourceTime = file4_val$
                     IF file4_var$ = "cooldowntotal" THEN CooldownTotal = file4_val$
@@ -751,12 +680,12 @@ SUB __UI_OnLoad
             CASE RIST_Fail_Mode_2: SettingsMissing = 1 ' RIST mode - Source 2
             CASE Allow_Resize: SettingsMissing = 1
             CASE CheckUpdateOnStartup: SettingsMissing = 1
-            CASE MultiCameraSwitch$: SettingsMissing = 1
+            CASE MultiCameraSwitch: SettingsMissing = 1
             CASE titleScene1: SettingsMissing = 1
             CASE titleScene2: SettingsMissing = 1
             CASE titleScene12: SettingsMissing = 1
             CASE returnPreviousScene: SettingsMissing = 1
-            CASE returnPreviousSceneRemember$: SettingsMissing = 1
+            CASE returnPreviousSceneRemember: SettingsMissing = 1
         END SELECT
 
         IF SettingsMissing THEN
@@ -876,11 +805,11 @@ SUB __UI_OnLoad
             _SCREENMOVE Desktop_Width_Position, Desktop_Height_Position
         END IF
     END IF
-    IF MultiCameraSwitch$ = "true" THEN __MultiCameraSwitch = 1 ELSE __MultiCameraSwitch = 0
+    IF MultiCameraSwitch = "true" THEN __MultiCameraSwitch = 1 ELSE __MultiCameraSwitch = 0
     IF returnPreviousScene = "true" THEN __returnPreviousScene = 1 ELSE __returnPreviousScene = 0
     IF FileStatusOutput = "true" THEN __FileStatusOutput = 1 ELSE __FileStatusOutput = 0
-    IF returnPreviousSceneRemember$ = "true" THEN returnPreviousSceneRemember = 1 ELSE returnPreviousSceneRemember = 0
-    IF __MultiCameraSwitch = 0 THEN __returnPreviousScene = 0: returnPreviousSceneRemember = 0 ' multi-camera-switch options disabled if not required
+    IF returnPreviousSceneRemember = "true" THEN __returnPreviousSceneRemember = 1 ELSE __returnPreviousSceneRemember = 0
+    IF __MultiCameraSwitch = 0 THEN __returnPreviousScene = 0: __returnPreviousSceneRemember = 0 ' multi-camera-switch options disabled if not required
 
     ' LBR enabled if required
     IF Scene_LBR_Enabled = "true" THEN SceneLBActive = 1
@@ -1594,8 +1523,8 @@ SUB __UI_OnLoad
                 websocketOK = 1
             END IF
 
-            IF websocketOK = 1 THEN LINE INPUT #90, file90$
-            IF file90$ <> "OK" THEN
+            IF websocketOK = 1 THEN LINE INPUT #90, file90
+            IF file90 <> "OK" THEN
                 CLOSE #90
                 IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
                 ' Check for 4.x else error
@@ -1637,8 +1566,8 @@ SUB __UI_OnLoad
                     websocketOK = 1
                 END IF
 
-                LINE INPUT #90, file90$
-                IF file90$ <> "OK" THEN
+                LINE INPUT #90, file90
+                IF file90 <> "OK" THEN
                     CLOSE #90
                     IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
                     websocketOK = 0
@@ -1715,7 +1644,7 @@ SUB __UI_OnLoad
                     ErrorDisplay (8)
                 END IF
 
-                LINE INPUT #90, file90$
+                LINE INPUT #90, file90
                 IF EOF(90) OR LOF(90) = 0 THEN
                     CLOSE #90
                     IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
@@ -1744,10 +1673,10 @@ SUB __UI_OnLoad
 
             Test_Pass_9 = 0
             DO
-                IF NOT EOF(90) THEN LINE INPUT #90, file90$
-                IF file90$ = Scene_OK THEN Test_Pass_9 = Test_Pass_9 + 1
-                IF file90$ = Scene_Fail THEN Test_Pass_9 = Test_Pass_9 + 2
-                IF file90$ = Scene_Intro THEN Test_Pass_9 = Test_Pass_9 + 4
+                IF NOT EOF(90) THEN LINE INPUT #90, file90
+                IF file90 = Scene_OK THEN Test_Pass_9 = Test_Pass_9 + 1
+                IF file90 = Scene_Fail THEN Test_Pass_9 = Test_Pass_9 + 2
+                IF file90 = Scene_Intro THEN Test_Pass_9 = Test_Pass_9 + 4
                 SELECT CASE Test_Pass_9
                     CASE 0: Test_Pass_9_Value = "SceneOK, SceneFail, SceneIntro"
                     CASE 1: Test_Pass_9_Value = "SceneFail, SceneIntro"
@@ -1782,10 +1711,10 @@ SUB __UI_OnLoad
 
                 Test_Pass_10 = 0
                 DO
-                    IF NOT EOF(90) THEN LINE INPUT #90, file90$
-                    IF file90$ = titleScene1 THEN Test_Pass_10 = Test_Pass_10 + 1
-                    IF file90$ = titleScene2 THEN Test_Pass_10 = Test_Pass_10 + 2
-                    IF file90$ = titleScene12 THEN Test_Pass_10 = Test_Pass_10 + 4
+                    IF NOT EOF(90) THEN LINE INPUT #90, file90
+                    IF file90 = titleScene1 THEN Test_Pass_10 = Test_Pass_10 + 1
+                    IF file90 = titleScene2 THEN Test_Pass_10 = Test_Pass_10 + 2
+                    IF file90 = titleScene12 THEN Test_Pass_10 = Test_Pass_10 + 4
                     SELECT CASE Test_Pass_10
                         CASE 0: Test_Pass_10_Value = "TitleScene1, TitleScene2, TitleScene12"
                         CASE 1: Test_Pass_10_Value = "TitleScene2, TitleScene12"
@@ -1812,12 +1741,12 @@ SUB __UI_OnLoad
     IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Program launched"
 
     IF __MultiCameraSwitch = 0 THEN
-        Scene_Current$ = Scene_OK
+        Scene_Current = Scene_OK
         SHELL _HIDE _DONTWAIT shell_nodejs_1 + Scene_OK
     END IF
 
     IF __MultiCameraSwitch = 1 THEN
-        Scene_Current$ = titleScene12
+        Scene_Current = titleScene12
         SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene12
     END IF
 
@@ -1948,10 +1877,10 @@ SUB __UI_BeforeUpdateDisplay
     IF Debug = 1 THEN
         mouseX = _MOUSEX
         mouseY = _MOUSEY
-        Debug_Timer# = TIMER(.001)
-        TIMEms Debug_Timer#, 0
+        Debug_Timer = TIMER(.001)
+        TIMEms Debug_Timer, 0
         SetCaption (Debug_TimerLB), tout + " sec   "
-        TIMEms td_display#, 1
+        TIMEms td_display, 1
         SetCaption (td_displayLB), tout + " sec   "
         SetCaption (mouseXLB), LTRIM$(STR$(mouseX + 1)) + "   "
         SetCaption (mouseYLB), LTRIM$(STR$(mouseY + 1)) + "   "
@@ -3035,13 +2964,13 @@ SUB __UI_FormResized
 END SUB
 
 ' The following code has been manually added after InForm
-SUB TIMEms (tout#, plus)
+SUB TIMEms (tout1#, plus)
 
     TIMER(t1) STOP
     tout = ""
-    tout2# = tout#
+    tout2# = tout1#
     toutint# = FIX(tout2#)
-    IF tout# >= 0 THEN
+    IF tout1# >= 0 THEN
         toutdec# = (tout2# - toutint#) + 1
         IF plus THEN tout = tout + "+"
     ELSE
@@ -3049,7 +2978,7 @@ SUB TIMEms (tout#, plus)
         IF toutint# = 0 THEN tout = tout + "-"
     END IF
     tout = tout + LTRIM$(STR$(toutint#))
-    IF tout# >= 0 THEN tout = tout + "." + MID$(LTRIM$(STR$(toutdec#)), 3, 3) ELSE tout = tout + "." + MID$(LTRIM$(STR$(toutdec#)), 4, 3)
+    IF tout1# >= 0 THEN tout = tout + "." + MID$(LTRIM$(STR$(toutdec#)), 3, 3) ELSE tout = tout + "." + MID$(LTRIM$(STR$(toutdec#)), 4, 3)
     IF LEN(STR$(toutdec#)) = 5 THEN tout = tout + "0"
     IF LEN(STR$(toutdec#)) = 4 THEN tout = tout + "00"
     IF LEN(STR$(toutdec#)) = 2 THEN tout = tout + "000" ' Output to tout
@@ -3210,13 +3139,13 @@ END SUB
 
 SUB Timer01
     ' Timer01: ------------------------------------------------------------------------------------------------------------------------------
-    td_update# = TIMER(.001) - timer1#
-    timer1# = TIMER(.001)
+    td_update = TIMER(.001) - timer1
+    timer1 = TIMER(.001)
 
-    'SetCaption DebugTemp1LB, "Scene_Current$"
-    'SetCaption DebugTemp1LB2, Scene_Current$
-    'SetCaption DebugTemp2LB, "previousScene$"
-    'SetCaption DebugTemp2LB2, Scene_Current$
+    'SetCaption DebugTemp1LB, "Scene_Current"
+    'SetCaption DebugTemp1LB2, Scene_Current
+    'SetCaption DebugTemp2LB, "previousScene"
+    'SetCaption DebugTemp2LB2, Scene_Current
     'SetCaption DebugTemp3LB, "titleScene1"
     'SetCaption DebugTemp3LB2, titleScene1
     'SetCaption DebugTemp4LB, "titleScene2"
@@ -3227,7 +3156,7 @@ SUB Timer01
 
     IF _DIREXISTS(config_dir) THEN IF NOT _DIREXISTS(temp_dir) THEN MKDIR temp_dir
 
-    tPing1# = TIMER(.001)
+    tPing1 = TIMER(.001)
 
     ' Count how many seconds stream has been running at low bitrate
     IF CooldownLog THEN CooldownDuration = CooldownDuration + 1
@@ -3238,7 +3167,7 @@ SUB Timer01
 
         ' Cancel cooldown if stream has stopped
         ' It's not required for single camera, but it will exit LBR quicker on playback stop
-        IF Scene_Current$ = Scene_LBR AND Timer_Fail_Stream1 >= 1 THEN CooldownLog = 0
+        IF Scene_Current = Scene_LBR AND Timer_Fail_Stream1 >= 1 THEN CooldownLog = 0
         IF SceneLBActive = 0 AND Timer_Fail_Stream1 >= 1 THEN CooldownLog = 0
 
         MediaSource1TimeLog = MediaSource1TimeMS
@@ -3299,11 +3228,11 @@ SUB Timer01
 
             IF LOF(92) = 0 THEN NoKill = 1: GOTO LOF92 ' Overkill with EOF checking, but just being safe
             IF EOF(92) THEN GOTO LOF92
-            LINE INPUT #92, file92$
+            LINE INPUT #92, file92
 
             RIST_MediaSource1Time = MediaSource1TimeMS ' RIST mode
 
-            MediaSource1TimeMS = VAL(file92$)
+            MediaSource1TimeMS = VAL(file92)
 
             ' RIST mode
             SELECT CASE RIST_Fail_Mode_1
@@ -3343,7 +3272,7 @@ SUB Timer01
 
             ' Switch to Low Bandwidth Scene
             IF SceneLBActive THEN
-                Scene_Current$ = Scene_LBR
+                Scene_Current = Scene_LBR
                 SHELL _HIDE _DONTWAIT shell_nodejs_1 + Scene_LBR
             END IF
 
@@ -3369,8 +3298,8 @@ SUB Timer01
 
             ' Restore Scene_OK
             IF SceneLBActive THEN
-                IF Scene_Current$ = Scene_LBR THEN
-                    Scene_Current$ = Scene_OK
+                IF Scene_Current = Scene_LBR THEN
+                    Scene_Current = Scene_OK
                     SHELL _HIDE _DONTWAIT shell_nodejs_1 + Scene_OK
                 END IF
             END IF
@@ -3392,10 +3321,10 @@ SUB Timer01
 
         ' Cancel cooldown if stream has stopped otherwise things will break
         ' if StreamFailDelay is set lower than CooldownLogTotal
-        IF Scene_Current$ = titleScene1 AND Timer_Fail_Stream1 >= 1 THEN CooldownLog = 0
-        IF Scene_Current$ = titleScene2 AND Timer_Fail_Stream2 >= 1 THEN CooldownLog = 0
-        IF Scene_Current$ = titleScene12 AND Timer_Fail_Stream1 >= 1 THEN CooldownLog = 0
-        IF Scene_Current$ = titleScene12 AND Timer_Fail_Stream2 >= 1 THEN CooldownLog = 0
+        IF Scene_Current = titleScene1 AND Timer_Fail_Stream1 >= 1 THEN CooldownLog = 0
+        IF Scene_Current = titleScene2 AND Timer_Fail_Stream2 >= 1 THEN CooldownLog = 0
+        IF Scene_Current = titleScene12 AND Timer_Fail_Stream1 >= 1 THEN CooldownLog = 0
+        IF Scene_Current = titleScene12 AND Timer_Fail_Stream2 >= 1 THEN CooldownLog = 0
 
         MediaSource1TimeLog = MediaSource1TimeMS
         MediaSource2TimeLog = MediaSource2TimeMS
@@ -3455,11 +3384,11 @@ SUB Timer01
             END IF
 
             IF LOF(92) = 0 THEN NoKill = 1: GOTO LOF922 ' Overkill with EOF checking, but just being safe
-            LINE INPUT #92, file92$
+            LINE INPUT #92, file92
 
             RIST_MediaSource1Time = MediaSource1TimeMS ' RIST mode
 
-            MediaSource1TimeMS = VAL(file92$)
+            MediaSource1TimeMS = VAL(file92)
 
             ' RIST mode
             SELECT CASE RIST_Fail_Mode_1
@@ -3479,11 +3408,11 @@ SUB Timer01
             MediaSource1Time = MediaSource1TimeMS / 1000
 
             IF EOF(92) THEN RefreshDisplayRequest = 1: Error_msg = "- Unable to read " + c34 + "MediaSource2" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + CHR$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + CHR$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSockets options are correctly set. (Error: #8)": _DELAY 3: GOTO LOF922
-            LINE INPUT #92, file92$
+            LINE INPUT #92, file92
 
             RIST_MediaSource2Time = MediaSource2TimeMS ' RIST mode - Source 2
 
-            MediaSource2TimeMS = VAL(file92$)
+            MediaSource2TimeMS = VAL(file92)
 
             ' RIST mode - Source 2
             SELECT CASE RIST_Fail_Mode_2
@@ -3533,31 +3462,31 @@ SUB Timer01
                 IF tmpFileError = 0 THEN
 
                     ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=true
-                    IF streamsUp$ <> "0" AND __returnPreviousScene = 1 AND returnPreviousSceneRemember = 1 THEN
-                        IF RIGHT$(Scene_Current$, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
-                            IF streamsUp$ = "1" AND previousScene$ = titleScene1 AND Scene_Current$ <> titleScene1 THEN titleScene1 = previousScene$: Scene_Current$ = titleScene1 ' titleScene1 needs to reflect the manual scene change and be changed
-                            IF streamsUp$ = "12" AND previousScene$ = titleScene12 AND Scene_Current$ <> titleScene12 THEN titleScene12 = previousScene$: Scene_Current$ = titleScene12 ' titleScene12 needs to reflect the manual scene change and be changed
+                    IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 1 THEN
+                        IF RIGHT$(Scene_Current, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
+                            IF streamsUp = "1" AND previousScene = titleScene1 AND Scene_Current <> titleScene1 THEN titleScene1 = previousScene: Scene_Current = titleScene1 ' titleScene1 needs to reflect the manual scene change and be changed
+                            IF streamsUp = "12" AND previousScene = titleScene12 AND Scene_Current <> titleScene12 THEN titleScene12 = previousScene: Scene_Current = titleScene12 ' titleScene12 needs to reflect the manual scene change and be changed
                         END IF
                     END IF
 
                     ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
-                    IF streamsUp$ <> "0" AND __returnPreviousScene = 1 AND returnPreviousSceneRemember = 0 THEN
-                        IF RIGHT$(Scene_Current$, 4) <> " LBR" AND RIGHT$(previousScene$, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
-                            ' titleScene1 cannot be changed so previousScene$ is used to change to LBR scene
+                    IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 0 THEN
+                        IF RIGHT$(Scene_Current, 4) <> " LBR" AND RIGHT$(previousScene, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
+                            ' titleScene1 cannot be changed so previousScene is used to change to LBR scene
                             ' this section changes to LBR scene but does not change back
-                            IF streamsUp$ = "1" THEN SRR = 1: titleScene1 = previousScene$: Scene_Current$ = titleScene1 ' For LBR title temp
-                            IF streamsUp$ = "12" THEN SRR = 1: titleScene12 = previousScene$: Scene_Current$ = titleScene12 ' For LBR title temp
+                            IF streamsUp = "1" THEN SRR = 1: titleScene1 = previousScene: Scene_Current = titleScene1 ' For LBR title temp
+                            IF streamsUp = "12" THEN SRR = 1: titleScene12 = previousScene: Scene_Current = titleScene12 ' For LBR title temp
                         END IF
                     END IF
 
                     ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
                     IF SRR = 1 THEN
-                        SHELL _HIDE _DONTWAIT shell_nodejs_1 + previousScene$ + " LBR"
+                        SHELL _HIDE _DONTWAIT shell_nodejs_1 + previousScene + " LBR"
                         SRR = 0
                     ELSE
                         ' These two lines were the only code prior to LBR fix
-                        IF Scene_Current$ = titleScene1 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene1 + " LBR"
-                        IF Scene_Current$ = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene12 + " LBR"
+                        IF Scene_Current = titleScene1 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene1 + " LBR"
+                        IF Scene_Current = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene12 + " LBR"
                     END IF
 
                 END IF
@@ -3587,18 +3516,18 @@ SUB Timer01
                 IF _FILEEXISTS(outputLB1 + "gif") THEN NAME outputLB1 + "gif" AS outputLB_Temp1 + "gif"
 
                 ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
-                IF streamsUp$ <> "0" AND __returnPreviousScene = 1 AND returnPreviousSceneRemember = 0 THEN
-                    IF RIGHT$(Scene_Current$, 4) = " LBR" OR RIGHT$(previousScene$, 4) = " LBR" THEN
-                        ' titleScene1 cannot be changed so previousScene$ is used to change to LBR scene
+                IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 0 THEN
+                    IF RIGHT$(Scene_Current, 4) = " LBR" OR RIGHT$(previousScene, 4) = " LBR" THEN
+                        ' titleScene1 cannot be changed so previousScene is used to change to LBR scene
 
-                        IF streamsUp$ = "1" THEN
-                            IF previousScene$ <> titleScene1 OR Scene_Current$ <> titleScene1 THEN
+                        IF streamsUp = "1" THEN
+                            IF previousScene <> titleScene1 OR Scene_Current <> titleScene1 THEN
                                 SRR = 1
                             END IF
                         END IF
 
-                        IF streamsUp$ = "12" THEN
-                            IF previousScene$ <> titleScene12 OR Scene_Current$ <> titleScene12 THEN
+                        IF streamsUp = "12" THEN
+                            IF previousScene <> titleScene12 OR Scene_Current <> titleScene12 THEN
                                 SRR = 1
                             END IF
                         END IF
@@ -3606,16 +3535,16 @@ SUB Timer01
                     END IF
                 END IF
 
-                IF SRR = 1 THEN ' previousScene$ is current scene name so " LBR" needs to be removed from the end
-                    IF RIGHT$(previousScene$, 4) = " LBR" THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + MID$(previousScene$, 1, LEN(previousScene$) - 4)
+                IF SRR = 1 THEN ' previousScene is current scene name so " LBR" needs to be removed from the end
+                    IF RIGHT$(previousScene, 4) = " LBR" THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + MID$(previousScene, 1, LEN(previousScene) - 4)
                     ' titleScene change should not be permanent when ReturnPreviousSceneRemember=false, so use titleScene Temp to revert
                     titleScene1 = titleScene1Temp: titleScene2 = titleScene2Temp: titleScene12 = titleScene12Temp
                     SRR = 0
                 ELSE
                     ' Change scene for multi camera
                     ' These two lines were the only code prior to LBR fix
-                    IF Scene_Current$ = titleScene1 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene1
-                    IF Scene_Current$ = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene12
+                    IF Scene_Current = titleScene1 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene1
+                    IF Scene_Current = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene12
                 END IF
 
             END IF
@@ -3647,33 +3576,33 @@ SUB Timer01
                 ' Disable Scene #2 LBR if Scene2LBRDisabled is true
 
                 ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=true
-                IF streamsUp$ <> "0" AND __returnPreviousScene = 1 AND returnPreviousSceneRemember = 1 THEN
-                    IF RIGHT$(Scene_Current$, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
-                        IF streamsUp$ = "2" AND previousScene$ = titleScene2 AND Scene_Current$ <> titleScene2 THEN titleScene2 = previousScene$: Scene_Current$ = titleScene2 ' titleScene2 needs to reflect the manual scene change and be changed
-                        IF streamsUp$ = "12" AND previousScene$ = titleScene12 AND Scene_Current$ <> titleScene12 THEN titleScene12 = previousScene$: Scene_Current$ = titleScene12 ' titleScene12 needs to reflect the manual scene change and be changed
+                IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 1 THEN
+                    IF RIGHT$(Scene_Current, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
+                        IF streamsUp = "2" AND previousScene = titleScene2 AND Scene_Current <> titleScene2 THEN titleScene2 = previousScene: Scene_Current = titleScene2 ' titleScene2 needs to reflect the manual scene change and be changed
+                        IF streamsUp = "12" AND previousScene = titleScene12 AND Scene_Current <> titleScene12 THEN titleScene12 = previousScene: Scene_Current = titleScene12 ' titleScene12 needs to reflect the manual scene change and be changed
                     END IF
                 END IF
 
 
                 ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
-                IF streamsUp$ <> "0" AND __returnPreviousScene = 1 AND returnPreviousSceneRemember = 0 THEN
-                    IF RIGHT$(Scene_Current$, 4) <> " LBR" AND RIGHT$(previousScene$, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
-                        ' titleScene2 cannot be changed so previousScene$ is used to change to LBR scene
+                IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 0 THEN
+                    IF RIGHT$(Scene_Current, 4) <> " LBR" AND RIGHT$(previousScene, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
+                        ' titleScene2 cannot be changed so previousScene is used to change to LBR scene
                         ' this section changes to LBR scene but does not change back
-                        IF streamsUp$ = "2" THEN SRR = 1: titleScene2 = previousScene$: Scene_Current$ = titleScene2 ' For LBR title temp
-                        IF streamsUp$ = "12" THEN SRR = 1: titleScene12 = previousScene$: Scene_Current$ = titleScene12 ' For LBR title temp
+                        IF streamsUp = "2" THEN SRR = 1: titleScene2 = previousScene: Scene_Current = titleScene2 ' For LBR title temp
+                        IF streamsUp = "12" THEN SRR = 1: titleScene12 = previousScene: Scene_Current = titleScene12 ' For LBR title temp
                     END IF
                 END IF
 
 
                 ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
                 IF SRR = 1 THEN
-                    SHELL _HIDE _DONTWAIT shell_nodejs_1 + previousScene$ + " LBR"
+                    SHELL _HIDE _DONTWAIT shell_nodejs_1 + previousScene + " LBR"
                     SRR = 0
                 ELSE
                     ' These two lines were the only code prior to LBR fix
-                    IF Scene_Current$ = titleScene2 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene2 + " LBR"
-                    IF Scene_Current$ = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene12 + " LBR"
+                    IF Scene_Current = titleScene2 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene2 + " LBR"
+                    IF Scene_Current = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene12 + " LBR"
                 END IF
 
             END IF
@@ -3753,18 +3682,18 @@ SUB Timer01
                 IF _FILEEXISTS(outputLB2 + "gif") THEN NAME outputLB2 + "gif" AS outputLB_Temp2 + "gif"
 
                 ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
-                IF streamsUp$ <> "0" AND __returnPreviousScene = 1 AND returnPreviousSceneRemember = 0 THEN
-                    IF RIGHT$(Scene_Current$, 4) = " LBR" OR RIGHT$(previousScene$, 4) = " LBR" THEN
-                        ' titleScene1 cannot be changed so previousScene$ is used to change to LBR scene
+                IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 0 THEN
+                    IF RIGHT$(Scene_Current, 4) = " LBR" OR RIGHT$(previousScene, 4) = " LBR" THEN
+                        ' titleScene1 cannot be changed so previousScene is used to change to LBR scene
 
-                        IF streamsUp$ = "2" THEN
-                            IF previousScene$ <> titleScene2 OR Scene_Current$ <> titleScene2 THEN
+                        IF streamsUp = "2" THEN
+                            IF previousScene <> titleScene2 OR Scene_Current <> titleScene2 THEN
                                 SRR = 1
                             END IF
                         END IF
 
-                        IF streamsUp$ = "12" THEN
-                            IF previousScene$ <> titleScene12 OR Scene_Current$ <> titleScene12 THEN
+                        IF streamsUp = "12" THEN
+                            IF previousScene <> titleScene12 OR Scene_Current <> titleScene12 THEN
                                 SRR = 1
                             END IF
                         END IF
@@ -3772,16 +3701,16 @@ SUB Timer01
                     END IF
                 END IF
 
-                IF SRR = 1 THEN ' previousScene$ is current scene name so " LBR" needs to be removed from the end
-                    IF RIGHT$(previousScene$, 4) = " LBR" THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + MID$(previousScene$, 1, LEN(previousScene$) - 4)
+                IF SRR = 1 THEN ' previousScene is current scene name so " LBR" needs to be removed from the end
+                    IF RIGHT$(previousScene, 4) = " LBR" THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + MID$(previousScene, 1, LEN(previousScene) - 4)
                     ' titleScene change should not be permanent when ReturnPreviousSceneRemember=false, so use titleScene Temp to revert
                     titleScene1 = titleScene1Temp: titleScene2 = titleScene2Temp: titleScene12 = titleScene12Temp
                     SRR = 0
                 ELSE
                     ' Change scene for multi camera
                     ' These two lines were the only code prior to LBR fix
-                    IF Scene_Current$ = titleScene2 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene2
-                    IF Scene_Current$ = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene12
+                    IF Scene_Current = titleScene2 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene2
+                    IF Scene_Current = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene12
                 END IF
 
             END IF
@@ -3808,19 +3737,19 @@ SUB Timer01
     IF MediaSource2TimeMSOffsetDisplay > 960 AND MediaSource2TimeMSOffsetDisplay < 1040 THEN MediaSource2TimeMSOffsetDisplay = 1000
     IF MediaSource2TimeMSOffsetDisplay > 99999 THEN MediaSource2TimeMSOffsetDisplay = 99999
 
-    tPing2# = TIMER(.001)
-    tPingOut# = (tPing2# - tPing1#)
+    tPing2 = TIMER(.001)
+    tPingOut = (tPing2 - tPing1)
 
     IF Deny_Ping <> "true" THEN
         tPingTimer = tPingTimer + 1
         IF tPingTimer >= 15 THEN
             tPingTimer = 0
             ON ERROR GOTO App_Fail
-            tIPPing1# = TIMER(.001)
+            tIPPing1 = TIMER(.001)
             client = _OPENCLIENT("TCP/IP:" + MID$(OBS_URL, INSTR(OBS_URL, ":") + 1) + ":" + LEFT$(OBS_URL, INSTR(OBS_URL, ":") - 1))
             CLOSE client
-            tIPPing2# = TIMER(.001)
-            tIPPingOut# = (tIPPing2# - tIPPing1#)
+            tIPPing2 = TIMER(.001)
+            tIPPingOut = (tIPPing2 - tIPPing1)
             ON ERROR GOTO 0
         END IF
     END IF
@@ -3855,8 +3784,10 @@ SUB Timer01
     ' OK icon
     IF Timer_Fail = 0 AND SD = 1 THEN
         SD = 0
-        _TITLE "Loopy SRT Monitor"
-        $EXEICON:'.\icon.ico'
+        IF ERR = 0 THEN
+            _TITLE "Loopy SRT Monitor"
+            $EXEICON:'.\icon.ico'
+        END IF
     END IF
 
     IF __MultiCameraSwitch = 0 THEN
@@ -3896,12 +3827,12 @@ SUB Timer01
 
     END IF
 
-    TIMEms tIPPingOut#, 0
+    TIMEms tIPPingOut, 0
     IF VAL(tout) >= .3 THEN Control(tIPPingOutLB).ForeColor = RED_WARNING ELSE Control(tIPPingOutLB).ForeColor = GREEN_OK
     IF ConnectionsLog AND VAL(tout) >= .15 AND CooldownLog = 0 THEN statusConnectionsLogToFile "[WARN] IP ping exceeding 150ms": CooldownLog = CooldownLogTotal
     SetCaption (tIPPingOutLB), LTRIM$(STR$(VAL(tout) * 1000)) + " ms"
 
-    TIMEms tPingOut#, 0
+    TIMEms tPingOut, 0
     IF VAL(tout) >= .35 THEN Control(tPingOutLB).ForeColor = RED_WARNING ELSE Control(tPingOutLB).ForeColor = GREEN_OK
     IF ConnectionsLog AND VAL(tout) >= .5 AND CooldownLog = 0 THEN statusConnectionsLogToFile "[WARN] WebSocket ping exceeding 500ms": CooldownLog = CooldownLogTotal
     IF VAL(tout) >= .5 AND CooldownLog = 0 THEN SetCaption StatusLB, "WebSocket ping too high, try another " + c34 + "NodejsFileSystem" + c34 + " if this persists...": updateDisplay = 1 ' Display error if WebSocket ping is too high
@@ -3913,17 +3844,17 @@ SUB Timer01
     END IF
 
     IF srt_warmup = 1 THEN
-        IF td_update# <= 0.001 THEN td_update# = 0.001
-        IF td_update# >= 9.999 THEN td_update# = 9.999
-        IF td_update# <= 0.989 OR td_update# >= 1.011 THEN Control(td_updateLB).ForeColor = RED_WARNING ELSE Control(td_updateLB).ForeColor = GREEN_OK
-        TIMEms td_update#, 0
+        IF td_update <= 0.001 THEN td_update = 0.001
+        IF td_update >= 9.999 THEN td_update = 9.999
+        IF td_update <= 0.989 OR td_update >= 1.011 THEN Control(td_updateLB).ForeColor = RED_WARNING ELSE Control(td_updateLB).ForeColor = GREEN_OK
+        TIMEms td_update, 0
         SetCaption (td_updateLB), tout + " sec "
     END IF
 
     SetCaption (Stream_Fail_DelayLB), calc_srt$(Stream_Fail_Delay, 1) + calc_srt_sec$
     IF Timer_Fail THEN Control(Scene_CurrentLB).ForeColor = RED_FAIL ELSE Control(Scene_CurrentLB).ForeColor = GREEN_SCENE_OK
     IF __MultiCameraSwitch = 0 THEN SetCaption (MultiCameraSwitchStatusLB), "Disabled" ELSE SetCaption (MultiCameraSwitchStatusLB), "Enabled"
-    IF __MultiCameraSwitch = 1 THEN SetCaption (Scene_CurrentLB), LEFT$(previousSceneDisplay$, 20) ELSE SetCaption (Scene_CurrentLB), LEFT$(Scene_Current$, 20)
+    IF __MultiCameraSwitch = 1 THEN SetCaption (Scene_CurrentLB), LEFT$(previousSceneDisplay, 20) ELSE SetCaption (Scene_CurrentLB), LEFT$(Scene_Current, 20)
 
     IF __MultiCameraSwitch = 1 THEN
         ' temp1_stream1 variables
@@ -3994,7 +3925,7 @@ SUB Timer01
 
     IF Scene_OK = "" OR Scene_Fail = "" OR Scene_Intro = "" THEN RefreshDisplayRequest = 1: Error_msg = "- Variable/s for scenes empty, check if " + c34 + config_main + c34 + " exists. (Error: #5)": _DELAY 3
 
-    IF Timer_Fail >= 1 AND Exe_OK = 1 AND streamsUp$ <> "0" THEN
+    IF Timer_Fail >= 1 AND Exe_OK = 1 AND streamsUp <> "0" THEN
         LoadImageMEM Control(PictureBox1), "tick_warning.png"
     ELSEIF Timer_Fail = 0 AND Exe_OK = 1 THEN
         LoadImageMEM Control(PictureBox1), "tick.png"
@@ -4110,7 +4041,7 @@ SUB Timer01
         SetCaption mouseXLB2, "mouseX"
         SetCaption mouseYLB2, "mouseY"
         SetCaption __ERRORLINELB2, "_ERRORLINE"
-        TIMEms Debug_Timer#, 0
+        TIMEms Debug_Timer, 0
         SetCaption (Debug_Timer_SnapshotLB), tout + " sec "
         ' MS rate
         SetCaption ms_playLB, _TRIM$(STR$((MediaSourceTimeMSOffsetDisplay))) + " ms "
@@ -4165,15 +4096,15 @@ SUB Timer01
             DO UNTIL EOF(96)
                 IF LOF(96) = 0 THEN NoKill = 1: EXIT DO ' Overkill with EOF checking, but just being safe
                 IF EOF(96) THEN EXIT DO
-                LINE INPUT #96, file96$
-                Scene_Bypass_Check = file96$
-                IF streamsUp$ <> "0" THEN previousScene$ = file96$
-                previousSceneDisplay$ = file96$
-                EXIT DO ' Output to previousScene$
+                LINE INPUT #96, file96
+                Scene_Bypass_Check = file96
+                IF streamsUp <> "0" THEN previousScene = file96
+                previousSceneDisplay = file96
+                EXIT DO ' Output to previousScene
             LOOP
         END IF
 
-        IF __MultiCameraSwitch = 1 THEN SetCaption (Scene_CurrentLB), LEFT$(previousSceneDisplay$, 20) ' Update scene name faster for multi-camera-switch
+        IF __MultiCameraSwitch = 1 THEN SetCaption (Scene_CurrentLB), LEFT$(previousSceneDisplay, 20) ' Update scene name faster for multi-camera-switch
 
     ELSE
 
@@ -4204,8 +4135,8 @@ SUB Timer01
                 DO UNTIL EOF(96)
                     IF LOF(96) = 0 THEN NoKill = 1: EXIT DO ' Overkill with EOF checking, but just being safe
                     IF EOF(96) THEN EXIT DO
-                    LINE INPUT #96, file96$
-                    EXIT DO ' Output to previousScene$
+                    LINE INPUT #96, file96
+                    EXIT DO ' Output to previousScene
                 LOOP
             END IF
 
@@ -4242,7 +4173,7 @@ SUB Timer01
     IF __MultiCameraSwitch = 0 THEN
         IF MediaSource1Time <> 0 AND RIST_MediaSource1Time_Count <= 4 THEN ' SRT ' RIST mode
             Timer_Fail = 0
-            IF CooldownLog = 0 THEN Scene_Current$ = Scene_OK
+            IF CooldownLog = 0 THEN Scene_Current = Scene_OK
             IF Exe_Fail = 1 THEN
                 Exe_Fail = 0
                 Exe_OK = 1
@@ -4262,11 +4193,11 @@ SUB Timer01
                     LoadImageMEM Control(PictureBox1), "cross.png"
                     IF Exe_Fail_First = 0 THEN
                         Exe_Fail_First = 1
-                        Scene_Current$ = Scene_Intro
+                        Scene_Current = Scene_Intro
                         SHELL _HIDE _DONTWAIT shell_nodejs_1 + Scene_Intro
                         _DELAY 0.1
                     ELSE
-                        Scene_Current$ = Scene_Fail
+                        Scene_Current = Scene_Fail
                         SHELL _HIDE _DONTWAIT shell_nodejs_1 + Scene_Fail
                         _DELAY 0.1
                         IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM DOWN]"
@@ -4278,27 +4209,27 @@ SUB Timer01
                 END IF
             END IF
         END IF
-        IF __MultiCameraSwitch = 1 THEN SetCaption (Scene_CurrentLB), LEFT$(previousSceneDisplay$, 20) ELSE SetCaption (Scene_CurrentLB), LEFT$(Scene_Current$, 20)
+        IF __MultiCameraSwitch = 1 THEN SetCaption (Scene_CurrentLB), LEFT$(previousSceneDisplay, 20) ELSE SetCaption (Scene_CurrentLB), LEFT$(Scene_Current, 20)
     END IF
 
-    IF streamsUp$ <> "0" THEN lastStreamUp$ = streamsUp$
+    IF streamsUp <> "0" THEN lastStreamUp = streamsUp
 
     ' Only set variable if not a Low Bitrate scene
-    IF RIGHT$(previousScene$, 4) <> " LBR" THEN
-        IF streamsUp$ <> "0" AND returnPreviousSceneRemember = 1 THEN
-            IF streamsUp$ = "1" THEN titleScene1 = previousScene$
-            IF streamsUp$ = "2" THEN titleScene2 = previousScene$
-            IF streamsUp$ = "12" THEN titleScene12 = previousScene$
+    IF RIGHT$(previousScene, 4) <> " LBR" THEN
+        IF streamsUp <> "0" AND __returnPreviousSceneRemember = 1 THEN
+            IF streamsUp = "1" THEN titleScene1 = previousScene
+            IF streamsUp = "2" THEN titleScene2 = previousScene
+            IF streamsUp = "12" THEN titleScene12 = previousScene
         END IF
     END IF
 
     IF __MultiCameraSwitch = 1 THEN
         IF Timer_Fail_Stream1 = 0 AND Timer_Fail_Stream2 >= Stream_Fail_Delay THEN
-            IF streamsUp$ <> "1" THEN
-                IF previousScene$ <> titleScene1 AND streamsUp$ = "0" AND __returnPreviousScene = 1 THEN ' __returnPreviousScene added for ReturnPreviousSceneRemember=false
-                    IF lastStreamUp$ <> "1" THEN previousScene$ = titleScene1
-                    Scene_Current$ = previousScene$
-                    SHELL _HIDE _DONTWAIT shell_nodejs_1 + previousScene$
+            IF streamsUp <> "1" THEN
+                IF previousScene <> titleScene1 AND streamsUp = "0" AND __returnPreviousScene = 1 THEN ' __returnPreviousScene added for ReturnPreviousSceneRemember=false
+                    IF lastStreamUp <> "1" THEN previousScene = titleScene1
+                    Scene_Current = previousScene
+                    SHELL _HIDE _DONTWAIT shell_nodejs_1 + previousScene
                     _DELAY 0.1
                     IF Timer_Fail_Output1 = 0 THEN Timer_Fail_Output1_Str = "-" ELSE Timer_Fail_Output1_Str = STR$(Timer_Fail_Output1)
                     IF Timer_Fail_Output2 = 0 THEN Timer_Fail_Output2_Str = "-" ELSE Timer_Fail_Output2_Str = STR$(Timer_Fail_Output2)
@@ -4306,7 +4237,7 @@ SUB Timer01
                     IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Now online stream #1, now down stream #2 (" + _TRIM$(Timer_Fail_Output1_Str) + " sec)"
                     Timer_Fail_Output1 = 0: Timer_Fail_Output2 = 0
                 ELSE ' ReturnPreviousSceneRemember=false
-                    Scene_Current$ = titleScene1
+                    Scene_Current = titleScene1
                     SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene1
                     _DELAY 0.1
                     IF Timer_Fail_Output1 = 0 THEN Timer_Fail_Output1_Str = "-" ELSE Timer_Fail_Output1_Str = STR$(Timer_Fail_Output1)
@@ -4316,15 +4247,15 @@ SUB Timer01
                     Timer_Fail_Output1 = 0: Timer_Fail_Output2 = 0
                 END IF
             END IF
-            streamsUp$ = "1"
+            streamsUp = "1"
         END IF
 
         IF Timer_Fail_Stream1 >= Stream_Fail_Delay AND Timer_Fail_Stream2 = 0 THEN
-            IF streamsUp$ <> "2" THEN
-                IF previousScene$ <> titleScene2 AND streamsUp$ = "0" AND __returnPreviousScene = 1 THEN
-                    IF lastStreamUp$ <> "2" THEN previousScene$ = titleScene2
-                    Scene_Current$ = previousScene$
-                    SHELL _HIDE _DONTWAIT shell_nodejs_1 + previousScene$
+            IF streamsUp <> "2" THEN
+                IF previousScene <> titleScene2 AND streamsUp = "0" AND __returnPreviousScene = 1 THEN
+                    IF lastStreamUp <> "2" THEN previousScene = titleScene2
+                    Scene_Current = previousScene
+                    SHELL _HIDE _DONTWAIT shell_nodejs_1 + previousScene
                     _DELAY 0.1
                     IF Timer_Fail_Output1 = 0 THEN Timer_Fail_Output1_Str = "-" ELSE Timer_Fail_Output1_Str = STR$(Timer_Fail_Output1)
                     IF Timer_Fail_Output2 = 0 THEN Timer_Fail_Output2_Str = "-" ELSE Timer_Fail_Output2_Str = STR$(Timer_Fail_Output2)
@@ -4332,7 +4263,7 @@ SUB Timer01
                     IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] Now down stream #1, now online stream #2 (" + _TRIM$(Timer_Fail_Output2_Str) + " sec)"
                     Timer_Fail_Output1 = 0: Timer_Fail_Output2 = 0
                 ELSE ' ReturnPreviousSceneRemember=false
-                    Scene_Current$ = titleScene2
+                    Scene_Current = titleScene2
                     SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene2
                     _DELAY 0.1
                     IF Timer_Fail_Output1 = 0 THEN Timer_Fail_Output1_Str = "-" ELSE Timer_Fail_Output1_Str = STR$(Timer_Fail_Output1)
@@ -4342,15 +4273,15 @@ SUB Timer01
                     Timer_Fail_Output1 = 0: Timer_Fail_Output2 = 0
                 END IF
             END IF
-            streamsUp$ = "2"
+            streamsUp = "2"
         END IF
 
         IF Timer_Fail_Stream1 = 0 AND Timer_Fail_Stream2 = 0 THEN
-            IF streamsUp$ <> "12" THEN
-                IF previousScene$ <> titleScene12 AND streamsUp$ = "0" AND __returnPreviousScene = 1 THEN
-                    IF lastStreamUp$ <> "12" THEN previousScene$ = titleScene12
-                    Scene_Current$ = previousScene$
-                    SHELL _HIDE _DONTWAIT shell_nodejs_1 + previousScene$
+            IF streamsUp <> "12" THEN
+                IF previousScene <> titleScene12 AND streamsUp = "0" AND __returnPreviousScene = 1 THEN
+                    IF lastStreamUp <> "12" THEN previousScene = titleScene12
+                    Scene_Current = previousScene
+                    SHELL _HIDE _DONTWAIT shell_nodejs_1 + previousScene
                     _DELAY 0.1
                     IF Timer_Fail_Output1 = 0 THEN Timer_Fail_Output1_Str = "-" ELSE Timer_Fail_Output1_Str = STR$(Timer_Fail_Output1)
                     IF Timer_Fail_Output2 = 0 THEN Timer_Fail_Output2_Str = "-" ELSE Timer_Fail_Output2_Str = STR$(Timer_Fail_Output2)
@@ -4359,7 +4290,7 @@ SUB Timer01
                     Timer_Fail_Output1 = 0: Timer_Fail_Output2 = 0
                 ELSE ' ReturnPreviousSceneRemember=false
                     ' CooldownLog = CooldownLogTotal
-                    Scene_Current$ = titleScene12
+                    Scene_Current = titleScene12
                     IF CooldownLog AND CooldownStartup = 0 THEN
                         SELECT CASE SceneLBActive
                             CASE 0
@@ -4378,20 +4309,20 @@ SUB Timer01
                     Timer_Fail_Output1 = 0: Timer_Fail_Output2 = 0
                 END IF
             END IF
-            streamsUp$ = "12"
+            streamsUp = "12"
         END IF
 
         IF Timer_Fail_Stream1 >= Stream_Fail_Delay AND Timer_Fail_Stream2 >= Stream_Fail_Delay THEN
-            IF streamsUp$ <> "0" THEN
-                streamsUp$ = "0"
+            IF streamsUp <> "0" THEN
+                streamsUp = "0"
                 LoadImageMEM Control(PictureBox1), "cross.png"
                 IF Exe_Fail_First = 0 THEN
                     Exe_Fail_First = 1
-                    Scene_Current$ = Scene_Intro
+                    Scene_Current = Scene_Intro
                     SHELL _HIDE _DONTWAIT shell_nodejs_1 + Scene_Intro
                     _DELAY 0.1
                 ELSE
-                    Scene_Current$ = Scene_Fail
+                    Scene_Current = Scene_Fail
                     SHELL _HIDE _DONTWAIT shell_nodejs_1 + Scene_Fail
                     _DELAY 0.1
                     IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM DOWN]:[ALL CAMERAS DOWN]"
@@ -4404,13 +4335,7 @@ SUB Timer01
         END IF
     END IF
 
-    IF srt_warmup = 1 AND returnFirstCheck = 1 AND __MultiCameraSwitch = 1 AND previousSceneDisplay$ = "" THEN RefreshDisplayRequest = 1: Error_msg = "- Variable/s for scenes empty, check if OBS is open." + CHR$(10) + "- If OBS is open, check communication is available via Node.js.": Error_msg_2$ = "- If Node.js is installed, check OBS WebSockets options are correctly set. (Error: #6)": _DELAY 3
-
-    ' temp2 variables
-
-    ' temp_stream1 & temp_stream2 variables
-    multiStream1_temp2# = multiStream1#
-    multiStream2_temp2# = multiStream2#
+    IF srt_warmup = 1 AND returnFirstCheck = 1 AND __MultiCameraSwitch = 1 AND previousSceneDisplay = "" THEN RefreshDisplayRequest = 1: Error_msg = "- Variable/s for scenes empty, check if OBS is open." + CHR$(10) + "- If OBS is open, check communication is available via Node.js.": Error_msg_2$ = "- If Node.js is installed, check OBS WebSockets options are correctly set. (Error: #6)": _DELAY 3
 
     IF Exe_Fail_First = 0 THEN
         Timer_Fail_First = Timer_Fail_First + 1
@@ -4445,7 +4370,7 @@ SUB Timer01
 
     IF ErrorTestRunOnce = 1 THEN ErrorTestRunOnce = 0
 
-    td_display# = TIMER(.001) - timer1#
+    td_display = TIMER(.001) - timer1
 END SUB
 
 '$INCLUDE:'InForm\InForm.ui'
