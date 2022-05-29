@@ -165,6 +165,12 @@ COMMON SHARED tmpFileError AS _BYTE
 COMMON SHARED tmpFileRestore AS _BYTE
 COMMON SHARED t1 AS SINGLE
 
+'v0.9.5.1
+COMMON SHARED SRR AS _BYTE
+COMMON SHARED titleScene1Temp AS STRING
+COMMON SHARED titleScene2Temp AS STRING
+COMMON SHARED titleScene12Temp AS STRING
+
 COMMON SHARED image_data() AS _UNSIGNED LONG
 COMMON SHARED Scene_OK AS STRING
 COMMON SHARED Scene_LBR AS STRING
@@ -250,8 +256,8 @@ COMMON SHARED file92$
 COMMON SHARED file96$
 COMMON SHARED findSceneName
 COMMON SHARED findSceneName2
-COMMON SHARED streamsUp$
-COMMON SHARED previousScene$
+COMMON SHARED streamsUp AS STRING
+COMMON SHARED previousScene AS STRING
 COMMON SHARED previousSceneDisplay$
 COMMON SHARED a$
 COMMON SHARED a2$
@@ -289,7 +295,7 @@ COMMON SHARED Scene_Intro
 COMMON SHARED Scene_Bypass
 COMMON SHARED Scene_Bypass_Check
 COMMON SHARED Exe_OK
-COMMON SHARED Scene_Current$
+COMMON SHARED Scene_Current AS STRING
 COMMON SHARED Exe_Fail
 COMMON SHARED lastStreamUp$
 COMMON SHARED returnPreviousSceneRemember
@@ -423,9 +429,9 @@ SUB __UI_BeforeInit
         $EXEICON:'.\icon.ico'
         _TITLE "Loopy SRT Monitor - loopy750"
     END IF
-    Ver = "0.9.5"
+    Ver = "0.9.5.1"
     VerBeta = ""
-    VerDate = "10/21"
+    VerDate = "05/22"
 END SUB
 
 SUB __UI_OnLoad
@@ -682,6 +688,11 @@ SUB __UI_OnLoad
         '''''''''''''
 
         CooldownLog = CooldownLogTotal
+
+        ' Used for LBR and ReturnPreviousSceneRemember=false
+        titleScene1Temp = titleScene1
+        titleScene2Temp = titleScene2
+        titleScene12Temp = titleScene12
 
         IF Desktop_Width_Position < -(_DESKTOPWIDTH * 4) THEN Desktop_Width_Position = -(_DESKTOPWIDTH * 4)
         IF Desktop_Width_Position > (_DESKTOPWIDTH * 4) THEN Desktop_Width_Position = (_DESKTOPWIDTH * 4)
@@ -2680,13 +2691,39 @@ SUB Timer01
                 IF _FILEEXISTS(outputLB_Temp1 + "png") THEN NAME outputLB_Temp1 + "png" AS outputLB1 + "png"
                 IF _FILEEXISTS(outputLB_Temp1 + "gif") THEN NAME outputLB_Temp1 + "gif" AS outputLB1 + "gif"
 
-                'Change scene for multi camera
-                'Bugged if ReturnPreviousScene is enabled
+                ' Change scene for multi camera
+                ' ReturnPreviousScene with SceneLBREnabled will be bugged unless the following code is used
                 IF tmpFileError = 0 THEN
-                    IF Scene_Current$ = titleScene1 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene1 + " LBR"
-                    IF Scene_Current$ = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene12 + " LBR"
+
+                    ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=true
+                    IF streamsUp <> "0" AND __returnPreviousScene = 1 AND returnPreviousSceneRemember = 1 THEN
+                        IF RIGHT$(Scene_Current, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
+                            IF streamsUp = "1" AND previousScene = titleScene1 AND Scene_Current <> titleScene1 THEN titleScene1 = previousScene: Scene_Current = titleScene1 ' titleScene1 needs to reflect the manual scene change and be changed
+                            IF streamsUp = "12" AND previousScene = titleScene12 AND Scene_Current <> titleScene12 THEN titleScene12 = previousScene: Scene_Current = titleScene12 ' titleScene12 needs to reflect the manual scene change and be changed
+                        END IF
+                    END IF
+
+                    ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
+                    IF streamsUp <> "0" AND __returnPreviousScene = 1 AND returnPreviousSceneRemember = 0 THEN
+                        IF RIGHT$(Scene_Current, 4) <> " LBR" AND RIGHT$(previousScene, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
+                            ' titleScene1 cannot be changed so previousScene is used to change to LBR scene
+                            ' this section changes to LBR scene but does not change back
+                            IF streamsUp = "1" THEN SRR = 1: titleScene1 = previousScene: Scene_Current = titleScene1 ' For LBR title temp
+                            IF streamsUp = "12" THEN SRR = 1: titleScene12 = previousScene: Scene_Current = titleScene12 ' For LBR title temp
+                        END IF
+                    END IF
+
+                    ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
+                    IF SRR = 1 THEN
+                        SHELL _HIDE _DONTWAIT shell_nodejs_1 + previousScene + " LBR"
+                        SRR = 0
+                    ELSE
+                        ' These two lines were the only code prior to LBR fix
+                        IF Scene_Current = titleScene1 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene1 + " LBR"
+                        IF Scene_Current = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene12 + " LBR"
+                    END IF
+
                 END IF
-                'IF Scene_Current$ <> Scene_Fail AND RIGHT$(Scene_Current$, 4) <> " LBR" AND RIGHT$(titleScene1, 4) <> " LBR" AND RIGHT$(titleScene2, 4) <> " LBR" THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + previousSceneDisplay$ + " LBR"
 
             END IF
             ON ERROR GOTO 0
@@ -2708,9 +2745,37 @@ SUB Timer01
                 IF _FILEEXISTS(outputLB1 + "png") THEN NAME outputLB1 + "png" AS outputLB_Temp1 + "png"
                 IF _FILEEXISTS(outputLB1 + "gif") THEN NAME outputLB1 + "gif" AS outputLB_Temp1 + "gif"
 
-                'Change scene for multi camera
-                IF Scene_Current$ = titleScene1 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene1
-                IF Scene_Current$ = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene12
+                ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
+                IF streamsUp <> "0" AND __returnPreviousScene = 1 AND returnPreviousSceneRemember = 0 THEN
+                    IF RIGHT$(Scene_Current, 4) = " LBR" OR RIGHT$(previousScene, 4) = " LBR" THEN
+                        ' titleScene1 cannot be changed so previousScene is used to change to LBR scene
+
+                        IF streamsUp = "1" THEN
+                            IF previousScene <> titleScene1 OR Scene_Current <> titleScene1 THEN
+                                SRR = 1
+                            END IF
+                        END IF
+
+                        IF streamsUp = "12" THEN
+                            IF previousScene <> titleScene12 OR Scene_Current <> titleScene12 THEN
+                                SRR = 1
+                            END IF
+                        END IF
+
+                    END IF
+                END IF
+
+                IF SRR = 1 THEN ' previousScene is current scene name so " LBR" needs to be removed from the end
+                    IF RIGHT$(previousScene, 4) = " LBR" THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + MID$(previousScene, 1, LEN(previousScene) - 4)
+                    ' titleScene change should not be permanent when ReturnPreviousSceneRemember=false, so use titleScene Temp to revert
+                    titleScene1 = titleScene1Temp: titleScene2 = titleScene2Temp: titleScene12 = titleScene12Temp
+                    SRR = 0
+                ELSE
+                    ' Change scene for multi camera
+                    ' These two lines were the only code prior to LBR fix
+                    IF Scene_Current = titleScene1 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene1
+                    IF Scene_Current = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene12
+                END IF
 
             END IF
             ON ERROR GOTO 0
@@ -2736,10 +2801,38 @@ SUB Timer01
                 IF _FILEEXISTS(outputLB_Temp2 + "png") THEN NAME outputLB_Temp2 + "png" AS outputLB2 + "png"
                 IF _FILEEXISTS(outputLB_Temp2 + "gif") THEN NAME outputLB_Temp2 + "gif" AS outputLB2 + "gif"
 
-                'Change scene for multi camera
-                'Disable Scene #2 LBR if Scene2LBRDisabled is true
-                IF Scene_Current$ = titleScene2 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene2 + " LBR"
-                IF Scene_Current$ = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene12 + " LBR"
+                ' Change scene for multi camera
+                ' Disable Scene #2 LBR if Scene2LBRDisabled is true
+
+                ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=true
+                IF streamsUp <> "0" AND __returnPreviousScene = 1 AND returnPreviousSceneRemember = 1 THEN
+                    IF RIGHT$(Scene_Current, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
+                        IF streamsUp = "2" AND previousScene = titleScene2 AND Scene_Current <> titleScene2 THEN titleScene2 = previousScene: Scene_Current = titleScene2 ' titleScene2 needs to reflect the manual scene change and be changed
+                        IF streamsUp = "12" AND previousScene = titleScene12 AND Scene_Current <> titleScene12 THEN titleScene12 = previousScene: Scene_Current = titleScene12 ' titleScene12 needs to reflect the manual scene change and be changed
+                    END IF
+                END IF
+
+
+                ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
+                IF streamsUp <> "0" AND __returnPreviousScene = 1 AND returnPreviousSceneRemember = 0 THEN
+                    IF RIGHT$(Scene_Current, 4) <> " LBR" AND RIGHT$(previousScene, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
+                        ' titleScene2 cannot be changed so previousScene is used to change to LBR scene
+                        ' this section changes to LBR scene but does not change back
+                        IF streamsUp = "2" THEN SRR = 1: titleScene2 = previousScene: Scene_Current = titleScene2 ' For LBR title temp
+                        IF streamsUp = "12" THEN SRR = 1: titleScene12 = previousScene: Scene_Current = titleScene12 ' For LBR title temp
+                    END IF
+                END IF
+
+
+                ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
+                IF SRR = 1 THEN
+                    SHELL _HIDE _DONTWAIT shell_nodejs_1 + previousScene + " LBR"
+                    SRR = 0
+                ELSE
+                    ' These two lines were the only code prior to LBR fix
+                    IF Scene_Current = titleScene2 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene2 + " LBR"
+                    IF Scene_Current = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene12 + " LBR"
+                END IF
 
             END IF
             ON ERROR GOTO 0
@@ -2762,9 +2855,37 @@ SUB Timer01
                 IF _FILEEXISTS(outputLB2 + "png") THEN NAME outputLB2 + "png" AS outputLB_Temp2 + "png"
                 IF _FILEEXISTS(outputLB2 + "gif") THEN NAME outputLB2 + "gif" AS outputLB_Temp2 + "gif"
 
-                'Change scene for multi camera
-                IF Scene_Current$ = titleScene2 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene2
-                IF Scene_Current$ = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene12
+                ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
+                IF streamsUp <> "0" AND __returnPreviousScene = 1 AND returnPreviousSceneRemember = 0 THEN
+                    IF RIGHT$(Scene_Current, 4) = " LBR" OR RIGHT$(previousScene, 4) = " LBR" THEN
+                        ' titleScene1 cannot be changed so previousScene is used to change to LBR scene
+
+                        IF streamsUp = "2" THEN
+                            IF previousScene <> titleScene2 OR Scene_Current <> titleScene2 THEN
+                                SRR = 1
+                            END IF
+                        END IF
+
+                        IF streamsUp = "12" THEN
+                            IF previousScene <> titleScene12 OR Scene_Current <> titleScene12 THEN
+                                SRR = 1
+                            END IF
+                        END IF
+
+                    END IF
+                END IF
+
+                IF SRR = 1 THEN ' previousScene is current scene name so " LBR" needs to be removed from the end
+                    IF RIGHT$(previousScene, 4) = " LBR" THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + MID$(previousScene, 1, LEN(previousScene) - 4)
+                    ' titleScene change should not be permanent when ReturnPreviousSceneRemember=false, so use titleScene Temp to revert
+                    titleScene1 = titleScene1Temp: titleScene2 = titleScene2Temp: titleScene12 = titleScene12Temp
+                    SRR = 0
+                ELSE
+                    ' Change scene for multi camera
+                    ' These two lines were the only code prior to LBR fix
+                    IF Scene_Current = titleScene2 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene2
+                    IF Scene_Current = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene12
+                END IF
 
             END IF
             ON ERROR GOTO 0
@@ -3064,6 +3185,8 @@ SUB Timer01
             LOOP
         END IF
 
+        IF __MultiCameraSwitch = 1 THEN SetCaption (Scene_CurrentLB), LEFT$(previousSceneDisplay$, 20) ' Update scene name faster for multi-camera-switch
+
     ELSE
 
         IF Scene_Bypass <> "none" THEN
@@ -3179,14 +3302,14 @@ SUB Timer01
     IF __MultiCameraSwitch = 1 THEN
         IF Timer_Fail_Stream1 = 0 AND Timer_Fail_Stream2 >= Stream_Fail_Delay THEN
             IF streamsUp$ <> "1" THEN
-                IF previousScene$ <> titleScene1 AND streamsUp$ = "0" THEN
+                IF previousScene <> titleScene1 AND streamsUp = "0" AND __returnPreviousScene = 1 THEN ' __returnPreviousScene added for ReturnPreviousSceneRemember=false
                     IF lastStreamUp$ <> "1" THEN previousScene$ = titleScene1
                     Scene_Current$ = previousScene$
                     SHELL _HIDE _DONTWAIT shell_nodejs_1 + previousScene$
                     _DELAY .1
                     IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM UP]:[CAMERA #1 UP]:[CAMERA #2 DOWN]"
                     IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Now online stream #1, now down stream #2"
-                ELSE
+                ELSE ' ReturnPreviousSceneRemember=false
                     Scene_Current$ = titleScene1
                     SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene1
                     _DELAY .1
@@ -3199,14 +3322,14 @@ SUB Timer01
 
         IF Timer_Fail_Stream1 >= Stream_Fail_Delay AND Timer_Fail_Stream2 = 0 THEN
             IF streamsUp$ <> "2" THEN
-                IF previousScene$ <> titleScene2 AND streamsUp$ = "0" THEN
+                IF previousScene <> titleScene2 AND streamsUp = "0" AND __returnPreviousScene = 1 THEN
                     IF lastStreamUp$ <> "2" THEN previousScene$ = titleScene2
                     Scene_Current$ = previousScene$
                     SHELL _HIDE _DONTWAIT shell_nodejs_1 + previousScene$
                     _DELAY .1
                     IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM UP]:[CAMERA #2 UP]:[CAMERA #1 DOWN]"
                     IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] Now down stream #1, now online stream #2"
-                ELSE
+                ELSE ' ReturnPreviousSceneRemember=false
                     Scene_Current$ = titleScene2
                     SHELL _HIDE _DONTWAIT shell_nodejs_1 + titleScene2
                     _DELAY .1
@@ -3219,14 +3342,14 @@ SUB Timer01
 
         IF Timer_Fail_Stream1 = 0 AND Timer_Fail_Stream2 = 0 THEN
             IF streamsUp$ <> "12" THEN
-                IF previousScene$ <> titleScene12 AND streamsUp$ = "0" THEN
+                IF previousScene <> titleScene12 AND streamsUp = "0" AND __returnPreviousScene = 1 THEN
                     IF lastStreamUp$ <> "12" THEN previousScene$ = titleScene12
                     Scene_Current$ = previousScene$
                     SHELL _HIDE _DONTWAIT shell_nodejs_1 + previousScene$
                     _DELAY .1
                     IF __FileStatusOutput = 1 THEN statusOutputToFile "[STREAM UP]:[ALL CAMERAS UP]"
                     IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Now online stream #1, now online stream #2"
-                ELSE
+                ELSE ' ReturnPreviousSceneRemember=false
                     'CooldownLog = CooldownLogTotal
                     Scene_Current$ = titleScene12
                     IF CooldownLog AND CooldownStartup = 0 THEN
