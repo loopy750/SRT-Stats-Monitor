@@ -62,7 +62,7 @@ Following installation of Node.js, run __install.cmd__ within '__Documents\Loopy
 
 VLC 64-bit
 ----------
-This will be used in OBS as a **_VLC Video Source_** for the "fallback" streams. It has features not currently available with the default OBS video player.
+This will be used in OBS as a ```VLC Video Source``` for the "fallback" streams. It has features not currently available with the default OBS video player.
 
 * See the "Modifications" section below for recommended changes.
 
@@ -76,16 +76,20 @@ MODIFICATIONS
 
 OBS Studio
 ----------
-Open OBS, and within the "Media Source", configure your SRT stream. Consult the [OBS SRT & RIST Wiki](https://obsproject.com/wiki/Streaming-With-SRT-Or-RIST-Protocols) for more information. Ensure **_Restart playback when source becomes active_** is disabled. Recommended setting for **_Reconnect Delay_** is 1 second.
+Open OBS, and within the "Media Source", configure your SRT stream. Consult the [OBS SRT & RIST Wiki](https://obsproject.com/wiki/Streaming-With-SRT-Or-RIST-Protocols) for more information. Ensure ```Restart playback when source becomes active``` is disabled. Recommended setting for ```Reconnect Delay``` is 1 second.
+
+![Restart playback when source becomes active=Disabled](https://i.imgur.com/XjQgbDy.jpg)
 
 VLC 64-bit
 ----------
-Open OBS, and within the "fallback" scene, add a source **_VLC Video Source_**. Select your video that viewers will see when your connection is lost. The following settings are recommended: **_Loop Playlist_** enabled, **_Pause when not visible, unpause when visible_** enabled.
+Open OBS, and within the "fallback" scene, add a source ```VLC Video Source```. Select your video that viewers will see when your connection is lost. The following settings are recommended: ```Loop Playlist``` enabled, ```Pause when not visible, unpause when visible``` enabled.
+
+![Loop Playlist=Enabled](https://i.imgur.com/NCk2IQT.jpg)
 
 AdiIRC
 ------
 
-[AdiIRC](https://www.adiirc.com/) is a free alternative to mIRC. If you have set **_FileStatusOutput=true_** for the purpose of outputting the stream status to a chat room, a sample script is supplied here. Edit [vars.ini](https://raw.githubusercontent.com/loopy750/SRT-Stats-Monitor/master/modifications/adiirc/vars.ini) with your channel name, and place in AdiIRC's root folder. Then load the [outputSRT.ini](https://raw.githubusercontent.com/loopy750/SRT-Stats-Monitor/master/modifications/adiirc/outputSRT.ini) script. Alt+R can be used to quickly access scripts.
+[AdiIRC](https://www.adiirc.com/) is a free alternative to mIRC. If you have set ```FileStatusOutput=true``` for the purpose of outputting the stream status to a chat room, a sample script is supplied here. Edit [vars.ini](https://raw.githubusercontent.com/loopy750/SRT-Stats-Monitor/master/modifications/adiirc/vars.ini) with your channel name, and place in AdiIRC's root folder. Then load the [outputSRT.ini](https://raw.githubusercontent.com/loopy750/SRT-Stats-Monitor/master/modifications/adiirc/outputSRT.ini) script. Alt+R can be used to quickly access scripts.
 
 
 ADDITIONAL STEPS
