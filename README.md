@@ -17,7 +17,7 @@ The _**readme.txt**_ file explains in depth how these function.
 - Added 'ColorTheme' configuration - see readme.txt for instructions
 - Added 'AllowResize' configuration - see readme.txt for instructions
 - Added Light Mode option - see readme.txt for instructions
-- Bitrate output to text file option for obs-websocket-http
+- Bitrate output to text file option for SRT Live Server
 - Released portable version for Windows
 - Released version for Linux
 - Minor UI changes
