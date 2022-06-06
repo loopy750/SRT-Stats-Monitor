@@ -121,6 +121,8 @@ COMMON SHARED __FileStatusOutput AS _BYTE
 COMMON SHARED outputBitrateFile AS STRING
 COMMON SHARED outputStatusFile AS STRING
 COMMON SHARED outputConnectionsLogFile AS STRING
+COMMON SHARED outputKbpsFile1 AS STRING
+COMMON SHARED outputKbpsFile2 AS STRING
 COMMON SHARED outputLB1 AS STRING
 COMMON SHARED outputLB2 AS STRING
 COMMON SHARED outputLB_Temp1 AS STRING
@@ -276,6 +278,7 @@ COMMON SHARED Scene_Bypass_Check AS STRING
 COMMON SHARED Scene_Bypass_Log AS INTEGER
 COMMON SHARED OBS_URL AS STRING
 COMMON SHARED OBS_PW AS STRING
+COMMON SHARED OBS_Connection AS STRING
 COMMON SHARED titleScene1 AS STRING
 COMMON SHARED titleScene2 AS STRING
 COMMON SHARED titleScene12 AS STRING
@@ -286,6 +289,7 @@ COMMON SHARED returnPreviousScene AS STRING
 COMMON SHARED shell_cmd_1 AS STRING
 COMMON SHARED shell_cmd_2 AS STRING
 COMMON SHARED ConnectionsLog_Check AS STRING
+COMMON SHARED segment_LBR AS _BYTE
 
 COMMON SHARED config_dir AS STRING
 COMMON SHARED nodejs_dir AS STRING
@@ -361,7 +365,7 @@ COMMON SHARED streamsUp AS STRING
 COMMON SHARED previousScene AS STRING
 COMMON SHARED previousSceneDisplay AS STRING
 COMMON SHARED tPing1 AS DOUBLE
-COMMON SHARED network_client AS INTEGER
+COMMON SHARED network_client AS SINGLE
 COMMON SHARED tPing2 AS DOUBLE
 COMMON SHARED tPingOut AS DOUBLE
 COMMON SHARED tIPPing1 AS DOUBLE
@@ -600,6 +604,8 @@ SUB __UI_OnLoad
     outputBitrateFile = temp_dir + s + "outputBitrate.txt"
     outputStatusFile = temp_dir + s + "outputStatus.txt"
     outputConnectionsLogFile = temp_dir + s + "outputConnections.log"
+    outputKbpsFile1 = temp_dir + s + "_Kbps1.txt"
+    outputKbpsFile2 = temp_dir + s + "_Kbps2.txt"
     http_media2_File = temp_dir + s + "http_get_media2.cmd"
     outputLB1 = config_dir + s + "outputLB1."
     outputLB2 = config_dir + s + "outputLB2."
@@ -695,6 +701,7 @@ SUB __UI_OnLoad
                     IF file4_var$ = "mediasource2" THEN MediaSource2 = file4_val$
                     IF file4_var$ = "websocketaddress" THEN OBS_URL = file4_val$
                     IF file4_var$ = "websocketpassword" THEN OBS_PW = file4_val$
+                    IF file4_var$ = "websocketconnection" THEN OBS_Connection = file4_val$
                     IF file4_var$ = "filestatusoutput" THEN FileStatusOutput = file4_val$
                     IF file4_var$ = "connectionslog" THEN ConnectionsLog_Check = file4_val$
                     IF file4_var$ = "scenelbrenabled" THEN Scene_LBR_Enabled = file4_val$
@@ -715,7 +722,6 @@ SUB __UI_OnLoad
                     IF file4_var$ = "returnpreviousscene" THEN returnPreviousScene = file4_val$
                     IF file4_var$ = "returnprevioussceneremember" THEN returnPreviousSceneRemember = file4_val$
                     ' obs-websocket-http
-                    IF file4_var$ = "httpenabled" THEN HTTP_Enabled = file4_val$
                     IF file4_var$ = "httpbindaddress" THEN HTTP_Bind_Address = file4_val$
                     IF file4_var$ = "httpbindport" THEN HTTP_Bind_Port = file4_val$
                     IF file4_var$ = "httpauthkey" THEN HTTP_Auth_Key = LEFT$(file4_val$, 256)
@@ -723,15 +729,15 @@ SUB __UI_OnLoad
                     ' SRT Live server
                     IF file4_var$ = "sls1enabled" THEN SLS_1_Enabled = file4_val$
                     IF file4_var$ = "sls2enabled" THEN SLS_2_Enabled = file4_val$
-                    IF file4_var$ = "serverip" THEN SLS_Server_IP = file4_val$
-                    IF file4_var$ = "serverport" THEN SLS_Server_Port = file4_val$
-                    IF file4_var$ = "serverstats" THEN SLS_Stats = file4_val$
-                    IF file4_var$ = "serverpublisher1" THEN SLS_Publisher1 = file4_val$
-                    IF file4_var$ = "serverpublisher2" THEN SLS_Publisher2 = file4_val$
-                    IF file4_var$ = "bitratelow1" THEN SLS_BitrateLow1 = VAL(file4_val$)
-                    IF file4_var$ = "bitratelow2" THEN SLS_BitrateLow2 = VAL(file4_val$)
-                    IF file4_var$ = "bitratefail1" THEN SLS_BitrateFail1 = VAL(file4_val$)
-                    IF file4_var$ = "bitratefail2" THEN SLS_BitrateFail2 = VAL(file4_val$)
+                    IF file4_var$ = "slsserverip" THEN SLS_Server_IP = file4_val$
+                    IF file4_var$ = "slsserverport" THEN SLS_Server_Port = file4_val$
+                    IF file4_var$ = "slsserverstats" THEN SLS_Stats = file4_val$
+                    IF file4_var$ = "slsserverpublisher1" THEN SLS_Publisher1 = file4_val$
+                    IF file4_var$ = "slsserverpublisher2" THEN SLS_Publisher2 = file4_val$
+                    IF file4_var$ = "slsbitratelow1" THEN SLS_BitrateLow1 = VAL(file4_val$)
+                    IF file4_var$ = "slsbitratelow2" THEN SLS_BitrateLow2 = VAL(file4_val$)
+                    IF file4_var$ = "slsbitratefail1" THEN SLS_BitrateFail1 = VAL(file4_val$)
+                    IF file4_var$ = "slsbitratefail2" THEN SLS_BitrateFail2 = VAL(file4_val$)
                     ' UNDOCUMENTED
                     IF file4_var$ = "mediasourcetime" THEN MediaSourceTime = file4_val$
                     IF file4_var$ = "cooldowntotal" THEN CooldownTotal = file4_val$
@@ -744,6 +750,11 @@ SUB __UI_OnLoad
             END IF
         LOOP UNTIL EOF(4)
         CLOSE #4
+
+        ' obs-websocket-http by default
+        HTTP_Enabled = "true"
+        IF OBS_Connection = "http" THEN HTTP_Enabled = "true"
+        IF OBS_Connection = "js" THEN HTTP_Enabled = "false"
 
         IF HTTP_Enabled = "true" THEN SetCaption ServerPingLB, "HTTP Ping" ELSE HTTP_Enabled = "false" ' HTTP
         IF HTTP_Enabled = "true" AND NodejsFileSystem = "2" THEN NodejsFileSystem = "1" ' HTTP
@@ -887,8 +898,17 @@ SUB __UI_OnLoad
         SLS_Header = SLS_Header + SLS_EOL
 
         SLS_Port_Client = "TCP/IP:" + SLS_Server_Port + ":"
-        IF SLS_1_Enabled <> "true" OR MultiCameraSwitch <> "true" THEN SLS_2_Enabled = "false" ' Disable if SLS1Enabled=false or MultiCameraSwitch=false
-        IF SLS_1_Enabled = "true" THEN SLS_Active = 1
+
+        IF MultiCameraSwitch = "true" THEN
+            __MultiCameraSwitch = 1
+        ELSE
+            MultiCameraSwitch = "false"
+            __MultiCameraSwitch = 0
+        END IF
+
+        IF SLS_1_Enabled <> "true" THEN SLS_1_Enabled = "false": IF SLS_2_Enabled <> "true" THEN SLS_2_Enabled = "false" ' Set true and false
+        IF __MultiCameraSwitch = 0 THEN SLS_2_Enabled = "false"
+        IF SLS_1_Enabled = "true" OR SLS_2_Enabled = "true" THEN SLS_Active = 1
 
         ' SRT Live Server
         IF SLS_Active = 1 THEN
@@ -897,11 +917,29 @@ SUB __UI_OnLoad
             SetCaption Bitrate_Stream_2LB, "-"
         END IF
 
-        IF SLS_Active = 1 AND MultiCameraSwitch <> "true" THEN
+        IF SLS_Active = 1 AND __MultiCameraSwitch = 0 THEN
             SetCaption MultiCameraSwitchLB, "Bitrate"
         END IF
 
-        IF SLS_Active = 1 AND MultiCameraSwitch = "true" THEN
+        IF SLS_Active = 1 AND __MultiCameraSwitch = 1 AND SLS_1_Enabled = "true" AND SLS_2_Enabled = "false" THEN
+            Control(StreamUptimeLB).Top = 254
+            Control(Uptime_Stream_1LB).Top = 254
+            Control(failLB).Top = 278
+            Control(Timer_Fail_Stream1LB).Top = 278
+            Control(BitrateLB2).Hidden = True
+            Control(Bitrate_Stream_2LB).Hidden = True
+        END IF
+
+        IF SLS_Active = 1 AND __MultiCameraSwitch = 1 AND SLS_1_Enabled = "false" AND SLS_2_Enabled = "true" THEN
+            Control(StreamUptimeLB2).Top = 254
+            Control(Uptime_Stream_2LB).Top = 254
+            Control(failLB2).Top = 278
+            Control(Timer_Fail_Stream2LB).Top = 278
+            Control(BitrateLB).Hidden = True
+            Control(Bitrate_Stream_1LB).Hidden = True
+        END IF
+
+        IF SLS_Active = 1 AND __MultiCameraSwitch = 1 AND SLS_1_Enabled = "true" AND SLS_2_Enabled = "true" THEN
             Control(StreamUptimeLB).Top = 254
             Control(Uptime_Stream_1LB).Top = 254
             Control(failLB).Top = 278
@@ -911,13 +949,14 @@ SUB __UI_OnLoad
             Control(Uptime_Stream_2LB).Top = 254
             Control(failLB2).Top = 278
             Control(Timer_Fail_Stream2LB).Top = 278
-        ELSE
-            Control(BitrateLB).Hidden = True
-            Control(BitrateLB2).Hidden = True
-            Control(Bitrate_Stream_1LB).Hidden = True
-            Control(Bitrate_Stream_2LB).Hidden = True
         END IF
 
+        IF SLS_Active = 0 OR __MultiCameraSwitch = 0 THEN
+            Control(BitrateLB).Hidden = True
+            Control(Bitrate_Stream_1LB).Hidden = True
+            Control(BitrateLB2).Hidden = True
+            Control(Bitrate_Stream_2LB).Hidden = True
+        END IF
 
         Scene_LBR = Scene_OK + " LBR"
         _RESIZE OFF , _SMOOTH
@@ -1030,7 +1069,6 @@ SUB __UI_OnLoad
             IF Desktop_Width_Position = -1 AND Desktop_Height_Position = -1 THEN _SCREENMOVE _MIDDLE ELSE _SCREENMOVE Desktop_Width_Position, Desktop_Height_Position
         END IF
     END IF
-    IF MultiCameraSwitch = "true" THEN __MultiCameraSwitch = 1 ELSE __MultiCameraSwitch = 0
     IF returnPreviousScene = "true" THEN __returnPreviousScene = 1 ELSE __returnPreviousScene = 0
     IF FileStatusOutput = "true" THEN __FileStatusOutput = 1 ELSE __FileStatusOutput = 0
     IF returnPreviousSceneRemember = "true" THEN __returnPreviousSceneRemember = 1 ELSE __returnPreviousSceneRemember = 0
@@ -2130,7 +2168,7 @@ SUB __UI_OnLoad
             JSON = SPACE$(LOF(128))
             GET #128, , JSON
             CLOSE #128
-            REDIM JSON_Multi(100) AS STRING
+            REDIM JSON_Multi(128) AS STRING
             GetAllKey "sceneName", JSON, JSON_Multi()
             Test_Pass_9 = 0
             FOR i_JSON = 1 TO UBOUND(JSON_Multi)
@@ -2203,7 +2241,7 @@ SUB __UI_OnLoad
                 JSON = SPACE$(LOF(128))
                 GET #128, , JSON
                 CLOSE #128
-                REDIM JSON_Multi(100) AS STRING
+                REDIM JSON_Multi(128) AS STRING
                 GetAllKey "sceneName", JSON, JSON_Multi()
                 Test_Pass_10 = 0
                 FOR i_JSON = 1 TO UBOUND(JSON_Multi)
@@ -3765,44 +3803,66 @@ SUB GetAllKey (keyname AS STRING, JSON AS STRING, ParseKey() AS STRING)
     LOOP UNTIL INSTR(JSON, CHR$(34) + keyname + CHR$(34)) = 0
 END SUB
 
-SUB Timer01
-    ' Timer01: ------------------------------------------------------------------------------------------------------------------------------
-    td_update = TIMER(.001) - timer1
-    timer1 = TIMER(.001)
+SUB sls_client_connect
 
-    'SetCaption DebugTemp1LB, "Scene_Current"
-    'SetCaption DebugTemp1LB2, Scene_Current
-    'SetCaption DebugTemp2LB, "previousScene"
-    'SetCaption DebugTemp2LB2, Scene_Current
-    'SetCaption DebugTemp3LB, "titleScene1"
-    'SetCaption DebugTemp3LB2, titleScene1
-    'SetCaption DebugTemp4LB, "titleScene2"
-    'SetCaption DebugTemp4LB2, titleScene2
+    ' Reset SLS data
+    SLS_GET_a = "": SLS_GET_a2 = "": SLS_GET_i = 0: SLS_GET_i2 = 0: SLS_GET_i3 = 0: SLS_GET_l = 0: SLS_GET_d = "": sls_stats.xml = "": SLS_Bitrate1 = 0: SLS_Bitrate2 = 0
+    SLS_streams_found = 0: SLS_Uptime1 = 0: SLS_Uptime2 = 0: SLS_streams_seek = 0
 
-    CooldownLog = CooldownLog - 1
-    IF CooldownLog < 0 THEN CooldownLog = 0
+    SLS_Ping1 = TIMER(.001)
+    sls_client = _OPENCLIENT(SLS_Port_Client + SLS_Server_IP)
 
-    IF _DIREXISTS(config_dir) THEN IF NOT _DIREXISTS(temp_dir) THEN MKDIR temp_dir
+    IF sls_client = 0 THEN RefreshDisplayRequest = 1: Error_msg$ = "- Unable to connect, check if " + c34 + SLS_Server_IP + ":" + SLS_Server_Port + c34 + " is correct." + CHR$(10) + "- Program is unable to read the SRT /stat URL from its http server. (Error: #4)": _DELAY 3: EXIT SUB
 
-    tPing1 = TIMER(.001)
+    ON ERROR GOTO App_Fail
+    App_Refresh = 1
 
-    ' Count how many seconds stream has been running at low bitrate
-    IF CooldownLog THEN CooldownDuration = CooldownDuration + 1
-    IF CooldownDuration > 32400 THEN CooldownDuration = 32400
+    PUT #sls_client, , SLS_Header
 
-    ' Get Media Source times (1 stream) ------------------------------------------------------------------------------------------------------------------------------
-    IF __MultiCameraSwitch = 0 THEN
+    SLS_Ping2 = TIMER(.001)
+    SLS_PingOut = (SLS_Ping2 - SLS_Ping1)
 
-        ' Cancel cooldown if stream has stopped
-        ' It's not required for single camera, but it will exit LBR quicker on playback stop
-        IF Scene_Current = Scene_LBR AND Timer_Fail_Stream1 >= 1 THEN CooldownLog = 0
-        IF SceneLBActive = 0 AND Timer_Fail_Stream1 >= 1 THEN CooldownLog = 0
+    ' Connect to SRT Live Server and grab json data
+    SLS_Timer_GET = TIMER
+    DO
+        _DELAY 0.01
+        GET #sls_client, , SLS_GET_a2
+        SLS_GET_a = SLS_GET_a + SLS_GET_a2
+        SLS_GET_i = INSTR(SLS_GET_a, "Content-Length:")
+        IF SLS_GET_i THEN
+            SLS_GET_i2 = INSTR(SLS_GET_i, SLS_GET_a, SLS_EOL)
+            IF SLS_GET_i2 THEN
+                SLS_GET_l = VAL(MID$(SLS_GET_a, SLS_GET_i + 15, SLS_GET_i2 - SLS_GET_i - 14))
+                SLS_GET_i3 = INSTR(SLS_GET_i2, SLS_GET_a, SLS_EOL + SLS_EOL)
+                IF SLS_GET_i3 THEN
+                    SLS_GET_i3 = SLS_GET_i3 + 4 'move i3 to start of data
+                    IF (LEN(SLS_GET_a) - SLS_GET_i3 + 1) = SLS_GET_l THEN
+                        CLOSE sls_client ' CLOSE CLIENT
+                        SLS_GET_d = MID$(SLS_GET_a, SLS_GET_i3, SLS_GET_l)
+                        EXIT DO
+                    END IF ' available data = l
+                END IF ' i3
+            END IF ' i2
+        END IF ' i
+    LOOP UNTIL TIMER > SLS_Timer_GET + 3 ' 3 second timeout
+    CLOSE sls_client
 
-        MediaSource1TimeLog = MediaSource1TimeMS
+    ' Store json data in sls_stats.xml
+    sls_stats.xml = SLS_GET_d
 
-        IF SLS_1_Enabled <> "true" THEN
-            ' Node.js check bitrate - source #1 only: BEGIN ---------------------------------------------------------------
+END SUB
 
+SUB Multi0 (serverType$)
+
+    ' Cancel cooldown if stream has stopped
+    ' It's not required for single camera, but it will exit LBR quicker on playback stop
+    IF Scene_Current = Scene_LBR AND Timer_Fail_Stream1 >= 1 THEN CooldownLog = 0
+    IF SceneLBActive = 0 AND Timer_Fail_Stream1 >= 1 THEN CooldownLog = 0
+
+    MediaSource1TimeLog = MediaSource1TimeMS
+
+    SELECT CASE serverType$
+        CASE "SRT"
             ' NodeJSFileSystem selection controls this
             SELECT CASE NodejsFileSystem
                 CASE "0"
@@ -3946,121 +4006,14 @@ SUB Timer01
                         END IF
                 END SELECT
 
-                MediaSource1Time = MediaSource1TimeMS / 1000
-
                 LOF92:
             END IF
             CLOSE #92
 
             IF NodejsFileSystem = "0" OR NodejsFileSystem = "1" THEN IF NoKill = 1 THEN NoKill = 0 ELSE IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
-            ON ERROR GOTO 0
-            App_Refresh = 0
+        CASE "SLS"
+            sls_client_connect
 
-            MediaSource1TimeMSOffset = MediaSource1TimeMS - MediaSource1TimeLog
-            IF MediaSource1TimeMSOffset < 0 THEN MediaSource1TimeMSOffset = 0
-
-
-            ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
-            IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 AND CooldownLog = 0 AND LBR_Delay >= LBR_Delay_Total THEN
-
-                CooldownActive = 1
-                ConnectionsLog1Count = ConnectionsLog1Count + 1
-                IF ConnectionsLog1Count > 999 THEN ConnectionsLog1Count = 999
-
-                ' Switch to Low Bandwidth Scene
-                IF SceneLBActive THEN
-                    Scene_Current = Scene_LBR
-                    SHELL _HIDE _DONTWAIT shell_cmd_1 + Scene_LBR + shell_cmd_2
-                END IF
-
-                IF tmpFileError = 0 THEN
-                    IF __FileStatusOutput = 1 THEN statusOutputToFile "[LOW BANDWIDTH]:[STREAM]"
-                    IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] Insufficient bandwidth for stream, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times": CooldownLog = CooldownLogTotal
-                END IF
-
-            END IF
-
-            IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 THEN
-                ' LBR_Delay
-                IF LBR_Delay >= LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: IF CooldownLog > CooldownLogTotal THEN CooldownLog = CooldownLogTotal
-                LBR_Delay = LBR_Delay + 1: IF LBR_Delay > LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total
-            END IF
-            SELECT CASE MediaSource1TimeMSOffset
-                CASE 960 TO 1040, 0
-                    LBR_Delay = LBR_Delay - 1: IF LBR_Delay <= 0 THEN LBR_Delay = 0
-            END SELECT
-
-            IF CooldownActive = 1 AND CooldownLog = 0 THEN
-                CooldownActive = 0
-
-                ' Restore Scene_OK
-                IF SceneLBActive THEN
-                    IF Scene_Current = Scene_LBR THEN
-                        Scene_Current = Scene_OK
-                        SHELL _HIDE _DONTWAIT shell_cmd_1 + Scene_OK + shell_cmd_2
-                    END IF
-                END IF
-
-                IF tmpFileRestore = 1 THEN
-                    tmpFileRestore = 0
-                ELSE
-                    IF __FileStatusOutput = 1 THEN statusOutputToFile "[FULL BANDWIDTH]:[STREAM] (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
-                    IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Bandwidth restored for stream, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
-                END IF
-                ' Reset low bitrate duration seconds count
-                CooldownDuration = 0
-            END IF
-            ' Node.js check bitrate - source #1 only: END ---------------------------------------------------------------
-
-        ELSE
-
-            ' SRT Live Server check bitrate - source #1 only: BEGIN ---------------------------------------------------------------
-
-            ' Reset SLS data
-            SLS_GET_a = "": SLS_GET_a2 = "": SLS_GET_i = 0: SLS_GET_i2 = 0: SLS_GET_i3 = 0: SLS_GET_l = 0: SLS_GET_d = "": sls_stats.xml = "": SLS_Bitrate1 = 0: SLS_Bitrate2 = 0
-            SLS_streams_found = 0: SLS_Uptime1 = 0: SLS_Uptime2 = 0: SLS_streams_seek = 0
-
-            SLS_Ping1 = TIMER(.001)
-            sls_client = _OPENCLIENT(SLS_Port_Client + SLS_Server_IP)
-            SLS_Ping2 = TIMER(.001)
-            SLS_PingOut = (SLS_Ping2 - SLS_Ping1)
-
-            IF sls_client = 0 THEN RefreshDisplayRequest = 1: Error_msg$ = "- Unable to connect, check if " + c34 + SLS_Server_IP + ":" + SLS_Server_Port + c34 + " is correct." + CHR$(10) + "- Program is unable to read the SRT /stat URL from its http server. (Error: #4)": _DELAY 3: GOTO SLS_URL_OK
-
-            ON ERROR GOTO App_Fail
-            App_Refresh = 1
-
-            PUT #sls_client, , SLS_Header
-
-            ' Connect to SRT Live Server and grab json data
-            SLS_Timer_GET = TIMER
-            DO
-                _DELAY 0.05
-                GET #sls_client, , SLS_GET_a2
-                SLS_GET_a = SLS_GET_a + SLS_GET_a2
-                SLS_GET_i = INSTR(SLS_GET_a, "Content-Length:")
-                IF SLS_GET_i THEN
-                    SLS_GET_i2 = INSTR(SLS_GET_i, SLS_GET_a, SLS_EOL)
-                    IF SLS_GET_i2 THEN
-                        SLS_GET_l = VAL(MID$(SLS_GET_a, SLS_GET_i + 15, SLS_GET_i2 - SLS_GET_i - 14))
-                        SLS_GET_i3 = INSTR(SLS_GET_i2, SLS_GET_a, SLS_EOL + SLS_EOL)
-                        IF SLS_GET_i3 THEN
-                            SLS_GET_i3 = SLS_GET_i3 + 4 'move i3 to start of data
-                            IF (LEN(SLS_GET_a) - SLS_GET_i3 + 1) = SLS_GET_l THEN
-                                CLOSE sls_client ' CLOSE CLIENT
-                                SLS_GET_d = MID$(SLS_GET_a, SLS_GET_i3, SLS_GET_l)
-                                EXIT DO
-                            END IF ' available data = l
-                        END IF ' i3
-                    END IF ' i2
-                END IF ' i
-            LOOP UNTIL TIMER > SLS_Timer_GET + 3 ' 3 second timeout
-            CLOSE sls_client
-
-            ' Store json data in sls_stats.xml
-            sls_stats.xml = SLS_GET_d
-
-            SLS_URL_OK:
             ON ERROR GOTO 0
             App_Refresh = 0
 
@@ -4091,84 +4044,112 @@ SUB Timer01
             MediaSource1TimeMS = SLS_Uptime1 * 1000
             ' Check BitrateFail1 - if bitrate is below fail value, appear to be 0
             IF SLS_Bitrate1 < SLS_BitrateFail1 THEN MediaSource1TimeMS = 0
-            MediaSource1Time = MediaSource1TimeMS / 1000
+        CASE "NGINX"
+            ''TODO
+    END SELECT
 
-            MediaSource1TimeMSOffset = MediaSource1TimeMS - MediaSource1TimeLog
-            IF MediaSource1TimeMSOffset < 0 THEN MediaSource1TimeMSOffset = 0
+    MediaSource1Time = MediaSource1TimeMS / 1000
+    ON ERROR GOTO 0
+    App_Refresh = 0
 
+    MediaSource1TimeMSOffset = MediaSource1TimeMS - MediaSource1TimeLog
+    IF MediaSource1TimeMSOffset < 0 THEN MediaSource1TimeMSOffset = 0
+
+    ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
+
+    SELECT CASE serverType$
+        CASE "SRT"
             ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
-            IF SLS_Bitrate1 < SLS_BitrateLow1 AND Timer_Fail_Stream1 = 0 AND CooldownLog = 0 AND LBR_Delay >= LBR_Delay_Total THEN
+            IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 AND CooldownLog = 0 AND LBR_Delay >= LBR_Delay_Total THEN Multi0_CMD_LBR
 
-                CooldownActive = 1
-                ConnectionsLog1Count = ConnectionsLog1Count + 1
-                IF ConnectionsLog1Count > 999 THEN ConnectionsLog1Count = 999
-
-                ' Switch to Low Bandwidth Scene
-                IF SceneLBActive THEN
-                    Scene_Current = Scene_LBR
-                    SHELL _HIDE _DONTWAIT shell_cmd_1 + Scene_LBR + shell_cmd_2
-                END IF
-
-                IF tmpFileError = 0 THEN
-                    IF __FileStatusOutput = 1 THEN statusOutputToFile "[LOW BANDWIDTH]:[STREAM]"
-                    IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] Insufficient bandwidth for stream, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times": CooldownLog = CooldownLogTotal
-                END IF
-
+            IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 THEN
+                ' LBR_Delay
+                IF LBR_Delay >= LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: IF CooldownLog > CooldownLogTotal THEN CooldownLog = CooldownLogTotal
+                LBR_Delay = LBR_Delay + 1: IF LBR_Delay > LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total
             END IF
+        CASE "SLS"
+            ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
+            IF SLS_Bitrate1 < SLS_BitrateLow1 AND Timer_Fail_Stream1 = 0 AND CooldownLog = 0 AND LBR_Delay >= LBR_Delay_Total THEN Multi0_CMD_LBR
 
             IF SLS_Bitrate1 < SLS_BitrateLow1 AND Timer_Fail_Stream1 = 0 THEN
                 ' LBR_Delay
                 IF LBR_Delay >= LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: IF CooldownLog > CooldownLogTotal THEN CooldownLog = CooldownLogTotal
                 LBR_Delay = LBR_Delay + 1: IF LBR_Delay > LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total
             END IF
+        CASE "NGINX"
+            ''TODO
+    END SELECT
 
+    SELECT CASE serverType$
+        CASE "SRT"
+            SELECT CASE MediaSource1TimeMSOffset
+                CASE 960 TO 1040, 0
+                    LBR_Delay = LBR_Delay - 1: IF LBR_Delay <= 0 THEN LBR_Delay = 0
+            END SELECT
+        CASE "SLS"
             ' Bitrate can be used here. Case 960 - 1040 is invalid.
             SELECT CASE SLS_Bitrate1
                 CASE IS > SLS_BitrateLow1, 0
                     LBR_Delay = LBR_Delay - 1: IF LBR_Delay <= 0 THEN LBR_Delay = 0
             END SELECT
+        CASE "NGINX"
+            ''TODO
+    END SELECT
 
-            IF CooldownActive = 1 AND CooldownLog = 0 THEN
-                CooldownActive = 0
+    IF CooldownActive = 1 AND CooldownLog = 0 THEN
+        CooldownActive = 0
 
-                ' Restore Scene_OK
-                IF SceneLBActive THEN
-                    IF Scene_Current = Scene_LBR THEN
-                        Scene_Current = Scene_OK
-                        SHELL _HIDE _DONTWAIT shell_cmd_1 + Scene_OK + shell_cmd_2
-                    END IF
-                END IF
-
-                IF tmpFileRestore = 1 THEN
-                    tmpFileRestore = 0
-                ELSE
-                    IF __FileStatusOutput = 1 THEN statusOutputToFile "[FULL BANDWIDTH]:[STREAM] (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
-                    IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Bandwidth restored for stream, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
-                END IF
-                ' Reset low bitrate duration seconds count
-                CooldownDuration = 0
+        ' Restore Scene_OK
+        IF SceneLBActive THEN
+            IF Scene_Current = Scene_LBR THEN
+                Scene_Current = Scene_OK
+                SHELL _HIDE _DONTWAIT shell_cmd_1 + Scene_OK + shell_cmd_2
             END IF
-            ' SRT Live Server check bitrate - source #1 only: END ---------------------------------------------------------------
-
         END IF
+
+        IF tmpFileRestore = 1 THEN
+            tmpFileRestore = 0
+        ELSE
+            IF __FileStatusOutput = 1 THEN statusOutputToFile "[FULL BANDWIDTH]:[STREAM] (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
+            IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Bandwidth restored for stream, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
+        END IF
+        ' Reset low bitrate duration seconds count
+        CooldownDuration = 0
     END IF
 
-    IF __MultiCameraSwitch = 1 THEN
-        ' Get Media Source times (2 streams) ------------------------------------------------------------------------------------------------------------------------------
+END SUB
 
-        ' Cancel cooldown if stream has stopped otherwise things will break
-        ' if StreamFailDelay is set lower than CooldownLogTotal
-        IF Scene_Current = titleScene1 AND Timer_Fail_Stream1 >= 1 THEN CooldownLog = 0
-        IF Scene_Current = titleScene2 AND Timer_Fail_Stream2 >= 1 THEN CooldownLog = 0
-        IF Scene_Current = titleScene12 AND Timer_Fail_Stream1 >= 1 THEN CooldownLog = 0
-        IF Scene_Current = titleScene12 AND Timer_Fail_Stream2 >= 1 THEN CooldownLog = 0
+SUB Multi0_CMD_LBR
+    CooldownActive = 1
+    ConnectionsLog1Count = ConnectionsLog1Count + 1
+    IF ConnectionsLog1Count > 999 THEN ConnectionsLog1Count = 999
 
-        MediaSource1TimeLog = MediaSource1TimeMS
-        MediaSource2TimeLog = MediaSource2TimeMS
+    ' Switch to Low Bandwidth Scene
+    IF SceneLBActive THEN
+        Scene_Current = Scene_LBR
+        SHELL _HIDE _DONTWAIT shell_cmd_1 + Scene_LBR + shell_cmd_2
+    END IF
 
-        IF SLS_1_Enabled <> "true" AND SLS_2_Enabled <> "true" THEN
-            ' Node.js check bitrate - source #1 + #2 only: BEGIN ---------------------------------------------------------------
+    IF tmpFileError = 0 THEN
+        IF __FileStatusOutput = 1 THEN statusOutputToFile "[LOW BANDWIDTH]:[STREAM]"
+        IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] Insufficient bandwidth for stream, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times": CooldownLog = CooldownLogTotal
+    END IF
+END SUB
 
+SUB Multi1 (serverType AS STRING, serverSelection AS _BYTE)
+
+    ' Cancel cooldown if stream has stopped otherwise things will break
+    ' if StreamFailDelay is set lower than CooldownLogTotal
+    IF Scene_Current = titleScene1 AND Timer_Fail_Stream1 >= 1 THEN CooldownLog = 0
+    IF Scene_Current = titleScene2 AND Timer_Fail_Stream2 >= 1 THEN CooldownLog = 0
+    IF Scene_Current = titleScene12 AND Timer_Fail_Stream1 >= 1 THEN CooldownLog = 0
+    IF Scene_Current = titleScene12 AND Timer_Fail_Stream2 >= 1 THEN CooldownLog = 0
+
+    IF serverSelection%% = 0 OR serverSelection%% = 1 THEN MediaSource1TimeLog = MediaSource1TimeMS
+    IF serverSelection%% = 0 OR serverSelection%% = 2 THEN MediaSource2TimeLog = MediaSource2TimeMS
+
+    SELECT CASE serverType$
+        CASE "SRT"
             ' NodeJSFileSystem selection controls this
             SELECT CASE NodejsFileSystem
                 CASE "0"
@@ -4280,7 +4261,7 @@ SUB Timer01
 
                 END IF
 
-                RIST_MediaSource1Time = MediaSource1TimeMS ' RIST mode
+                IF serverSelection%% = 0 OR serverSelection%% = 1 THEN RIST_MediaSource1Time = MediaSource1TimeMS ' RIST mode
 
                 IF HTTP_Enabled = "true" THEN ' HTTP
                     OPEN filePrevious_ms FOR BINARY AS #128
@@ -4295,24 +4276,25 @@ SUB Timer01
                     file92 = JSON_Multi(1)
                 END IF
 
-                MediaSource1TimeMS = VAL(file92)
+                IF serverSelection%% = 0 OR serverSelection%% = 1 THEN MediaSource1TimeMS = VAL(file92)
 
                 ' RIST mode
                 SELECT CASE RIST_Fail_Mode_1
                     CASE "false"
-                        RIST_MediaSource1Time_Count = 0
+                        IF serverSelection%% = 0 OR serverSelection%% = 1 THEN RIST_MediaSource1Time_Count = 0
                     CASE "true"
-                        IF MediaSource1TimeMS <> 0 THEN
-                            IF RIST_MediaSource1Time = MediaSource1TimeMS THEN
-                                RIST_MediaSource1Time_Count = RIST_MediaSource1Time_Count + 1 ' Scene_Fail will be triggered at 5 seconds, the same as SRT timeout
-                                IF RIST_MediaSource1Time_Count > 99 THEN RIST_MediaSource1Time_Count = 99 ' No need to have it count up forever
-                            ELSE
-                                RIST_MediaSource1Time_Count = 0
+                        IF serverSelection%% = 0 OR serverSelection%% = 1 THEN IF MediaSource1TimeMS <> 0 THEN
+                                IF RIST_MediaSource1Time = MediaSource1TimeMS THEN
+                                    RIST_MediaSource1Time_Count = RIST_MediaSource1Time_Count + 1 ' Scene_Fail will be triggered at 5 seconds, the same as SRT timeout
+                                    IF RIST_MediaSource1Time_Count > 99 THEN RIST_MediaSource1Time_Count = 99 ' No need to have it count up forever
+                                ELSE
+                                    RIST_MediaSource1Time_Count = 0
+                                END IF
                             END IF
                         END IF
                 END SELECT
 
-                MediaSource1Time = MediaSource1TimeMS / 1000
+                IF serverSelection%% = 0 OR serverSelection%% = 1 THEN MediaSource1Time = MediaSource1TimeMS / 1000
 
                 IF HTTP_Enabled <> "true" THEN
 
@@ -4321,30 +4303,32 @@ SUB Timer01
 
                 END IF
 
-                RIST_MediaSource2Time = MediaSource2TimeMS ' RIST mode - Source 2
+                IF serverSelection%% = 0 OR serverSelection%% = 2 THEN RIST_MediaSource2Time = MediaSource2TimeMS ' RIST mode - Source 2
 
                 IF HTTP_Enabled = "true" THEN ' HTTP
-                    MediaSource2TimeMS = VAL(JSON_Multi(2))
+                    IF serverSelection%% = 0 OR serverSelection%% = 2 THEN MediaSource2TimeMS = VAL(JSON_Multi(2))
                 ELSE
-                    MediaSource2TimeMS = VAL(file92)
+                    IF serverSelection%% = 0 OR serverSelection%% = 2 THEN MediaSource2TimeMS = VAL(file92)
                 END IF
 
                 ' RIST mode - Source 2
                 SELECT CASE RIST_Fail_Mode_2
                     CASE "false"
-                        RIST_MediaSource2Time_Count = 0
+                        IF serverSelection%% = 0 OR serverSelection%% = 2 THEN RIST_MediaSource2Time_Count = 0
                     CASE "true"
-                        IF MediaSource2TimeMS <> 0 THEN
-                            IF RIST_MediaSource2Time = MediaSource2TimeMS THEN
-                                RIST_MediaSource2Time_Count = RIST_MediaSource2Time_Count + 1 ' Scene_Fail will be triggered at 5 seconds, the same as SRT timeout
-                                IF RIST_MediaSource2Time_Count > 99 THEN RIST_MediaSource2Time_Count = 99 ' No need to have it count up forever
-                            ELSE
-                                RIST_MediaSource2Time_Count = 0
+                        IF serverSelection%% = 0 OR serverSelection%% = 2 THEN
+                            IF MediaSource2TimeMS <> 0 THEN
+                                IF RIST_MediaSource2Time = MediaSource2TimeMS THEN
+                                    RIST_MediaSource2Time_Count = RIST_MediaSource2Time_Count + 1 ' Scene_Fail will be triggered at 5 seconds, the same as SRT timeout
+                                    IF RIST_MediaSource2Time_Count > 99 THEN RIST_MediaSource2Time_Count = 99 ' No need to have it count up forever
+                                ELSE
+                                    RIST_MediaSource2Time_Count = 0
+                                END IF
                             END IF
                         END IF
                 END SELECT
 
-                MediaSource2Time = MediaSource2TimeMS / 1000
+                IF serverSelection%% = 0 OR serverSelection%% = 2 THEN MediaSource2Time = MediaSource2TimeMS / 1000
 
                 LOF922:
             END IF
@@ -4353,342 +4337,9 @@ SUB Timer01
             IF NodejsFileSystem = "0" OR NodejsFileSystem = "1" THEN IF NoKill = 1 THEN NoKill = 0 ELSE IF _FILEEXISTS(filePrevious_ms) THEN KILL filePrevious_ms
             ON ERROR GOTO 0
             App_Refresh = 0
+        CASE "SLS"
+            sls_client_connect
 
-            MediaSource1TimeMSOffset = MediaSource1TimeMS - MediaSource1TimeLog
-            IF MediaSource1TimeMSOffset < 0 THEN MediaSource1TimeMSOffset = 0
-
-            MediaSource2TimeMSOffset = MediaSource2TimeMS - MediaSource2TimeLog
-            IF MediaSource2TimeMSOffset < 0 THEN MediaSource2TimeMSOffset = 0
-
-            ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
-            IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 AND CooldownLog = 0 AND LBR_Delay >= LBR_Delay_Total THEN
-                CooldownActive = 1
-                ConnectionsLog1Count = ConnectionsLog1Count + 1
-                IF ConnectionsLog1Count > 999 THEN ConnectionsLog1Count = 999
-
-                ' Switch to Low Bandwidth Scene #1
-                ON ERROR GOTO App_Fail
-                IF SceneLBActive THEN ' LBR fix Scene #1
-                    IF _FILEEXISTS(outputLB_Temp1 + "png") THEN NAME outputLB_Temp1 + "png" AS outputLB1 + "png"
-                    IF _FILEEXISTS(outputLB_Temp1 + "gif") THEN NAME outputLB_Temp1 + "gif" AS outputLB1 + "gif"
-
-                    ' Change scene for multi camera
-                    ' ReturnPreviousScene with SceneLBREnabled will be bugged unless the following code is used
-                    IF tmpFileError = 0 THEN
-
-                        ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=true
-                        IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 1 THEN
-                            IF RIGHT$(Scene_Current, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
-                                IF streamsUp = "1" AND previousScene = titleScene1 AND Scene_Current <> titleScene1 THEN titleScene1 = previousScene: Scene_Current = titleScene1 ' titleScene1 needs to reflect the manual scene change and be changed
-                                IF streamsUp = "12" AND previousScene = titleScene12 AND Scene_Current <> titleScene12 THEN titleScene12 = previousScene: Scene_Current = titleScene12 ' titleScene12 needs to reflect the manual scene change and be changed
-                            END IF
-                        END IF
-
-                        ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
-                        IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 0 THEN
-                            IF RIGHT$(Scene_Current, 4) <> " LBR" AND RIGHT$(previousScene, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
-                                ' titleScene1 cannot be changed so previousScene is used to change to LBR scene
-                                ' this section changes to LBR scene but does not change back
-                                IF streamsUp = "1" THEN SRR = 1: titleScene1 = previousScene: Scene_Current = titleScene1 ' For LBR title temp
-                                IF streamsUp = "12" THEN SRR = 1: titleScene12 = previousScene: Scene_Current = titleScene12 ' For LBR title temp
-                            END IF
-                        END IF
-
-                        ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
-                        IF SRR = 1 THEN
-                            SHELL _HIDE _DONTWAIT shell_cmd_1 + previousScene + " LBR" + shell_cmd_2
-                            SRR = 0
-                        ELSE
-                            ' These two lines were the only code prior to LBR fix
-                            IF Scene_Current = titleScene1 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene1 + " LBR" + shell_cmd_2
-                            IF Scene_Current = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene12 + " LBR" + shell_cmd_2
-                        END IF
-
-                    END IF
-
-                END IF
-                ON ERROR GOTO 0
-
-                IF tmpFileError = 0 THEN
-                    IF __FileStatusOutput = 1 THEN statusOutputToFile "[LOW BANDWIDTH]:[CAMERA #1]"
-                    IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] Insufficient bandwidth for stream #1, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times": CooldownLog = CooldownLogTotal
-                END IF
-            END IF
-
-            IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 THEN
-                ' LBR_Delay
-                IF LBR_Delay >= LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: IF CooldownLog > CooldownLogTotal THEN CooldownLog = CooldownLogTotal
-                LBR_Delay_Plus = 1
-            END IF
-
-            IF CooldownActive = 1 AND CooldownLog = 0 THEN
-                CooldownActive = 0
-
-                ' Switch to Low Bandwidth Scene #1 end
-                ON ERROR GOTO App_Fail
-                IF SceneLBActive THEN ' LBR fix Scene #1 end
-                    IF _FILEEXISTS(outputLB1 + "png") THEN NAME outputLB1 + "png" AS outputLB_Temp1 + "png"
-                    IF _FILEEXISTS(outputLB1 + "gif") THEN NAME outputLB1 + "gif" AS outputLB_Temp1 + "gif"
-
-                    ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
-                    IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 0 THEN
-                        IF RIGHT$(Scene_Current, 4) = " LBR" OR RIGHT$(previousScene, 4) = " LBR" THEN
-                            ' titleScene1 cannot be changed so previousScene is used to change to LBR scene
-
-                            IF streamsUp = "1" THEN
-                                IF previousScene <> titleScene1 OR Scene_Current <> titleScene1 THEN
-                                    SRR = 1
-                                END IF
-                            END IF
-
-                            IF streamsUp = "12" THEN
-                                IF previousScene <> titleScene12 OR Scene_Current <> titleScene12 THEN
-                                    SRR = 1
-                                END IF
-                            END IF
-
-                        END IF
-                    END IF
-
-                    IF SRR = 1 THEN ' previousScene is current scene name so " LBR" needs to be removed from the end
-                        IF RIGHT$(previousScene, 4) = " LBR" THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + MID$(previousScene, 1, LEN(previousScene) - 4) + shell_cmd_2
-                        ' titleScene change should not be permanent when ReturnPreviousSceneRemember=false, so use titleScene Temp to revert
-                        titleScene1 = titleScene1Temp: titleScene2 = titleScene2Temp: titleScene12 = titleScene12Temp
-                        SRR = 0
-                    ELSE
-                        ' Change scene for multi camera
-                        ' These two lines were the only code prior to LBR fix
-                        IF Scene_Current = titleScene1 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene1 + shell_cmd_2
-                        IF Scene_Current = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene12 + shell_cmd_2
-                    END IF
-
-                END IF
-                ON ERROR GOTO 0
-
-                IF tmpFileRestore = 1 THEN
-                    tmpFileRestore = 0
-                ELSE
-                    IF __FileStatusOutput = 1 THEN statusOutputToFile "[FULL BANDWIDTH]:[CAMERA #1] (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
-                    IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Bandwidth restored for stream #1, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
-                END IF
-                ' Reset low bitrate duration seconds count
-                CooldownDuration = 0
-            END IF
-
-            ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
-            IF MediaSource2TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream2 = 0 AND CooldownLog = 0 AND LBR_Delay >= LBR_Delay_Total AND Scene2LBInactive = 0 THEN
-                CooldownActive = 2
-                ConnectionsLog2Count = ConnectionsLog2Count + 1
-                IF ConnectionsLog2Count > 999 THEN ConnectionsLog2Count = 999
-
-                ' Switch to Low Bandwidth Scene #2
-                ON ERROR GOTO App_Fail
-                IF SceneLBActive THEN ' LBR fix Scene #2
-                    IF _FILEEXISTS(outputLB_Temp2 + "png") THEN NAME outputLB_Temp2 + "png" AS outputLB2 + "png"
-                    IF _FILEEXISTS(outputLB_Temp2 + "gif") THEN NAME outputLB_Temp2 + "gif" AS outputLB2 + "gif"
-
-                    ' Change scene for multi camera
-                    ' Disable Scene #2 LBR if Scene2LBRDisabled is true
-
-                    ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=true
-                    IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 1 THEN
-                        IF RIGHT$(Scene_Current, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
-                            IF streamsUp = "2" AND previousScene = titleScene2 AND Scene_Current <> titleScene2 THEN titleScene2 = previousScene: Scene_Current = titleScene2 ' titleScene2 needs to reflect the manual scene change and be changed
-                            IF streamsUp = "12" AND previousScene = titleScene12 AND Scene_Current <> titleScene12 THEN titleScene12 = previousScene: Scene_Current = titleScene12 ' titleScene12 needs to reflect the manual scene change and be changed
-                        END IF
-                    END IF
-
-
-                    ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
-                    IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 0 THEN
-                        IF RIGHT$(Scene_Current, 4) <> " LBR" AND RIGHT$(previousScene, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
-                            ' titleScene2 cannot be changed so previousScene is used to change to LBR scene
-                            ' this section changes to LBR scene but does not change back
-                            IF streamsUp = "2" THEN SRR = 1: titleScene2 = previousScene: Scene_Current = titleScene2 ' For LBR title temp
-                            IF streamsUp = "12" THEN SRR = 1: titleScene12 = previousScene: Scene_Current = titleScene12 ' For LBR title temp
-                        END IF
-                    END IF
-
-
-                    ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
-                    IF SRR = 1 THEN
-                        SHELL _HIDE _DONTWAIT shell_cmd_1 + previousScene + " LBR" + shell_cmd_2
-                        SRR = 0
-                    ELSE
-                        ' These two lines were the only code prior to LBR fix
-                        IF Scene_Current = titleScene2 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene2 + " LBR" + shell_cmd_2
-                        IF Scene_Current = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene12 + " LBR" + shell_cmd_2
-                    END IF
-
-                END IF
-                ON ERROR GOTO 0
-
-                IF tmpFileError = 0 THEN
-                    IF __FileStatusOutput = 1 THEN statusOutputToFile "[LOW BANDWIDTH]:[CAMERA #2]"
-                    IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] Insufficient bandwidth for stream #2, " + _TRIM$(STR$(ConnectionsLog2Count)) + " times": CooldownLog = CooldownLogTotal
-                END IF
-            END IF
-
-            ' Disable Scene #2 LBR if Scene2LBRDisabled is true
-            IF MediaSource2TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream2 = 0 AND Scene2LBInactive = 0 THEN
-                ' LBR_Delay
-                IF LBR_Delay >= LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: IF CooldownLog > CooldownLogTotal THEN CooldownLog = CooldownLogTotal
-                LBR_Delay_Plus = 1
-            END IF
-
-
-            IF Timer_Fail_Stream1 = 0 AND Timer_Fail_Stream2 = 0 THEN
-
-                ' LBR_Delay streams 1+2
-
-                SELECT CASE MediaSource1TimeMSOffset
-                    CASE 960 TO 1040, 0
-                        LBR_Delay_Minus = 1
-                END SELECT
-                SELECT CASE MediaSource2TimeMSOffset
-                    CASE 960 TO 1040, 0
-                        LBR_Delay_Minus = 1
-                END SELECT
-
-                IF LBR_Delay_Plus = 1 THEN
-                    LBR_Delay = LBR_Delay + 1: IF LBR_Delay > LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total
-                ELSEIF LBR_Delay_Minus = 1 THEN
-                    LBR_Delay = LBR_Delay - 1: IF LBR_Delay <= 0 THEN LBR_Delay = 0
-                END IF
-
-
-            ELSE
-
-                ' LBR_Delay stream 1 or 2
-
-                IF Timer_Fail_Stream1 = 0 THEN
-                    SELECT CASE MediaSource1TimeMSOffset
-                        CASE 960 TO 1040, 0
-                            LBR_Delay_Minus = 1
-                    END SELECT
-                END IF
-
-                IF Timer_Fail_Stream2 = 0 THEN
-                    SELECT CASE MediaSource2TimeMSOffset
-                        CASE 960 TO 1040, 0
-                            LBR_Delay_Minus = 1
-                    END SELECT
-                END IF
-
-                IF LBR_Delay_Plus = 1 THEN LBR_Delay = LBR_Delay + 1: IF LBR_Delay > LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total
-                IF LBR_Delay_Minus = 1 THEN LBR_Delay = LBR_Delay - 1: IF LBR_Delay <= 0 THEN LBR_Delay = 0
-
-            END IF
-
-
-            LBR_Delay_Minus = 0
-            LBR_Delay_Plus = 0
-
-
-            IF CooldownActive = 2 AND CooldownLog = 0 THEN
-                CooldownActive = 0
-
-                ' Switch to Low Bandwidth Scene #2 end
-                ON ERROR GOTO App_Fail
-                IF SceneLBActive THEN ' LBR fix Scene #2 end
-                    IF _FILEEXISTS(outputLB2 + "png") THEN NAME outputLB2 + "png" AS outputLB_Temp2 + "png"
-                    IF _FILEEXISTS(outputLB2 + "gif") THEN NAME outputLB2 + "gif" AS outputLB_Temp2 + "gif"
-
-                    ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
-                    IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 0 THEN
-                        IF RIGHT$(Scene_Current, 4) = " LBR" OR RIGHT$(previousScene, 4) = " LBR" THEN
-                            ' titleScene1 cannot be changed so previousScene is used to change to LBR scene
-
-                            IF streamsUp = "2" THEN
-                                IF previousScene <> titleScene2 OR Scene_Current <> titleScene2 THEN
-                                    SRR = 1
-                                END IF
-                            END IF
-
-                            IF streamsUp = "12" THEN
-                                IF previousScene <> titleScene12 OR Scene_Current <> titleScene12 THEN
-                                    SRR = 1
-                                END IF
-                            END IF
-
-                        END IF
-                    END IF
-
-                    IF SRR = 1 THEN ' previousScene is current scene name so " LBR" needs to be removed from the end
-                        IF RIGHT$(previousScene, 4) = " LBR" THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + MID$(previousScene, 1, LEN(previousScene) - 4) + shell_cmd_2
-                        ' titleScene change should not be permanent when ReturnPreviousSceneRemember=false, so use titleScene Temp to revert
-                        titleScene1 = titleScene1Temp: titleScene2 = titleScene2Temp: titleScene12 = titleScene12Temp
-                        SRR = 0
-                    ELSE
-                        ' Change scene for multi camera
-                        ' These two lines were the only code prior to LBR fix
-                        IF Scene_Current = titleScene2 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene2 + shell_cmd_2
-                        IF Scene_Current = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene12 + shell_cmd_2
-                    END IF
-
-                END IF
-                ON ERROR GOTO 0
-
-                IF tmpFileRestore = 1 THEN
-                    tmpFileRestore = 0
-                ELSE
-                    IF __FileStatusOutput = 1 THEN statusOutputToFile "[FULL BANDWIDTH]:[CAMERA #2] (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
-                    IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Bandwidth restored for stream #2, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
-                END IF
-                ' Reset low bitrate duration seconds count
-                CooldownDuration = 0
-            END IF
-            ' Node.js check bitrate - source #1 + #2 only: END ---------------------------------------------------------------
-
-        ELSE
-
-            ' SRT Live Server check bitrate - source #1 + #2: BEGIN ---------------------------------------------------------------
-
-            ' Reset SLS data
-            SLS_GET_a = "": SLS_GET_a2 = "": SLS_GET_i = 0: SLS_GET_i2 = 0: SLS_GET_i3 = 0: SLS_GET_l = 0: SLS_GET_d = "": sls_stats.xml = "": SLS_Bitrate1 = 0: SLS_Bitrate2 = 0
-            SLS_streams_found = 0: SLS_Uptime1 = 0: SLS_Uptime2 = 0: SLS_streams_seek = 0
-
-            SLS_Ping1 = TIMER(.001)
-            sls_client = _OPENCLIENT(SLS_Port_Client + SLS_Server_IP)
-            SLS_Ping2 = TIMER(.001)
-            SLS_PingOut = (SLS_Ping2 - SLS_Ping1)
-
-            IF sls_client = 0 THEN RefreshDisplayRequest = 1: Error_msg$ = "- Unable to connect, check if " + c34 + SLS_Server_IP + ":" + SLS_Server_Port + c34 + " is correct." + CHR$(10) + "- Program is unable to read the SRT /stat URL from its http server. (Error: #4)": _DELAY 3: GOTO SLS_URL_OK_1_2
-
-            ON ERROR GOTO App_Fail
-            App_Refresh = 1
-
-            PUT #sls_client, , SLS_Header
-
-            ' Connect to SRT Live Server and grab json data
-            SLS_Timer_GET = TIMER
-            DO
-                _DELAY 0.05
-                GET #sls_client, , SLS_GET_a2
-                SLS_GET_a = SLS_GET_a + SLS_GET_a2
-                SLS_GET_i = INSTR(SLS_GET_a, "Content-Length:")
-                IF SLS_GET_i THEN
-                    SLS_GET_i2 = INSTR(SLS_GET_i, SLS_GET_a, SLS_EOL)
-                    IF SLS_GET_i2 THEN
-                        SLS_GET_l = VAL(MID$(SLS_GET_a, SLS_GET_i + 15, SLS_GET_i2 - SLS_GET_i - 14))
-                        SLS_GET_i3 = INSTR(SLS_GET_i2, SLS_GET_a, SLS_EOL + SLS_EOL)
-                        IF SLS_GET_i3 THEN
-                            SLS_GET_i3 = SLS_GET_i3 + 4 'move i3 to start of data
-                            IF (LEN(SLS_GET_a) - SLS_GET_i3 + 1) = SLS_GET_l THEN
-                                CLOSE sls_client ' CLOSE CLIENT
-                                SLS_GET_d = MID$(SLS_GET_a, SLS_GET_i3, SLS_GET_l)
-                                EXIT DO
-                            END IF ' available data = l
-                        END IF ' i3
-                    END IF ' i2
-                END IF ' i
-            LOOP UNTIL TIMER > SLS_Timer_GET + 3 ' 3 second timeout
-            CLOSE sls_client
-
-            ' Store json data in sls_stats.xml
-            sls_stats.xml = SLS_GET_d
-
-            SLS_URL_OK_1_2:
             ON ERROR GOTO 0
             App_Refresh = 0
 
@@ -4726,79 +4377,41 @@ SUB Timer01
             END SELECT
 
             ' Uptime
-            MediaSource1Time = SLS_Uptime1
-            MediaSource1TimeMS = SLS_Uptime1 * 1000
-            ' Check BitrateFail1 - if bitrate is below fail value, appear to be 0
-            IF SLS_Bitrate1 < SLS_BitrateFail1 THEN MediaSource1TimeMS = 0
-            MediaSource1Time = MediaSource1TimeMS / 1000
-
-            MediaSource2Time = SLS_Uptime2
-            MediaSource2TimeMS = SLS_Uptime2 * 1000
-            ' Check BitrateFail2 - if bitrate is below fail value, appear to be 0
-            IF SLS_Bitrate2 < SLS_BitrateFail2 THEN MediaSource2TimeMS = 0
-            MediaSource2Time = MediaSource2TimeMS / 1000
-
-
-            MediaSource1TimeMSOffset = MediaSource1TimeMS - MediaSource1TimeLog
-            IF MediaSource1TimeMSOffset < 0 THEN MediaSource1TimeMSOffset = 0
-
-            MediaSource2TimeMSOffset = MediaSource2TimeMS - MediaSource2TimeLog
-            IF MediaSource2TimeMSOffset < 0 THEN MediaSource2TimeMSOffset = 0
-
-            ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
-            IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 AND CooldownLog = 0 AND LBR_Delay >= LBR_Delay_Total THEN
-                CooldownActive = 1
-                ConnectionsLog1Count = ConnectionsLog1Count + 1
-                IF ConnectionsLog1Count > 999 THEN ConnectionsLog1Count = 999
-
-                ' Switch to Low Bandwidth Scene #1
-                ON ERROR GOTO App_Fail
-                IF SceneLBActive THEN ' LBR fix Scene #1
-                    IF _FILEEXISTS(outputLB_Temp1 + "png") THEN NAME outputLB_Temp1 + "png" AS outputLB1 + "png"
-                    IF _FILEEXISTS(outputLB_Temp1 + "gif") THEN NAME outputLB_Temp1 + "gif" AS outputLB1 + "gif"
-
-                    ' Change scene for multi camera
-                    ' ReturnPreviousScene with SceneLBREnabled will be bugged unless the following code is used
-                    IF tmpFileError = 0 THEN
-
-                        ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=true
-                        IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 1 THEN
-                            IF RIGHT$(Scene_Current, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
-                                IF streamsUp = "1" AND previousScene = titleScene1 AND Scene_Current <> titleScene1 THEN titleScene1 = previousScene: Scene_Current = titleScene1 ' titleScene1 needs to reflect the manual scene change and be changed
-                                IF streamsUp = "12" AND previousScene = titleScene12 AND Scene_Current <> titleScene12 THEN titleScene12 = previousScene: Scene_Current = titleScene12 ' titleScene12 needs to reflect the manual scene change and be changed
-                            END IF
-                        END IF
-
-                        ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
-                        IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 0 THEN
-                            IF RIGHT$(Scene_Current, 4) <> " LBR" AND RIGHT$(previousScene, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
-                                ' titleScene1 cannot be changed so previousScene is used to change to LBR scene
-                                ' this section changes to LBR scene but does not change back
-                                IF streamsUp = "1" THEN SRR = 1: titleScene1 = previousScene: Scene_Current = titleScene1 ' For LBR title temp
-                                IF streamsUp = "12" THEN SRR = 1: titleScene12 = previousScene: Scene_Current = titleScene12 ' For LBR title temp
-                            END IF
-                        END IF
-
-                        ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
-                        IF SRR = 1 THEN
-                            SHELL _HIDE _DONTWAIT shell_cmd_1 + previousScene + " LBR" + shell_cmd_2
-                            SRR = 0
-                        ELSE
-                            ' These two lines were the only code prior to LBR fix
-                            IF Scene_Current = titleScene1 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene1 + " LBR" + shell_cmd_2
-                            IF Scene_Current = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene12 + " LBR" + shell_cmd_2
-                        END IF
-
-                    END IF
-
-                END IF
-                ON ERROR GOTO 0
-
-                IF tmpFileError = 0 THEN
-                    IF __FileStatusOutput = 1 THEN statusOutputToFile "[LOW BANDWIDTH]:[CAMERA #1]"
-                    IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] Insufficient bandwidth for stream #1, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times": CooldownLog = CooldownLogTotal
-                END IF
+            IF serverSelection%% = 0 OR serverSelection%% = 1 THEN
+                MediaSource1Time = SLS_Uptime1
+                MediaSource1TimeMS = SLS_Uptime1 * 1000
+                ' Check BitrateFail1 - if bitrate is below fail value, appear to be 0
+                IF SLS_Bitrate1 < SLS_BitrateFail1 THEN MediaSource1TimeMS = 0
+                MediaSource1Time = MediaSource1TimeMS / 1000
             END IF
+
+            IF serverSelection%% = 0 OR serverSelection%% = 2 THEN
+                MediaSource2Time = SLS_Uptime2
+                MediaSource2TimeMS = SLS_Uptime2 * 1000
+                ' Check BitrateFail2 - if bitrate is below fail value, appear to be 0
+                IF SLS_Bitrate2 < SLS_BitrateFail2 THEN MediaSource2TimeMS = 0
+                MediaSource2Time = MediaSource2TimeMS / 1000
+            END IF
+        CASE "NGINX"
+            ''TODO
+    END SELECT
+
+    IF serverSelection%% = 0 OR serverSelection%% = 1 THEN
+        MediaSource1TimeMSOffset = MediaSource1TimeMS - MediaSource1TimeLog
+        IF MediaSource1TimeMSOffset < 0 THEN MediaSource1TimeMSOffset = 0
+    END IF
+
+    IF serverSelection%% = 0 OR serverSelection%% = 2 THEN
+        MediaSource2TimeMSOffset = MediaSource2TimeMS - MediaSource2TimeLog
+        IF MediaSource2TimeMSOffset < 0 THEN MediaSource2TimeMSOffset = 0
+    END IF
+
+    ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
+
+    SELECT CASE serverType$
+        CASE "SRT"
+            ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
+            IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 AND CooldownLog = 0 AND LBR_Delay >= LBR_Delay_Total THEN Multi1_CMD_LBR_1
 
             IF MediaSource1TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream1 = 0 THEN
                 ' LBR_Delay
@@ -4806,113 +4419,10 @@ SUB Timer01
                 LBR_Delay_Plus = 1
             END IF
 
-            IF CooldownActive = 1 AND CooldownLog = 0 THEN
-                CooldownActive = 0
-
-                ' Switch to Low Bandwidth Scene #1 end
-                ON ERROR GOTO App_Fail
-                IF SceneLBActive THEN ' LBR fix Scene #1 end
-                    IF _FILEEXISTS(outputLB1 + "png") THEN NAME outputLB1 + "png" AS outputLB_Temp1 + "png"
-                    IF _FILEEXISTS(outputLB1 + "gif") THEN NAME outputLB1 + "gif" AS outputLB_Temp1 + "gif"
-
-                    ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
-                    IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 0 THEN
-                        IF RIGHT$(Scene_Current, 4) = " LBR" OR RIGHT$(previousScene, 4) = " LBR" THEN
-                            ' titleScene1 cannot be changed so previousScene is used to change to LBR scene
-
-                            IF streamsUp = "1" THEN
-                                IF previousScene <> titleScene1 OR Scene_Current <> titleScene1 THEN
-                                    SRR = 1
-                                END IF
-                            END IF
-
-                            IF streamsUp = "12" THEN
-                                IF previousScene <> titleScene12 OR Scene_Current <> titleScene12 THEN
-                                    SRR = 1
-                                END IF
-                            END IF
-
-                        END IF
-                    END IF
-
-                    IF SRR = 1 THEN ' previousScene is current scene name so " LBR" needs to be removed from the end
-                        IF RIGHT$(previousScene, 4) = " LBR" THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + MID$(previousScene, 1, LEN(previousScene) - 4) + shell_cmd_2
-                        ' titleScene change should not be permanent when ReturnPreviousSceneRemember=false, so use titleScene Temp to revert
-                        titleScene1 = titleScene1Temp: titleScene2 = titleScene2Temp: titleScene12 = titleScene12Temp
-                        SRR = 0
-                    ELSE
-                        ' Change scene for multi camera
-                        ' These two lines were the only code prior to LBR fix
-                        IF Scene_Current = titleScene1 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene1 + shell_cmd_2
-                        IF Scene_Current = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene12 + shell_cmd_2
-                    END IF
-
-                END IF
-                ON ERROR GOTO 0
-
-                IF tmpFileRestore = 1 THEN
-                    tmpFileRestore = 0
-                ELSE
-                    IF __FileStatusOutput = 1 THEN statusOutputToFile "[FULL BANDWIDTH]:[CAMERA #1] (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
-                    IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Bandwidth restored for stream #1, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
-                END IF
-                ' Reset low bitrate duration seconds count
-                CooldownDuration = 0
-            END IF
+            Multi1_CMD_LBR_2
 
             ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
-            IF MediaSource2TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream2 = 0 AND CooldownLog = 0 AND LBR_Delay >= LBR_Delay_Total AND Scene2LBInactive = 0 THEN
-                CooldownActive = 2
-                ConnectionsLog2Count = ConnectionsLog2Count + 1
-                IF ConnectionsLog2Count > 999 THEN ConnectionsLog2Count = 999
-
-                ' Switch to Low Bandwidth Scene #2
-                ON ERROR GOTO App_Fail
-                IF SceneLBActive THEN ' LBR fix Scene #2
-                    IF _FILEEXISTS(outputLB_Temp2 + "png") THEN NAME outputLB_Temp2 + "png" AS outputLB2 + "png"
-                    IF _FILEEXISTS(outputLB_Temp2 + "gif") THEN NAME outputLB_Temp2 + "gif" AS outputLB2 + "gif"
-
-                    ' Change scene for multi camera
-                    ' Disable Scene #2 LBR if Scene2LBRDisabled is true
-
-                    ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=true
-                    IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 1 THEN
-                        IF RIGHT$(Scene_Current, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
-                            IF streamsUp = "2" AND previousScene = titleScene2 AND Scene_Current <> titleScene2 THEN titleScene2 = previousScene: Scene_Current = titleScene2 ' titleScene2 needs to reflect the manual scene change and be changed
-                            IF streamsUp = "12" AND previousScene = titleScene12 AND Scene_Current <> titleScene12 THEN titleScene12 = previousScene: Scene_Current = titleScene12 ' titleScene12 needs to reflect the manual scene change and be changed
-                        END IF
-                    END IF
-
-
-                    ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
-                    IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 0 THEN
-                        IF RIGHT$(Scene_Current, 4) <> " LBR" AND RIGHT$(previousScene, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
-                            ' titleScene2 cannot be changed so previousScene is used to change to LBR scene
-                            ' this section changes to LBR scene but does not change back
-                            IF streamsUp = "2" THEN SRR = 1: titleScene2 = previousScene: Scene_Current = titleScene2 ' For LBR title temp
-                            IF streamsUp = "12" THEN SRR = 1: titleScene12 = previousScene: Scene_Current = titleScene12 ' For LBR title temp
-                        END IF
-                    END IF
-
-
-                    ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
-                    IF SRR = 1 THEN
-                        SHELL _HIDE _DONTWAIT shell_cmd_1 + previousScene + " LBR" + shell_cmd_2
-                        SRR = 0
-                    ELSE
-                        ' These two lines were the only code prior to LBR fix
-                        IF Scene_Current = titleScene2 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene2 + " LBR" + shell_cmd_2
-                        IF Scene_Current = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene12 + " LBR" + shell_cmd_2
-                    END IF
-
-                END IF
-                ON ERROR GOTO 0
-
-                IF tmpFileError = 0 THEN
-                    IF __FileStatusOutput = 1 THEN statusOutputToFile "[LOW BANDWIDTH]:[CAMERA #2]"
-                    IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] Insufficient bandwidth for stream #2, " + _TRIM$(STR$(ConnectionsLog2Count)) + " times": CooldownLog = CooldownLogTotal
-                END IF
-            END IF
+            IF MediaSource2TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream2 = 0 AND CooldownLog = 0 AND LBR_Delay >= LBR_Delay_Total AND Scene2LBInactive = 0 THEN Multi1_CMD_LBR_3
 
             ' Disable Scene #2 LBR if Scene2LBRDisabled is true
             IF MediaSource2TimeMSOffset < MediaSourceTimeLB AND Timer_Fail_Stream2 = 0 AND Scene2LBInactive = 0 THEN
@@ -4921,12 +4431,222 @@ SUB Timer01
                 LBR_Delay_Plus = 1
             END IF
 
+            Multi1_CMD_LBR_4 "SRT"
+        CASE "SLS"
+            ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
+            IF SLS_Bitrate1 < SLS_BitrateLow1 AND Timer_Fail_Stream1 = 0 AND CooldownLog = 0 AND LBR_Delay >= LBR_Delay_Total THEN Multi1_CMD_LBR_1
 
-            IF Timer_Fail_Stream1 = 0 AND Timer_Fail_Stream2 = 0 THEN
+            IF SLS_Bitrate1 < SLS_BitrateLow1 AND Timer_Fail_Stream1 = 0 THEN
+                ' LBR_Delay
+                IF LBR_Delay >= LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: IF CooldownLog > CooldownLogTotal THEN CooldownLog = CooldownLogTotal
+                LBR_Delay_Plus = 1
+            END IF
 
-                ' LBR_Delay streams 1+2
+            Multi1_CMD_LBR_2
+
+            ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
+            IF SLS_Bitrate2 < SLS_BitrateLow2 AND Timer_Fail_Stream2 = 0 AND CooldownLog = 0 AND LBR_Delay >= LBR_Delay_Total THEN Multi1_CMD_LBR_3
+
+            ' Disable Scene #2 LBR if Scene2LBRDisabled is true
+            IF SLS_Bitrate2 < SLS_BitrateLow2 AND Timer_Fail_Stream2 = 0 AND Scene2LBInactive = 0 THEN
+                ' LBR_Delay
+                IF LBR_Delay >= LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: IF CooldownLog > CooldownLogTotal THEN CooldownLog = CooldownLogTotal
+                LBR_Delay_Plus = 1
+            END IF
+
+            Multi1_CMD_LBR_4 "SLS"
+        CASE "NGINX"
+            ''TODO
+    END SELECT
+
+END SUB
+
+SUB Multi1_CMD_LBR_1
+
+    CooldownActive = 1
+    ConnectionsLog1Count = ConnectionsLog1Count + 1
+    IF ConnectionsLog1Count > 999 THEN ConnectionsLog1Count = 999
+
+    ' Switch to Low Bandwidth Scene #1
+    ON ERROR GOTO App_Fail
+    IF SceneLBActive THEN ' LBR fix Scene #1
+        IF _FILEEXISTS(outputLB_Temp1 + "png") THEN NAME outputLB_Temp1 + "png" AS outputLB1 + "png"
+        IF _FILEEXISTS(outputLB_Temp1 + "gif") THEN NAME outputLB_Temp1 + "gif" AS outputLB1 + "gif"
+
+        ' Change scene for multi camera
+        ' ReturnPreviousScene with SceneLBREnabled will be bugged unless the following code is used
+        IF tmpFileError = 0 THEN
+
+            ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=true
+            IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 1 THEN
+                IF RIGHT$(Scene_Current, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
+                    IF streamsUp = "1" AND previousScene = titleScene1 AND Scene_Current <> titleScene1 THEN titleScene1 = previousScene: Scene_Current = titleScene1 ' titleScene1 needs to reflect the manual scene change and be changed
+                    IF streamsUp = "12" AND previousScene = titleScene12 AND Scene_Current <> titleScene12 THEN titleScene12 = previousScene: Scene_Current = titleScene12 ' titleScene12 needs to reflect the manual scene change and be changed
+                END IF
+            END IF
+
+            ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
+            IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 0 THEN
+                IF RIGHT$(Scene_Current, 4) <> " LBR" AND RIGHT$(previousScene, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
+                    ' titleScene1 cannot be changed so previousScene is used to change to LBR scene
+                    ' this section changes to LBR scene but does not change back
+                    IF streamsUp = "1" THEN SRR = 1: titleScene1 = previousScene: Scene_Current = titleScene1 ' For LBR title temp
+                    IF streamsUp = "12" THEN SRR = 1: titleScene12 = previousScene: Scene_Current = titleScene12 ' For LBR title temp
+                END IF
+            END IF
+
+            ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
+            IF SRR = 1 THEN
+                SHELL _HIDE _DONTWAIT shell_cmd_1 + previousScene + " LBR" + shell_cmd_2
+                SRR = 0
+            ELSE
+                ' These two lines were the only code prior to LBR fix
+                IF Scene_Current = titleScene1 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene1 + " LBR" + shell_cmd_2
+                IF Scene_Current = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene12 + " LBR" + shell_cmd_2
+            END IF
+
+        END IF
+
+    END IF
+    ON ERROR GOTO 0
+
+    IF tmpFileError = 0 THEN
+        IF __FileStatusOutput = 1 THEN statusOutputToFile "[LOW BANDWIDTH]:[CAMERA #1]"
+        IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] Insufficient bandwidth for stream #1, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times": CooldownLog = CooldownLogTotal
+    END IF
+
+END SUB
+
+SUB Multi1_CMD_LBR_2
+
+    IF CooldownActive = 1 AND CooldownLog = 0 THEN
+        CooldownActive = 0
+
+        ' Switch to Low Bandwidth Scene #1 end
+        ON ERROR GOTO App_Fail
+        IF SceneLBActive THEN ' LBR fix Scene #1 end
+            IF _FILEEXISTS(outputLB1 + "png") THEN NAME outputLB1 + "png" AS outputLB_Temp1 + "png"
+            IF _FILEEXISTS(outputLB1 + "gif") THEN NAME outputLB1 + "gif" AS outputLB_Temp1 + "gif"
+
+            ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
+            IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 0 THEN
+                IF RIGHT$(Scene_Current, 4) = " LBR" OR RIGHT$(previousScene, 4) = " LBR" THEN
+                    ' titleScene1 cannot be changed so previousScene is used to change to LBR scene
+
+                    IF streamsUp = "1" THEN
+                        IF previousScene <> titleScene1 OR Scene_Current <> titleScene1 THEN
+                            SRR = 1
+                        END IF
+                    END IF
+
+                    IF streamsUp = "12" THEN
+                        IF previousScene <> titleScene12 OR Scene_Current <> titleScene12 THEN
+                            SRR = 1
+                        END IF
+                    END IF
+
+                END IF
+            END IF
+
+            IF SRR = 1 THEN ' previousScene is current scene name so " LBR" needs to be removed from the end
+                IF RIGHT$(previousScene, 4) = " LBR" THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + MID$(previousScene, 1, LEN(previousScene) - 4) + shell_cmd_2
+                ' titleScene change should not be permanent when ReturnPreviousSceneRemember=false, so use titleScene Temp to revert
+                titleScene1 = titleScene1Temp: titleScene2 = titleScene2Temp: titleScene12 = titleScene12Temp
+                SRR = 0
+            ELSE
+                ' Change scene for multi camera
+                ' These two lines were the only code prior to LBR fix
+                IF Scene_Current = titleScene1 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene1 + shell_cmd_2
+                IF Scene_Current = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene12 + shell_cmd_2
+            END IF
+
+        END IF
+        ON ERROR GOTO 0
+
+        IF tmpFileRestore = 1 THEN
+            tmpFileRestore = 0
+        ELSE
+            IF __FileStatusOutput = 1 THEN statusOutputToFile "[FULL BANDWIDTH]:[CAMERA #1] (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
+            IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Bandwidth restored for stream #1, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
+        END IF
+        ' Reset low bitrate duration seconds count
+        CooldownDuration = 0
+    END IF
+
+END SUB
+
+SUB Multi1_CMD_LBR_3
+
+    CooldownActive = 2
+    ConnectionsLog2Count = ConnectionsLog2Count + 1
+    IF ConnectionsLog2Count > 999 THEN ConnectionsLog2Count = 999
+
+    ' Switch to Low Bandwidth Scene #2
+    ON ERROR GOTO App_Fail
+    IF SceneLBActive THEN ' LBR fix Scene #2
+        IF _FILEEXISTS(outputLB_Temp2 + "png") THEN NAME outputLB_Temp2 + "png" AS outputLB2 + "png"
+        IF _FILEEXISTS(outputLB_Temp2 + "gif") THEN NAME outputLB_Temp2 + "gif" AS outputLB2 + "gif"
+
+        ' Change scene for multi camera
+        ' Disable Scene #2 LBR if Scene2LBRDisabled is true
+
+        ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=true
+        IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 1 THEN
+            IF RIGHT$(Scene_Current, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
+                IF streamsUp = "2" AND previousScene = titleScene2 AND Scene_Current <> titleScene2 THEN titleScene2 = previousScene: Scene_Current = titleScene2 ' titleScene2 needs to reflect the manual scene change and be changed
+                IF streamsUp = "12" AND previousScene = titleScene12 AND Scene_Current <> titleScene12 THEN titleScene12 = previousScene: Scene_Current = titleScene12 ' titleScene12 needs to reflect the manual scene change and be changed
+            END IF
+        END IF
 
 
+        ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
+        IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 0 THEN
+            IF RIGHT$(Scene_Current, 4) <> " LBR" AND RIGHT$(previousScene, 4) <> " LBR" THEN ' Only set variable if not a Low Bitrate scene
+                ' titleScene2 cannot be changed so previousScene is used to change to LBR scene
+                ' this section changes to LBR scene but does not change back
+                IF streamsUp = "2" THEN SRR = 1: titleScene2 = previousScene: Scene_Current = titleScene2 ' For LBR title temp
+                IF streamsUp = "12" THEN SRR = 1: titleScene12 = previousScene: Scene_Current = titleScene12 ' For LBR title temp
+            END IF
+        END IF
+
+
+        ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
+        IF SRR = 1 THEN
+            SHELL _HIDE _DONTWAIT shell_cmd_1 + previousScene + " LBR" + shell_cmd_2
+            SRR = 0
+        ELSE
+            ' These two lines were the only code prior to LBR fix
+            IF Scene_Current = titleScene2 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene2 + " LBR" + shell_cmd_2
+            IF Scene_Current = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene12 + " LBR" + shell_cmd_2
+        END IF
+
+    END IF
+    ON ERROR GOTO 0
+
+    IF tmpFileError = 0 THEN
+        IF __FileStatusOutput = 1 THEN statusOutputToFile "[LOW BANDWIDTH]:[CAMERA #2]"
+        IF ConnectionsLog THEN statusConnectionsLogToFile "[WARN] Insufficient bandwidth for stream #2, " + _TRIM$(STR$(ConnectionsLog2Count)) + " times": CooldownLog = CooldownLogTotal
+    END IF
+
+END SUB
+
+SUB Multi1_CMD_LBR_4 (serverType AS STRING)
+
+    IF Timer_Fail_Stream1 = 0 AND Timer_Fail_Stream2 = 0 THEN
+
+        ' LBR_Delay streams 1+2
+
+        SELECT CASE serverType$
+            CASE "SRT"
+                SELECT CASE MediaSource1TimeMSOffset
+                    CASE 960 TO 1040, 0
+                        LBR_Delay_Minus = 1
+                END SELECT
+                SELECT CASE MediaSource2TimeMSOffset
+                    CASE 960 TO 1040, 0
+                        LBR_Delay_Minus = 1
+                END SELECT
+            CASE "SLS"
                 ' Bitrate can be used here. Case 960 - 1040 is invalid.
                 SELECT CASE SLS_Bitrate1
                     CASE IS > SLS_BitrateLow1, 0
@@ -4937,19 +4657,39 @@ SUB Timer01
                     CASE IS > SLS_BitrateLow2, 0
                         LBR_Delay_Minus = 1
                 END SELECT
+            CASE "NGINX"
+                ''TODO
+        END SELECT
 
 
-                IF LBR_Delay_Plus = 1 THEN
-                    LBR_Delay = LBR_Delay + 1: IF LBR_Delay > LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total
-                ELSEIF LBR_Delay_Minus = 1 THEN
-                    LBR_Delay = LBR_Delay - 1: IF LBR_Delay <= 0 THEN LBR_Delay = 0
+        IF LBR_Delay_Plus = 1 THEN
+            LBR_Delay = LBR_Delay + 1: IF LBR_Delay > LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total
+        ELSEIF LBR_Delay_Minus = 1 THEN
+            LBR_Delay = LBR_Delay - 1: IF LBR_Delay <= 0 THEN LBR_Delay = 0
+        END IF
+
+
+    ELSE
+
+        ' LBR_Delay stream 1 or 2
+
+
+        SELECT CASE serverType$
+            CASE "SRT"
+                IF Timer_Fail_Stream1 = 0 THEN
+                    SELECT CASE MediaSource1TimeMSOffset
+                        CASE 960 TO 1040, 0
+                            LBR_Delay_Minus = 1
+                    END SELECT
                 END IF
 
-
-            ELSE
-
-                ' LBR_Delay stream 1 or 2
-
+                IF Timer_Fail_Stream2 = 0 THEN
+                    SELECT CASE MediaSource2TimeMSOffset
+                        CASE 960 TO 1040, 0
+                            LBR_Delay_Minus = 1
+                    END SELECT
+                END IF
+            CASE "SLS"
                 ' Bitrate can be used here. Case 960 - 1040 is invalid.
                 IF Timer_Fail_Stream1 = 0 THEN
                     SELECT CASE SLS_Bitrate1
@@ -4964,74 +4704,117 @@ SUB Timer01
                             LBR_Delay_Minus = 1
                     END SELECT
                 END IF
+            CASE "NGINX"
+                ''TODO
+        END SELECT
+
+        IF LBR_Delay_Plus = 1 THEN LBR_Delay = LBR_Delay + 1: IF LBR_Delay > LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total
+        IF LBR_Delay_Minus = 1 THEN LBR_Delay = LBR_Delay - 1: IF LBR_Delay <= 0 THEN LBR_Delay = 0
+
+    END IF
 
 
-                IF LBR_Delay_Plus = 1 THEN LBR_Delay = LBR_Delay + 1: IF LBR_Delay > LBR_Delay_Total THEN LBR_Delay = LBR_Delay_Total
-                IF LBR_Delay_Minus = 1 THEN LBR_Delay = LBR_Delay - 1: IF LBR_Delay <= 0 THEN LBR_Delay = 0
-
-            END IF
+    LBR_Delay_Minus = 0
+    LBR_Delay_Plus = 0
 
 
-            LBR_Delay_Minus = 0
-            LBR_Delay_Plus = 0
+    IF CooldownActive = 2 AND CooldownLog = 0 THEN
+        CooldownActive = 0
 
+        ' Switch to Low Bandwidth Scene #2 end
+        ON ERROR GOTO App_Fail
+        IF SceneLBActive THEN ' LBR fix Scene #2 end
+            IF _FILEEXISTS(outputLB2 + "png") THEN NAME outputLB2 + "png" AS outputLB_Temp2 + "png"
+            IF _FILEEXISTS(outputLB2 + "gif") THEN NAME outputLB2 + "gif" AS outputLB_Temp2 + "gif"
 
-            IF CooldownActive = 2 AND CooldownLog = 0 THEN
-                CooldownActive = 0
+            ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
+            IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 0 THEN
+                IF RIGHT$(Scene_Current, 4) = " LBR" OR RIGHT$(previousScene, 4) = " LBR" THEN
+                    ' titleScene1 cannot be changed so previousScene is used to change to LBR scene
 
-                ' Switch to Low Bandwidth Scene #2 end
-                ON ERROR GOTO App_Fail
-                IF SceneLBActive THEN ' LBR fix Scene #2 end
-                    IF _FILEEXISTS(outputLB2 + "png") THEN NAME outputLB2 + "png" AS outputLB_Temp2 + "png"
-                    IF _FILEEXISTS(outputLB2 + "gif") THEN NAME outputLB2 + "gif" AS outputLB_Temp2 + "gif"
-
-                    ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
-                    IF streamsUp <> "0" AND __returnPreviousScene = 1 AND __returnPreviousSceneRemember = 0 THEN
-                        IF RIGHT$(Scene_Current, 4) = " LBR" OR RIGHT$(previousScene, 4) = " LBR" THEN
-                            ' titleScene1 cannot be changed so previousScene is used to change to LBR scene
-
-                            IF streamsUp = "2" THEN
-                                IF previousScene <> titleScene2 OR Scene_Current <> titleScene2 THEN
-                                    SRR = 1
-                                END IF
-                            END IF
-
-                            IF streamsUp = "12" THEN
-                                IF previousScene <> titleScene12 OR Scene_Current <> titleScene12 THEN
-                                    SRR = 1
-                                END IF
-                            END IF
-
+                    IF streamsUp = "2" THEN
+                        IF previousScene <> titleScene2 OR Scene_Current <> titleScene2 THEN
+                            SRR = 1
                         END IF
                     END IF
 
-                    IF SRR = 1 THEN ' previousScene is current scene name so " LBR" needs to be removed from the end
-                        IF RIGHT$(previousScene, 4) = " LBR" THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + MID$(previousScene, 1, LEN(previousScene) - 4) + shell_cmd_2
-                        ' titleScene change should not be permanent when ReturnPreviousSceneRemember=false, so use titleScene Temp to revert
-                        titleScene1 = titleScene1Temp: titleScene2 = titleScene2Temp: titleScene12 = titleScene12Temp
-                        SRR = 0
-                    ELSE
-                        ' Change scene for multi camera
-                        ' These two lines were the only code prior to LBR fix
-                        IF Scene_Current = titleScene2 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene2 + shell_cmd_2
-                        IF Scene_Current = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene12 + shell_cmd_2
+                    IF streamsUp = "12" THEN
+                        IF previousScene <> titleScene12 OR Scene_Current <> titleScene12 THEN
+                            SRR = 1
+                        END IF
                     END IF
 
                 END IF
-                ON ERROR GOTO 0
-
-                IF tmpFileRestore = 1 THEN
-                    tmpFileRestore = 0
-                ELSE
-                    IF __FileStatusOutput = 1 THEN statusOutputToFile "[FULL BANDWIDTH]:[CAMERA #2] (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
-                    IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Bandwidth restored for stream #2, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
-                END IF
-                ' Reset low bitrate duration seconds count
-                CooldownDuration = 0
             END IF
-            ' SRT Live Server check bitrate - source #1 + #2: END ---------------------------------------------------------------
+
+            IF SRR = 1 THEN ' previousScene is current scene name so " LBR" needs to be removed from the end
+                IF RIGHT$(previousScene, 4) = " LBR" THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + MID$(previousScene, 1, LEN(previousScene) - 4) + shell_cmd_2
+                ' titleScene change should not be permanent when ReturnPreviousSceneRemember=false, so use titleScene Temp to revert
+                titleScene1 = titleScene1Temp: titleScene2 = titleScene2Temp: titleScene12 = titleScene12Temp
+                SRR = 0
+            ELSE
+                ' Change scene for multi camera
+                ' These two lines were the only code prior to LBR fix
+                IF Scene_Current = titleScene2 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene2 + shell_cmd_2
+                IF Scene_Current = titleScene12 THEN SHELL _HIDE _DONTWAIT shell_cmd_1 + titleScene12 + shell_cmd_2
+            END IF
 
         END IF
+        ON ERROR GOTO 0
+
+        IF tmpFileRestore = 1 THEN
+            tmpFileRestore = 0
+        ELSE
+            IF __FileStatusOutput = 1 THEN statusOutputToFile "[FULL BANDWIDTH]:[CAMERA #2] (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
+            IF ConnectionsLog THEN statusConnectionsLogToFile "[INFO] Bandwidth restored for stream #2, " + _TRIM$(STR$(ConnectionsLog1Count)) + " times (" + _TRIM$(STR$(CooldownDuration)) + " sec)"
+        END IF
+        ' Reset low bitrate duration seconds count
+        CooldownDuration = 0
+    END IF
+
+END SUB
+
+SUB Timer01
+    ' Timer01: ------------------------------------------------------------------------------------------------------------------------------
+    td_update = TIMER(.001) - timer1
+    timer1 = TIMER(.001)
+
+    'SetCaption DebugTemp1LB, "Scene_Current"
+    'SetCaption DebugTemp1LB2, Scene_Current
+    'SetCaption DebugTemp2LB, "previousScene"
+    'SetCaption DebugTemp2LB2, Scene_Current
+    'SetCaption DebugTemp3LB, "titleScene1"
+    'SetCaption DebugTemp3LB2, titleScene1
+    'SetCaption DebugTemp4LB, "titleScene2"
+    'SetCaption DebugTemp4LB2, titleScene2
+
+    CooldownLog = CooldownLog - 1
+    IF CooldownLog < 0 THEN CooldownLog = 0
+
+    IF _DIREXISTS(config_dir) THEN IF NOT _DIREXISTS(temp_dir) THEN MKDIR temp_dir
+
+    tPing1 = TIMER(.001)
+
+    ' Count how many seconds stream has been running at low bitrate
+    IF CooldownLog THEN CooldownDuration = CooldownDuration + 1
+    IF CooldownDuration > 32400 THEN CooldownDuration = 32400
+
+    ' Get Media Source times (1 stream) ------------------------------------------------------------------------------------------------------------------------------
+    IF __MultiCameraSwitch = 0 THEN
+
+        IF SLS_1_Enabled = "false" THEN Multi0 "SRT"
+        IF SLS_1_Enabled = "true" THEN Multi0 "SLS"
+
+    END IF
+
+    IF __MultiCameraSwitch = 1 THEN
+        ' Get Media Source times (2 streams) ------------------------------------------------------------------------------------------------------------------------------
+
+        IF SLS_1_Enabled = "false" AND SLS_2_Enabled = "false" THEN Multi1 "SRT", 0
+        IF SLS_1_Enabled = "false" AND SLS_2_Enabled = "true" THEN Multi1 "SRT", 1: Multi1 "SLS", 2
+        IF SLS_1_Enabled = "true" AND SLS_2_Enabled = "false" THEN Multi1 "SLS", 1: Multi1 "SRT", 2
+        IF SLS_1_Enabled = "true" AND SLS_2_Enabled = "true" THEN Multi1 "SLS", 0
+
     END IF
 
     ' Debug: MS rate
@@ -5046,7 +4829,7 @@ SUB Timer01
     tPing2 = TIMER(.001)
     tPingOut = (tPing2 - tPing1)
 
-    IF Deny_Ping <> "true" OR SLS_Active = 1 THEN
+    IF Deny_Ping <> "true" AND SLS_Active <> 1 THEN
         tPingTimer = tPingTimer + 1
         IF tPingTimer >= 10 THEN
             tPingTimer = 0
@@ -5151,7 +4934,7 @@ SUB Timer01
     SetCaption (tPingOutLB), LTRIM$(STR$(VAL(tout) * 1000)) + " ms"
 
     ' SRT Live Server
-    IF SLS_Active = 1 AND MultiCameraSwitch <> "true" THEN
+    IF SLS_Active = 1 AND __MultiCameraSwitch = 0 THEN
         IF SLS_Bitrate1 > SLS_BitrateLow1 THEN Control(MultiCameraSwitchStatusLB).ForeColor = GREEN_OK ELSE Control(MultiCameraSwitchStatusLB).ForeColor = RED_WARNING
         IF SLS_Bitrate1 < SLS_BitrateFail1 OR SLS_Bitrate1 = 0 THEN Control(MultiCameraSwitchStatusLB).ForeColor = RED_FAIL
         SELECT CASE SLS_Bitrate1
@@ -5209,14 +4992,16 @@ SUB Timer01
     END IF
 
     SetCaption (Stream_Fail_DelayLB), calc_srt$(Stream_Fail_Delay, 1) + calc_srt_sec$
-    IF Timer_Fail THEN Control(Scene_CurrentLB).ForeColor = RED_FAIL ELSE Control(Scene_CurrentLB).ForeColor = GREEN_SCENE_OK
+    IF Timer_Fail AND MediaSource1Time = 0 AND MediaSource2Time = 0 THEN Control(Scene_CurrentLB).ForeColor = RED_FAIL ELSE Control(Scene_CurrentLB).ForeColor = GREEN_SCENE_OK
     IF SLS_Active = 0 AND __MultiCameraSwitch = 0 THEN SetCaption (MultiCameraSwitchStatusLB), "Disabled"
-    IF __MultiCameraSwitch = 1 THEN SetCaption (MultiCameraSwitchStatusLB), "Enabled"
-    IF __MultiCameraSwitch = 1 THEN SetCaption (Scene_CurrentLB), LEFT$(previousSceneDisplay, 20) ELSE SetCaption (Scene_CurrentLB), LEFT$(Scene_Current, 20)
+
     IF Timer_Fail_Stream1 THEN SetCaption (Stream1), "Stream #1 (Offline)": Control(Stream1).ForeColor = RED_FAIL ELSE SetCaption (Stream1), "Stream #1": Control(Stream1).ForeColor = GREEN_STREAM_OK
     IF Timer_Fail_Stream2 THEN SetCaption (Stream2), "Stream #2 (Offline)": Control(Stream2).ForeColor = RED_FAIL ELSE SetCaption (Stream2), "Stream #2": Control(Stream2).ForeColor = GREEN_STREAM_OK
 
     IF __MultiCameraSwitch = 1 THEN
+        SetCaption (MultiCameraSwitchStatusLB), "Enabled"
+        SetCaption (Scene_CurrentLB), LEFT$(previousSceneDisplay, 20)
+
         ' temp1_stream1 variables
         IF srt_warmup = 1 THEN Timer_Fail_Stream1 = Timer_Fail_Stream1 + 1
         IF MediaSource1Time <> 0 AND RIST_MediaSource1Time_Count <= 4 THEN Timer_Fail_Stream1 = 0: Timer_Fail = 0 ' SRT ' RIST mode
@@ -5270,6 +5055,8 @@ SUB Timer01
             IF Timer_Fail_Count2 > 999 THEN Timer_Fail_Count2 = 999
         END IF
     ELSE
+        SetCaption (Scene_CurrentLB), LEFT$(Scene_Current, 20)
+
         ' Stream #1 only
         IF srt_warmup = 1 THEN Timer_Fail_Stream1 = Timer_Fail_Stream1 + 1
         IF MediaSource1Time <> 0 AND RIST_MediaSource1Time_Count <= 4 THEN Timer_Fail_Stream1 = 0: Timer_Fail = 0 ' SRT ' RIST mode
@@ -5421,7 +5208,34 @@ SUB Timer01
     GetOBSScene:
     IF Scene_Bypass <> Scene_Bypass_Check AND Scene_Bypass_2 <> Scene_Bypass_Check AND Scene_Bypass_3 <> Scene_Bypass_Check AND Scene_Bypass_4 <> Scene_Bypass_Check AND Scene_Bypass_5 <> Scene_Bypass_Check AND Scene_Bypass_6 <> Scene_Bypass_Check AND Scene_Bypass_7 <> Scene_Bypass_Check AND Scene_Bypass_8 <> Scene_Bypass_Check AND Scene_Bypass_9 <> Scene_Bypass_Check THEN
         returnPreviousSceneTime = returnPreviousSceneTime + 1
-        IF returnPreviousSceneTime > 2 THEN returnPreviousSceneTime = 1 ELSE GOTO Exit_returnPreviousSceneCheck
+        IF returnPreviousSceneTime > 2 THEN
+            ' Output Kbps to file
+            IF __FileStatusOutput = 1 THEN
+                ON ERROR GOTO App_Fail
+                App_Refresh = 1
+                OPEN outputKbpsFile1 FOR OUTPUT AS #200
+                SELECT CASE SLS_Bitrate1
+                    CASE 0 TO 99
+                        IF SLS_Kbps_Precision <> "nerd" THEN PRINT #200, _TRIM$(STR$(INT(SLS_Bitrate1 / 100))) ELSE PRINT #200, _TRIM$(STR$(INT(SLS_Bitrate1)))
+                    CASE IS >= 100
+                        IF SLS_Kbps_Precision <> "nerd" THEN PRINT #200, _TRIM$(STR$(INT(SLS_Bitrate1 / 100))) + "00" ELSE PRINT #200, _TRIM$(STR$(INT(SLS_Bitrate1)))
+                END SELECT
+                CLOSE 200
+                OPEN outputKbpsFile2 FOR OUTPUT AS #204
+                SELECT CASE SLS_Bitrate2
+                    CASE 0 TO 99
+                        IF SLS_Kbps_Precision <> "nerd" THEN PRINT #204, _TRIM$(STR$(INT(SLS_Bitrate2 / 100))) ELSE PRINT #204, _TRIM$(STR$(INT(SLS_Bitrate2)))
+                    CASE IS >= 100
+                        IF SLS_Kbps_Precision <> "nerd" THEN PRINT #204, _TRIM$(STR$(INT(SLS_Bitrate2 / 100))) + "00" ELSE PRINT #204, _TRIM$(STR$(INT(SLS_Bitrate2)))
+                END SELECT
+                CLOSE 204
+                ON ERROR GOTO 0
+                App_Refresh = 0
+            END IF
+            returnPreviousSceneTime = 1
+        ELSE
+            GOTO Exit_returnPreviousSceneCheck
+        END IF
         returnFirstCheck = 1
 
         ' NodeJSFileSystem selection controls this
@@ -5850,6 +5664,10 @@ SUB Timer01
             _RESIZE ON , _SMOOTH
             _DELAY 0.25
         END IF
+        ON ERROR GOTO App_Fail
+        network_client = _OPENCLIENT("TCP/IP:" + MID$(OBS_URL, INSTR(OBS_URL, ":") + 1) + ":" + LEFT$(OBS_URL, INSTR(OBS_URL, ":") - 1))
+        CLOSE network_client
+        ON ERROR GOTO 0
     END IF
 
     IF ErrorTestRunOnce = 1 THEN ErrorTestRunOnce = 0
