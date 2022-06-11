@@ -9,6 +9,7 @@ The _**readme.txt**_ file explains in depth how these function.
 
 - Added support for OBS WebSocket 5.x
 - Added support for SRT Live Server (mattwb65)
+- Added support for NGINX RTMP Server
 - Added support for obs-websocket-http (requires OBS WebSocket 5.x)
 - Added 'SceneLBRDelay' configuration - see readme.txt for instructions
 - Added 'jsEncoding' configuration - see readme.txt for instructions
