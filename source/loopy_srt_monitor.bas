@@ -101,6 +101,7 @@ Dim Shared Bitrate_Stream_2LB As Long
 DefInt A-Z
 Common Shared Error_msg As String
 Common Shared Error_msg_2 As String
+Common Shared Error_3rd_line As String
 Common Shared Ver As String
 Common Shared VerBeta As String
 Common Shared VerDate As String
@@ -190,6 +191,8 @@ Common Shared js_Encoding As String
 Common Shared Debug_Temp As String
 Common Shared Deny_Ping As String
 Common Shared Leading_Zero As String
+Common Shared Server_Display1 As String
+Common Shared Server_Display2 As String
 
 ' RIST mode
 Common Shared RIST_Fail_Mode_1 As String
@@ -237,6 +240,9 @@ Common Shared SLS_Active As _Byte
 Common Shared SLS_Kbps_Precision As String
 
 ' NGINX RTMP Server
+Dim Shared i_XML
+Dim Shared XML As String
+ReDim Shared XML_Multi(10) As String
 Common Shared RTMP_1_Enabled As String ' RTMP1Enabled=true
 Common Shared RTMP_2_Enabled As String ' RTMP2Enabled=true
 Common Shared RTMP_Server_IP As String ' ServerIP=127.0.0.1
@@ -266,12 +272,32 @@ Common Shared RTMP_Bitrate1 As Single
 Common Shared RTMP_Bitrate2 As Single
 Common Shared rtmp_client As Single
 Common Shared rtmp_stats.xml As String
+Common Shared rtmp_stats.xml_XML As String
 Common Shared RTMP_streams_seek As Integer
 Common Shared RTMP_streams_found As Integer
-Common Shared RTMP_Uptime1 As Integer
-Common Shared RTMP_Uptime2 As Integer
+Common Shared RTMP_Uptime1 As Double
+Common Shared RTMP_Uptime2 As Double
+Common Shared RTMP_Uptime1_XML As String
+Common Shared RTMP_Uptime2_XML As String
 Common Shared RTMP_Active As _Byte
 Common Shared RTMP_Kbps_Precision As String
+Common Shared RTMP_Width1 As Integer
+Common Shared RTMP_Height1 As Integer
+Common Shared RTMP_Width2 As Integer
+Common Shared RTMP_Height2 As Integer
+
+
+Common Shared RTMP_Bytes_In As Double
+Common Shared RTMP_Bytes_In_Temp1 As Double
+Common Shared RTMP_Bytes_In_Temp2 As Double
+
+
+Common Shared multiStream1_Temp1 As Double
+Common Shared multiStream1_Temp2 As Double
+Common Shared multiStream2_Temp1 As Double
+Common Shared multiStream2_Temp2 As Double
+Common Shared multiStream1 As Double
+Common Shared multiStream2 As Double
 
 ' obs-websocket-http
 Dim Shared i_JSON
@@ -442,6 +468,10 @@ Common Shared EqualFound As Integer
 Common Shared MultiCameraSwitch As String
 Common Shared returnPreviousSceneRemember As String
 
+Common Shared serverType As String
+Common Shared serverSelection As _Byte
+
+
 ' SUB TIMEms
 Common Shared tout1#
 Common Shared tout2#
@@ -525,6 +555,7 @@ SLS_Port_Client = "TCP/IP:" + SLS_Server_Port + ":"
 SLS_Publisher1 = "live/stream/stream1" ' Temp setting - config.ini should override
 SLS_Publisher2 = "live/stream/stream2" ' Temp setting - config.ini should override
 SLS_EOL = Chr$(13) + Chr$(10)
+RTMP_EOL = Chr$(13) + Chr$(10)
 ' ---------------------------------------------------------------
 
 ' Error handling when enabled takes place here
@@ -960,7 +991,7 @@ Sub __UI_OnLoad
         RTMP_Header = RTMP_Header + "Accept-Encoding: identity" + RTMP_EOL
         RTMP_Header = RTMP_Header + "Host: " + RTMP_Server_IP + ":" + RTMP_Server_Port + RTMP_EOL
         RTMP_Header = RTMP_Header + "Connection: Keep-Alive" + RTMP_EOL
-        RTMP_Header = RTMP_Header + RTMP_EOL
+        RTMP_Header = RTMP_Header + RTMP_EOL + RTMP_EOL
 
         RTMP_Port_Client = "TCP/IP:" + RTMP_Server_Port + ":"
 
@@ -971,114 +1002,97 @@ Sub __UI_OnLoad
             __MultiCameraSwitch = 0
         End If
 
-        If RTMP_1_Enabled <> "true" Then RTMP_1_Enabled = "false": If RTMP_2_Enabled <> "true" Then RTMP_2_Enabled = "false" ' Set true and false
-        If __MultiCameraSwitch = 0 Then RTMP_2_Enabled = "false"
-        If RTMP_1_Enabled = "true" Or RTMP_2_Enabled = "true" Then RTMP_Active = 1
+        ' Set true and false
+        If SLS_1_Enabled <> "true" Then SLS_1_Enabled = "false"
+        If SLS_2_Enabled <> "true" Then SLS_2_Enabled = "false"
+        If SLS_1_Enabled = "true" Then RTMP_1_Enabled = "false"
+        If SLS_2_Enabled = "true" Then RTMP_2_Enabled = "false"
+        If RTMP_1_Enabled <> "true" Then RTMP_1_Enabled = "false"
+        If RTMP_2_Enabled <> "true" Then RTMP_2_Enabled = "false"
+        If RTMP_1_Enabled = "true" Then SLS_1_Enabled = "false"
+        If RTMP_2_Enabled = "true" Then SLS_2_Enabled = "false"
 
         ' SRT Live Server
-        If SLS_1_Enabled <> "true" Then SLS_1_Enabled = "false": If SLS_2_Enabled <> "true" Then SLS_2_Enabled = "false" ' Set true and false
-        If __MultiCameraSwitch = 0 Then SLS_2_Enabled = "false"
+        If SLS_1_Enabled = "true" And SLS_2_Enabled = "true" Then RTMP_Active = 0: RTMP_1_Enabled = "false": RTMP_2_Enabled = "false"
+
+        ' NGINX RTMP Server
+        If RTMP_1_Enabled = "true" And RTMP_2_Enabled = "true" Then SLS_Active = 0: SLS_1_Enabled = "false": SLS_2_Enabled = "false"
+
+        If __MultiCameraSwitch = 0 Then SLS_2_Enabled = "false": RTMP_2_Enabled = "false"
+
         If SLS_1_Enabled = "true" Or SLS_2_Enabled = "true" Then SLS_Active = 1
-        ' Disable RTMP if SLS is enabled
-        If SLS_1_Enabled = "true" Then RTMP_1_Enabled = "false": If SLS_2_Enabled = "true" Then RTMP_2_Enabled = "false"
+
+        If RTMP_1_Enabled = "true" Or RTMP_2_Enabled = "true" Then RTMP_Active = 1: RTMP_Kbps_Precision = SLS_Kbps_Precision
 
         ' SRT Live Server ---------------------------------------------
         If SLS_Active = 1 Then
             SetCaption IPPingLB, "SLS Ping"
             SetCaption Bitrate_Stream_1LB, "-"
             SetCaption Bitrate_Stream_2LB, "-"
-        End If
-
-        If SLS_Active = 1 And __MultiCameraSwitch = 0 Then
-            SetCaption MultiCameraSwitchLB, "Bitrate"
-        End If
-
-        If SLS_Active = 1 And __MultiCameraSwitch = 1 And SLS_1_Enabled = "true" And SLS_2_Enabled = "false" Then
-            Control(StreamUptimeLB).Top = 254
-            Control(Uptime_Stream_1LB).Top = 254
-            Control(failLB).Top = 278
-            Control(Timer_Fail_Stream1LB).Top = 278
-            Control(BitrateLB2).Hidden = True
-            Control(Bitrate_Stream_2LB).Hidden = True
-        End If
-
-        If SLS_Active = 1 And __MultiCameraSwitch = 1 And SLS_1_Enabled = "false" And SLS_2_Enabled = "true" Then
-            Control(StreamUptimeLB2).Top = 254
-            Control(Uptime_Stream_2LB).Top = 254
-            Control(failLB2).Top = 278
-            Control(Timer_Fail_Stream2LB).Top = 278
-            Control(BitrateLB).Hidden = True
-            Control(Bitrate_Stream_1LB).Hidden = True
-        End If
-
-        If SLS_Active = 1 And __MultiCameraSwitch = 1 And SLS_1_Enabled = "true" And SLS_2_Enabled = "true" Then
-            Control(StreamUptimeLB).Top = 254
-            Control(Uptime_Stream_1LB).Top = 254
-            Control(failLB).Top = 278
-            Control(Timer_Fail_Stream1LB).Top = 278
-
-            Control(StreamUptimeLB2).Top = 254
-            Control(Uptime_Stream_2LB).Top = 254
-            Control(failLB2).Top = 278
-            Control(Timer_Fail_Stream2LB).Top = 278
-        End If
-
-        If SLS_Active = 0 Or __MultiCameraSwitch = 0 Then
-            Control(BitrateLB).Hidden = True
-            Control(Bitrate_Stream_1LB).Hidden = True
-            Control(BitrateLB2).Hidden = True
-            Control(Bitrate_Stream_2LB).Hidden = True
-        End If
-        ' SRT Live Server ---------------------------------------------
-
-        ' NGINX RTMP Live Server ---------------------------------------------
-        If RTMP_Active = 1 Then
+        ElseIf RTMP_Active = 1 Then
             SetCaption IPPingLB, "NGINX Ping"
             SetCaption Bitrate_Stream_1LB, "-"
             SetCaption Bitrate_Stream_2LB, "-"
         End If
 
-        If RTMP_Active = 1 And __MultiCameraSwitch = 0 Then
-            SetCaption MultiCameraSwitchLB, "Bitrate"
+        If __MultiCameraSwitch = 0 Then
+            If SLS_Active = 1 Or RTMP_Active = 1 Then
+                SetCaption MultiCameraSwitchLB, "Bitrate"
+            End If
         End If
 
-        If RTMP_Active = 1 And __MultiCameraSwitch = 1 And RTMP_1_Enabled = "true" And RTMP_2_Enabled = "false" Then
-            Control(StreamUptimeLB).Top = 254
-            Control(Uptime_Stream_1LB).Top = 254
-            Control(failLB).Top = 278
-            Control(Timer_Fail_Stream1LB).Top = 278
-            Control(BitrateLB2).Hidden = True
-            Control(Bitrate_Stream_2LB).Hidden = True
-        End If
+        If __MultiCameraSwitch = 1 Then
 
-        If RTMP_Active = 1 And __MultiCameraSwitch = 1 And RTMP_1_Enabled = "false" And RTMP_2_Enabled = "true" Then
-            Control(StreamUptimeLB2).Top = 254
-            Control(Uptime_Stream_2LB).Top = 254
-            Control(failLB2).Top = 278
-            Control(Timer_Fail_Stream2LB).Top = 278
+            If SLS_1_Enabled = "true" Or RTMP_1_Enabled = "true" Then
+                If SLS_2_Enabled = "false" And RTMP_2_Enabled = "false" Then
+                    Control(StreamUptimeLB).Top = 254
+                    Control(Uptime_Stream_1LB).Top = 254
+                    Control(failLB).Top = 278
+                    Control(Timer_Fail_Stream1LB).Top = 278
+                    Control(BitrateLB2).Hidden = True
+                    Control(Bitrate_Stream_2LB).Hidden = True
+                End If
+            End If
+
+            If SLS_2_Enabled = "true" Or RTMP_2_Enabled = "true" Then
+                If SLS_1_Enabled = "false" And RTMP_1_Enabled = "false" Then
+                    Control(StreamUptimeLB2).Top = 254
+                    Control(Uptime_Stream_2LB).Top = 254
+                    Control(failLB2).Top = 278
+                    Control(Timer_Fail_Stream2LB).Top = 278
+                    Control(BitrateLB).Hidden = True
+                    Control(Bitrate_Stream_1LB).Hidden = True
+                End If
+            End If
+
+            If SLS_1_Enabled = "true" And SLS_2_Enabled = "true" Or RTMP_1_Enabled = "true" And RTMP_2_Enabled = "true" Or SLS_1_Enabled = "true" And RTMP_2_Enabled = "true" Or SLS_2_Enabled = "true" And RTMP_1_Enabled = "true" Then
+                Control(StreamUptimeLB).Top = 254
+                Control(Uptime_Stream_1LB).Top = 254
+                Control(failLB).Top = 278
+                Control(Timer_Fail_Stream1LB).Top = 278
+                Control(StreamUptimeLB2).Top = 254
+                Control(Uptime_Stream_2LB).Top = 254
+                Control(failLB2).Top = 278
+                Control(Timer_Fail_Stream2LB).Top = 278
+            End If
+
+            If SLS_Active = 0 And RTMP_Active = 0 Then
+                Control(BitrateLB).Hidden = True
+                Control(Bitrate_Stream_1LB).Hidden = True
+                Control(BitrateLB2).Hidden = True
+                Control(Bitrate_Stream_2LB).Hidden = True
+            End If
+
+        Else
+
             Control(BitrateLB).Hidden = True
             Control(Bitrate_Stream_1LB).Hidden = True
-        End If
-
-        If RTMP_Active = 1 And __MultiCameraSwitch = 1 And RTMP_1_Enabled = "true" And RTMP_2_Enabled = "true" Then
-            Control(StreamUptimeLB).Top = 254
-            Control(Uptime_Stream_1LB).Top = 254
-            Control(failLB).Top = 278
-            Control(Timer_Fail_Stream1LB).Top = 278
-
-            Control(StreamUptimeLB2).Top = 254
-            Control(Uptime_Stream_2LB).Top = 254
-            Control(failLB2).Top = 278
-            Control(Timer_Fail_Stream2LB).Top = 278
-        End If
-
-        If RTMP_Active = 0 Or __MultiCameraSwitch = 0 Then
-            Control(BitrateLB).Hidden = True
-            Control(Bitrate_Stream_1LB).Hidden = True
             Control(BitrateLB2).Hidden = True
             Control(Bitrate_Stream_2LB).Hidden = True
+
         End If
-        ' NGINX RTMP Server ---------------------------------------------
+        ' SRT Live Server ---------------------------------------------
+
 
         Scene_LBR = Scene_OK + " LBR"
         _Resize Off , _Smooth
@@ -2083,7 +2097,7 @@ Sub __UI_OnLoad
             Get #128, , JSON
             Close #128
             If GetKey("obsWebSocketVersion", JSON) = "" Then
-                Error_msg = "- OBS " + c34 + "WebSockets Server" + c34 + " connection failed. Correctly configure " + c34 + "HTTPBindAddress, HTTPBindPort" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check OBS Studio is open,  " + c34 + "WebSockets Server" + c34 + " is enabled in OBS Studio, and " + c34 + "obs-websocket-http" + c34 + " is installed."
+                Error_msg = "- OBS " + c34 + "WebSockets Server" + c34 + " connection failed. Correctly configure " + c34 + "HTTPBindAddress, HTTPBindPort" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check OBS Studio is open,  " + c34 + "WebSockets Server" + c34 + " is enabled in OBS Studio, and " + c34 + "obs-websocket-http" + c34 + " is installed.": Error_3rd_line = "- Check " + c34 + "WebSocketConnection" + c34 + " in " + c34 + "config.ini" + c34 + " is set to the required connection method."
                 ErrorDisplay (6)
             Else
                 checkWebSocketVersion$ = GetKey("obsWebSocketVersion", JSON)
@@ -2151,7 +2165,7 @@ Sub __UI_OnLoad
                         If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
                         On Error GoTo 0
                         websocketOK = 0
-                        Error_msg = "- OBS " + c34 + "WebSockets Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check OBS Studio is open, " + c34 + "WebSockets Server" + c34 + " is enabled in OBS Studio, and " + c34 + "Node.js" + c34 + " is installed."
+                        Error_msg = "- OBS " + c34 + "WebSockets Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check OBS Studio is open, " + c34 + "WebSockets Server" + c34 + " is enabled in OBS Studio, and " + c34 + "Node.js" + c34 + " is installed.": Error_3rd_line = "- Check " + c34 + "WebSocketConnection" + c34 + " in " + c34 + "config.ini" + c34 + " is set to the required connection method."
                         ErrorDisplay (6)
                     Else
                         websocketOK = 1
@@ -2162,7 +2176,7 @@ Sub __UI_OnLoad
                         Close #90
                         If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
                         websocketOK = 0
-                        Error_msg = "- OBS " + c34 + "WebSockets Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check OBS Studio is open, " + c34 + "WebSockets Server" + c34 + " is enabled in OBS Studio, and " + c34 + "Node.js" + c34 + " is installed."
+                        Error_msg = "- OBS " + c34 + "WebSockets Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check OBS Studio is open, " + c34 + "WebSockets Server" + c34 + " is enabled in OBS Studio, and " + c34 + "Node.js" + c34 + " is installed.": Error_3rd_line = "- Check " + c34 + "WebSocketConnection" + c34 + " in " + c34 + "config.ini" + c34 + " is set to the required connection method."
                         ErrorDisplay (6)
                     Else
                         websocketOK = 1
@@ -3878,12 +3892,15 @@ Sub ErrorDisplay (ErrorTestVal)
         If InStr(Error_msg, Chr$(10)) >= 1 Then
             _PrintString (20, 14 * 18), Left$(Error_msg, InStr(Error_msg, Chr$(10)) - 1)
             _PrintString (20, 15 * 18), Mid$(Error_msg, InStr(Error_msg, Chr$(10)) + 1)
+            _PrintString (20, 16 * 18), Mid$(Error_3rd_line, 1)
+            Sound 440, 1
         Else
             _PrintString (20, 14 * 18), Error_msg
         End If
         _PrintString (20, 20 * 18), "Program will exit shortly or press any key to exit now..."
         _Display
         _Delay 0.5
+        Error_3rd_line = ""
         For Error_Exit = 1 To 60
             _Delay 0.5
             If _Exit Then System
@@ -3934,6 +3951,29 @@ Sub GetAllKey (keyname As String, JSON As String, ParseKey() As String)
             ParseKey(x_JSON) = jkey
         End If
     Loop Until InStr(JSON, Chr$(34) + keyname + Chr$(34)) = 0
+End Sub
+
+Sub GetAllKeyXML (keyname_XML As String, XML As String, ParseKeyXML() As String)
+    ' Credit to SpriggsySpriggs
+    Dim jkey_XML As String
+    Dim x_XML
+    Do
+        If InStr(XML, Chr$(60) + keyname_XML + Chr$(62)) Then
+            x_XML = x_XML + 1
+            ReDim _Preserve ParseKeyXML(x_XML) As String
+            XML = Mid$(XML, InStr(XML, Chr$(60) + keyname_XML + Chr$(62)) + Len(keyname_XML))
+            jkey_XML = XML
+            jkey_XML = Mid$(jkey_XML, InStr(jkey_XML, ">") + 1)
+            If Mid$(jkey_XML, 1, 1) = Chr$(34) Then
+                jkey_XML = Mid$(jkey_XML, 2)
+            End If
+            jkey_XML = Mid$(jkey_XML, 1, InStr(jkey_XML, Chr$(60)) - 1)
+            If Right$(jkey_XML, 2) = "</" Then
+                jkey_XML = Mid$(jkey_XML, 1, Len(jkey_XML) - 1)
+            End If
+            ParseKeyXML(x_XML) = jkey_XML
+        End If
+    Loop Until InStr(XML, Chr$(60) + keyname_XML + Chr$(62)) = 0
 End Sub
 
 Sub sls_client_connect
@@ -3994,7 +4034,7 @@ Sub rtmp_client_connect
     RTMP_Ping1 = Timer(.001)
     rtmp_client = _OpenClient(RTMP_Port_Client + RTMP_Server_IP)
 
-    If rtmp_client = 0 Then RefreshDisplayRequest = 1: Error_msg$ = "- Unable to connect, check if " + c34 + RTMP_Server_IP + ":" + RTMP_Server_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to read the SRT /" + RTMP_Stats + " URL from its http server. (Error: #4)": _Delay 3: Exit Sub
+    If rtmp_client = 0 Then RefreshDisplayRequest = 1: Error_msg$ = "- Unable to connect, check if " + c34 + RTMP_Server_IP + ":" + RTMP_Server_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to read the NGINX /" + RTMP_Stats + " URL from its http server. (Error: #4)": _Delay 3: Exit Sub
 
     On Error GoTo App_Fail
     App_Refresh = 1
@@ -4224,81 +4264,75 @@ Sub Multi0 (serverType$)
             ' Uptime
             MediaSource1Time = SLS_Uptime1
             MediaSource1TimeMS = SLS_Uptime1 * 1000
+
             ' Check BitrateFail1 - if bitrate is below fail value, appear to be 0
             If SLS_Bitrate1 < SLS_BitrateFail1 Then MediaSource1TimeMS = 0
         Case "NGINX"
-            ''TODO
-
-
-
-
-
-
-
             rtmp_client_connect
 
-            On Error GoTo 0
-            App_Refresh = 0
+            On Error GoTo App_Fail
+            App_Refresh = 1
 
+            ' Older code:
+            'If InStr(rtmp_stats.xml$, "<uptime>") Then RTMP_Uptime1 = Val(Mid$(rtmp_stats.xml$, InStr(rtmp_stats.xml$, "<uptime>") + 8, 16))
+            'If InStr(rtmp_stats.xml$, "<time>") Then RTMP_Uptime1 = (Val(Mid$(rtmp_stats.xml$, InStr(rtmp_stats.xml$, "<time>") + 6, 12)) / 1000)
+            'If InStr(rtmp_stats.xml$, "<bytes_in>") Then RTMP_Bytes_In = Val(Mid$(rtmp_stats.xml$, InStr(rtmp_stats.xml$, "<bytes_in>") + 10, 16))
 
-            If InStr(rtmp_stats.xml$, "<uptime>") Then RTMP_Uptime1 = Val(Mid$(rtmp_stats.xml$, InStr(rtmp_stats.xml$, "<uptime>") + 8, 16))
+            ' name:
+            ' (1) = live
+            ' (2) = stream1
+            ' (3) = hls
+
+            ' time:
+            ' (1) time #1
+            ' (2) time #1 or mpv time #1
+
+            ' bytes_in
+            ' (1) total
+            ' (2) stream #1
+
+            ' Check if stream name = requested stream name
+            rtmp_stats.xml_XML = rtmp_stats.xml
+            ReDim XML_Multi(64) As String
+            GetAllKeyXML "name", rtmp_stats.xml_XML, XML_Multi()
+            For i_XML = 1 To UBound(XML_Multi)
+                ' xml_multi(i_XML)
+            Next
+
+            If i_XML > 2 Then
+                If RTMP_Publisher1 = XML_Multi(2) Then
+
+                    rtmp_stats.xml_XML = rtmp_stats.xml
+                    ReDim XML_Multi(64) As String
+                    GetAllKeyXML "time", rtmp_stats.xml_XML, XML_Multi()
+                    For i_XML = 1 To UBound(XML_Multi)
+                        ' xml_multi(i_XML)
+                    Next
+                    If i_XML > 2 Then RTMP_Uptime1 = Val(XML_Multi(2)) / 1000
+
+                    rtmp_stats.xml_XML = rtmp_stats.xml
+                    ReDim XML_Multi(64) As String
+                    GetAllKeyXML "bytes_in", rtmp_stats.xml_XML, XML_Multi()
+                    For i_XML = 1 To UBound(XML_Multi)
+                        ' xml_multi(i_XML)
+                    Next
+                    If i_XML > 2 Then RTMP_Bytes_In = Val(XML_Multi(2))
+
+                    ' bw_in update interval is too slow, so get bytes_in minus the previous bytes_in = birate updated every second
+                    RTMP_Bytes_In_Temp1 = RTMP_Bytes_In
+                    If RTMP_Bytes_In_Temp1 >= 1 And RTMP_Bytes_In_Temp2 >= 1 Then
+                        RTMP_Bitrate1 = Int((RTMP_Bytes_In_Temp1 - RTMP_Bytes_In_Temp2) / 128)
+                    End If
+
+                End If
+            End If
+
 
             ' Uptime
             MediaSource1Time = RTMP_Uptime1
             MediaSource1TimeMS = RTMP_Uptime1 * 1000
 
-            'IF INSTR(rtmp_stats.xml$, "<naccepted>") THEN rtmp_naccepted# = VAL(MID$(rtmp_stats.xml$, INSTR(rtmp_stats.xml$, "<naccepted>") + 11, 16))
-            'IF INSTR(rtmp_stats.xml$, "<bytes_in>") THEN rtmp_bytes_in# = VAL(MID$(rtmp_stats.xml$, INSTR(rtmp_stats.xml$, "<bytes_in>") + 10, 16))
-            'IF INSTR(rtmp_stats.xml$, "<bytes_out>") THEN rtmp_bytes_out# = VAL(MID$(rtmp_stats.xml$, INSTR(rtmp_stats.xml$, "<bytes_out>") + 11, 16))
-            If InStr(rtmp_stats.xml$, "<bw_in>") Then RTMP_Bitrate1 = Val(Mid$(rtmp_stats.xml$, InStr(rtmp_stats.xml$, "<bw_in>") + 7, 16))
-            'IF INSTR(rtmp_stats.xml$, "<bw_out>") THEN rtmp_bw_out# = VAL(MID$(rtmp_stats.xml$, INSTR(rtmp_stats.xml$, "<bw_out>") + 8, 16))
-            'IF INSTR(rtmp_stats.xml$, "</frame_rate><codec>") THEN rtmp_codec_video$ = MID$(rtmp_stats.xml$, INSTR(rtmp_stats.xml$, "</frame_rate><codec>") + 20, 4)
-            'IF INSTR(rtmp_stats.xml$, "<audio><codec>") THEN rtmp_codec_audio$ = MID$(rtmp_stats.xml$, INSTR(rtmp_stats.xml$, "<audio><codec>") + 14, 3)
-
-            'rtmp_codec_video_level$ = ""
-            'rtmp_codec_video_profile$ = ""
-            'rtmp_codec_audio_channels$ = ""
-            'rtmp_codec_audio_samplerate$ = ""
-            'rtmp_codec_audio_profile$ = ""
-            'rtmp_codec_video_width$ = ""
-            'rtmp_codec_video_height$ = ""
-            'rtmp_codec_video_resolution$ = ""
-
-            'Tooltips - RTMP
-            'IF INSTR(rtmp_stats.xml$, "<nginx_version>") THEN rtmp_codec_version$ = MID$(rtmp_stats.xml$, INSTR(rtmp_stats.xml$, "<nginx_version>") + 15, 10)
-            'rtmp_codec_version$ = LEFT$(rtmp_codec_version$, INSTR(rtmp_codec_version$, "<") - 1)
-            'IF INSTR(rtmp_stats.xml$, "<nginx_rtmp_version>") THEN rtmp_codec_rtmp_version$ = MID$(rtmp_stats.xml$, INSTR(rtmp_stats.xml$, "<nginx_rtmp_version>") + 20, 10)
-            'rtmp_codec_rtmp_version$ = LEFT$(rtmp_codec_rtmp_version$, INSTR(rtmp_codec_rtmp_version$, "<") - 1)
-            'Tooltips - Video
-            'IF INSTR(rtmp_stats.xml$, "</compat><level>") THEN rtmp_codec_video_level$ = MID$(rtmp_stats.xml$, INSTR(rtmp_stats.xml$, "</compat><level>") + 16, 6)
-            'rtmp_codec_video_level$ = LEFT$(rtmp_codec_video_level$, INSTR(rtmp_codec_video_level$, "<") - 1)
-            'IF INSTR(rtmp_stats.xml$, "</codec><profile>") THEN rtmp_codec_video_profile$ = MID$(rtmp_stats.xml$, INSTR(rtmp_stats.xml$, "</codec><profile>") + 17, 10)
-            'rtmp_codec_video_profile$ = LEFT$(rtmp_codec_video_profile$, INSTR(rtmp_codec_video_profile$, "<") - 1)
-            'IF INSTR(rtmp_stats.xml$, "<video><width>") THEN rtmp_codec_video_width$ = STR$(VAL(MID$(rtmp_stats.xml$, INSTR(rtmp_stats.xml$, "<video><width>") + 14, 6)))
-            'IF INSTR(rtmp_stats.xml$, "</width><height>") THEN rtmp_codec_video_height$ = STR$(VAL(MID$(rtmp_stats.xml$, INSTR(rtmp_stats.xml$, "</width><height>") + 16, 6)))
-            'IF rtmp_codec_video_width$ <> "" THEN rtmp_codec_video_resolution$ = _TRIM$(rtmp_codec_video_width$) + "x" + _TRIM$(rtmp_codec_video_height$)
-            'Tooltips - Audio
-            'IF INSTR((INSTR(rtmp_stats.xml$, "</codec><profile>") + 1), rtmp_stats.xml$, "</codec><profile>") THEN rtmp_codec_audio_profile$ = MID$(rtmp_stats.xml$, INSTR((INSTR(rtmp_stats.xml$, "</codec><profile>") + 1), rtmp_stats.xml$, "</codec><profile>") + 17, 10)
-            'rtmp_codec_audio_profile$ = LEFT$(rtmp_codec_audio_profile$, INSTR(rtmp_codec_audio_profile$, "<") - 1)
-            'IF INSTR(rtmp_stats.xml$, "</profile><channels>") THEN rtmp_codec_audio_channels$ = STR$(VAL(MID$(rtmp_stats.xml$, INSTR(rtmp_stats.xml$, "</profile><channels>") + 20, 1)))
-            'IF INSTR(rtmp_stats.xml$, "</channels><sample_rate>") THEN rtmp_codec_audio_samplerate$ = STR$(VAL(MID$(rtmp_stats.xml$, INSTR(rtmp_stats.xml$, "</channels><sample_rate>") + 24, 6)))
-
-            'Dirty fix
-            'IF rtmp_codec_video_profile$ = "LC" OR rtmp_codec_video_profile$ = "MP3" THEN rtmp_codec_audio_profile$ = rtmp_codec_video_profile$: rtmp_codec_video_profile$ = ""
-            'IF rtmp_codec_audio_profile$ = "Baseline" OR rtmp_codec_audio_profile$ = "Main" OR rtmp_codec_audio_profile$ = "High" THEN rtmp_codec_video_profile$ = rtmp_codec_audio_profile$: rtmp_codec_audio_profile$ = ""
-
-            'ToolTip(rtmp_codec_audioLB) = "Profile: " + rtmp_codec_audio_profile$ + "\nChannels: " + _TRIM$(rtmp_codec_audio_channels$) + "\nSample rate: " + _TRIM$(rtmp_codec_audio_samplerate$) + "\n"
-            'ToolTip(rtmp_codec_videoLB) = "Resolution: " + rtmp_codec_video_resolution$ + "\nProfile: " + rtmp_codec_video_profile$ + "\nLevel: " + _TRIM$(rtmp_codec_video_level$) + "\n"
-            'ToolTip(tPingOutLB) = "URL: " + URL + "\nPort: " + Port$ + "\n"
-
-            'ToolTip(RMTPLB) = "NGINX Version: " + rtmp_codec_version$ + "\nNGINX RTMP Version: " + rtmp_codec_rtmp_version$ + "\n"
-            'ToolTip(rtmp_nacceptedLB) = "NGINX Version: " + rtmp_codec_version$ + "\nNGINX RTMP Version: " + rtmp_codec_rtmp_version$ + "\n"
-            'IF Timer_Failed = 1 THEN Timer_Failed = 0: ToolTip(Timer_Fail_CountLB) = "Last Failed: " + TIME$
-
-
-
-
-
+            If RTMP_Bitrate1 < RTMP_BitrateFail1 Then MediaSource1TimeMS = 0
     End Select
 
     MediaSource1Time = MediaSource1TimeMS / 1000
@@ -4330,7 +4364,14 @@ Sub Multi0 (serverType$)
                 LBR_Delay = LBR_Delay + 1: If LBR_Delay > LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total
             End If
         Case "NGINX"
-            ''TODO
+            ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
+            If RTMP_Bitrate1 < RTMP_BitrateLow1 And Timer_Fail_Stream1 = 0 And CooldownLog = 0 And LBR_Delay >= LBR_Delay_Total Then Multi0_CMD_LBR
+
+            If RTMP_Bitrate1 < RTMP_BitrateLow1 And Timer_Fail_Stream1 = 0 Then
+                ' LBR_Delay
+                If LBR_Delay >= LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: If CooldownLog > CooldownLogTotal Then CooldownLog = CooldownLogTotal
+                LBR_Delay = LBR_Delay + 1: If LBR_Delay > LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total
+            End If
     End Select
 
     Select Case serverType$
@@ -4346,7 +4387,11 @@ Sub Multi0 (serverType$)
                     LBR_Delay = LBR_Delay - 1: If LBR_Delay <= 0 Then LBR_Delay = 0
             End Select
         Case "NGINX"
-            ''TODO
+            ' Bitrate can be used here. Case 960 - 1040 is invalid.
+            Select Case RTMP_Bitrate1
+                Case Is > RTMP_BitrateLow1, 0
+                    LBR_Delay = LBR_Delay - 1: If LBR_Delay <= 0 Then LBR_Delay = 0
+            End Select
     End Select
 
     If CooldownActive = 1 And CooldownLog = 0 Then
@@ -4523,8 +4568,8 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                     Close #128
                     ' No JSON_Multi(0) redmin required
                     GetAllKey "mediaCursor", JSON, JSON_Multi()
-                    For i_JSON = 1 To UBound(JSON_Multi)
-                        ' JSON_Multi(i_JSON)
+                    For i_XML = 1 To UBound(JSON_Multi)
+                        ' JSON_Multi(i_XML)
                     Next
                     file92 = JSON_Multi(1)
                 End If
@@ -4646,8 +4691,165 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                 MediaSource2Time = MediaSource2TimeMS / 1000
             End If
         Case "NGINX"
-            ''TODO
+            rtmp_client_connect
+
+            On Error GoTo App_Fail
+            App_Refresh = 1
+
+            ' name:                       ' time:                                 ' bytes_in:
+            ' (1) = live                  ' (1) time #1                           ' (1) total
+            ' (2) = stream1               ' (2) time #1 or mpv time #1            ' (2) stream #1
+            ' (3) = stream2               ' (3) time #2                           ' (3) stream #2
+            ' (4) = hls                   ' (4) time #2 or mpv time #2            ' (4)
+
+            'multiStream1 = 0: multiStream2 = 0
+
+            ' Check if stream name 1 = requested stream name 1 or stream name 2
+            rtmp_stats.xml_XML = rtmp_stats.xml
+            ReDim XML_Multi(64) As String
+            GetAllKeyXML "name", rtmp_stats.xml_XML, XML_Multi()
+            For i_XML = 1 To UBound(XML_Multi)
+                ' XML_Multi(i_XML)
+            Next
+
+            If i_XML > 2 Then
+
+                ' Check if stream name 1 = requested stream name 1
+                If RTMP_Publisher1 = XML_Multi(2) Then
+                    rtmp_stats.xml_XML = rtmp_stats.xml
+                    ReDim XML_Multi(64) As String
+                    GetAllKeyXML "time", rtmp_stats.xml_XML, XML_Multi()
+                    For i_XML = 1 To UBound(XML_Multi)
+                        ' XML_Multi(i_XML)
+                    Next
+                    If i_XML > 2 Then RTMP_Uptime1 = Val(XML_Multi(2)) / 1000
+
+                    rtmp_stats.xml_XML = rtmp_stats.xml
+                    ReDim XML_Multi(64) As String
+                    GetAllKeyXML "bytes_in", rtmp_stats.xml_XML, XML_Multi()
+                    For i_XML = 1 To UBound(XML_Multi)
+                        ' XML_Multi(i_XML)
+                    Next
+                    If i_XML > 2 Then RTMP_Bytes_In = Val(XML_Multi(2))
+
+                    ' bw_in update interval is too slow, so get bytes_in minus the previous bytes_in = birate updated every second
+                    multiStream1 = RTMP_Bytes_In
+
+                End If
+
+                ' Check if stream name 1 = requested stream name 1
+                If RTMP_Publisher2 = XML_Multi(2) Then
+                    rtmp_stats.xml_XML = rtmp_stats.xml
+                    ReDim XML_Multi(64) As String
+                    GetAllKeyXML "time", rtmp_stats.xml_XML, XML_Multi()
+                    For i_XML = 1 To UBound(XML_Multi)
+                        ' XML_Multi(i_XML)
+                    Next
+                    If i_XML > 2 Then RTMP_Uptime2 = Val(XML_Multi(2)) / 1000
+
+                    rtmp_stats.xml_XML = rtmp_stats.xml
+                    ReDim XML_Multi(64) As String
+                    GetAllKeyXML "bytes_in", rtmp_stats.xml_XML, XML_Multi()
+                    For i_XML = 1 To UBound(XML_Multi)
+                        ' XML_Multi(i_XML)
+                    Next
+                    If i_XML > 2 Then RTMP_Bytes_In = Val(XML_Multi(2))
+
+                    ' bw_in update interval is too slow, so get bytes_in minus the previous bytes_in = birate updated every second
+                    multiStream2 = RTMP_Bytes_In
+                End If
+
+            End If
+
+            ' Check if stream name 2 = requested stream name 2 or stream name 1
+            rtmp_stats.xml_XML = rtmp_stats.xml
+            ReDim XML_Multi(64) As String
+            GetAllKeyXML "name", rtmp_stats.xml_XML, XML_Multi()
+            For i_XML = 1 To UBound(XML_Multi)
+                ' XML_Multi(i_XML)
+            Next
+
+            If i_XML > 3 Then
+                ' Check if stream name 2 = requested stream name 2
+                If RTMP_Publisher2 = XML_Multi(3) Then
+                    rtmp_stats.xml_XML = rtmp_stats.xml
+                    ReDim XML_Multi(64) As String
+                    GetAllKeyXML "time", rtmp_stats.xml_XML, XML_Multi()
+                    For i_XML = 1 To UBound(XML_Multi)
+                        ' XML_Multi(i_XML)
+                    Next
+                    If i_XML > 3 Then RTMP_Uptime2 = Val(XML_Multi(3)) / 1000
+
+                    rtmp_stats.xml_XML = rtmp_stats.xml
+                    ReDim XML_Multi(64) As String
+                    GetAllKeyXML "bytes_in", rtmp_stats.xml_XML, XML_Multi()
+                    For i_XML = 1 To UBound(XML_Multi)
+                        ' XML_Multi(i_XML)
+                    Next
+                    If i_XML > 3 Then RTMP_Bytes_In = Val(XML_Multi(3))
+
+                    ' bw_in update interval is too slow, so get bytes_in minus the previous bytes_in = birate updated every second
+                    multiStream2 = RTMP_Bytes_In
+
+                End If
+
+                ' Check if stream name 2 = requested stream name 1
+                If RTMP_Publisher1 = XML_Multi(3) Then
+                    rtmp_stats.xml_XML = rtmp_stats.xml
+                    ReDim XML_Multi(64) As String
+                    GetAllKeyXML "time", rtmp_stats.xml_XML, XML_Multi()
+                    For i_XML = 1 To UBound(XML_Multi)
+                        ' XML_Multi(i_XML)
+                    Next
+                    If i_XML > 3 Then RTMP_Uptime1 = Val(XML_Multi(3)) / 1000
+
+                    rtmp_stats.xml_XML = rtmp_stats.xml
+                    ReDim XML_Multi(64) As String
+                    GetAllKeyXML "bytes_in", rtmp_stats.xml_XML, XML_Multi()
+                    For i_XML = 1 To UBound(XML_Multi)
+                        ' XML_Multi(i_XML)
+                    Next
+                    If i_XML > 3 Then RTMP_Bytes_In = Val(XML_Multi(3))
+
+                    ' bw_in update interval is too slow, so get bytes_in minus the previous bytes_in = birate updated every second
+                    multiStream1 = RTMP_Bytes_In
+                End If
+
+            End If
+
+
+            ' Uptime
+            If serverSelection%% = 0 Or serverSelection%% = 1 Then
+
+                multiStream1_Temp1 = multiStream1
+                If multiStream1_Temp1 >= 1 And multiStream1_Temp2 >= 1 Then
+                    RTMP_Bitrate1 = Int((multiStream1_Temp1 - multiStream1_Temp2) / 128)
+                End If
+
+                MediaSource1Time = RTMP_Uptime1
+                MediaSource1TimeMS = RTMP_Uptime1 * 1000
+                ' Check BitrateFail1 - if bitrate is below fail value, appear to be 0
+                If RTMP_Bitrate1 < RTMP_BitrateFail1 Then MediaSource1TimeMS = 0
+                MediaSource1Time = MediaSource1TimeMS / 1000
+            End If
+
+            If serverSelection%% = 0 Or serverSelection%% = 2 Then
+
+                multiStream2_Temp1 = multiStream2
+                If multiStream2_Temp1 >= 1 And RTMP_Bytes_In_Temp2 >= 1 Then
+                    RTMP_Bitrate2 = Int((multiStream2_Temp1 - multiStream2_Temp2) / 128)
+                End If
+
+                MediaSource2Time = RTMP_Uptime2
+                MediaSource2TimeMS = RTMP_Uptime2 * 1000
+                ' Check BitrateFail2 - if bitrate is below fail value, appear to be 0
+                If RTMP_Bitrate2 < RTMP_BitrateFail2 Then MediaSource2TimeMS = 0
+                MediaSource2Time = MediaSource2TimeMS / 1000
+            End If
     End Select
+
+    On Error GoTo 0
+    App_Refresh = 0
 
     If serverSelection%% = 0 Or serverSelection%% = 1 Then
         MediaSource1TimeMSOffset = MediaSource1TimeMS - MediaSource1TimeLog
@@ -4664,52 +4866,76 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
     Select Case serverType$
         Case "SRT"
             ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
-            If MediaSource1TimeMSOffset < MediaSourceTimeLB And Timer_Fail_Stream1 = 0 And CooldownLog = 0 And LBR_Delay >= LBR_Delay_Total Then Multi1_CMD_LBR_1
+            If serverSelection%% = 0 Or serverSelection%% = 1 Then
+                If MediaSource1TimeMSOffset < MediaSourceTimeLB And Timer_Fail_Stream1 = 0 And CooldownLog = 0 And LBR_Delay >= LBR_Delay_Total Then Multi1_CMD_LBR_1
 
-            If MediaSource1TimeMSOffset < MediaSourceTimeLB And Timer_Fail_Stream1 = 0 Then
-                ' LBR_Delay
-                If LBR_Delay >= LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: If CooldownLog > CooldownLogTotal Then CooldownLog = CooldownLogTotal
-                LBR_Delay_Plus = 1
+                If MediaSource1TimeMSOffset < MediaSourceTimeLB And Timer_Fail_Stream1 = 0 Then
+                    ' LBR_Delay
+                    If LBR_Delay >= LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: If CooldownLog > CooldownLogTotal Then CooldownLog = CooldownLogTotal
+                    LBR_Delay_Plus = 1
+                End If
+                Multi1_CMD_LBR_2
             End If
-
-            Multi1_CMD_LBR_2
 
             ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
-            If MediaSource2TimeMSOffset < MediaSourceTimeLB And Timer_Fail_Stream2 = 0 And CooldownLog = 0 And LBR_Delay >= LBR_Delay_Total And Scene2LBInactive = 0 Then Multi1_CMD_LBR_3
+            If serverSelection%% = 0 Or serverSelection%% = 2 Then
+                If MediaSource2TimeMSOffset < MediaSourceTimeLB And Timer_Fail_Stream2 = 0 And CooldownLog = 0 And LBR_Delay >= LBR_Delay_Total And Scene2LBInactive = 0 Then Multi1_CMD_LBR_3
 
-            ' Disable Scene #2 LBR if Scene2LBRDisabled is true
-            If MediaSource2TimeMSOffset < MediaSourceTimeLB And Timer_Fail_Stream2 = 0 And Scene2LBInactive = 0 Then
-                ' LBR_Delay
-                If LBR_Delay >= LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: If CooldownLog > CooldownLogTotal Then CooldownLog = CooldownLogTotal
-                LBR_Delay_Plus = 1
+                ' Disable Scene #2 LBR if Scene2LBRDisabled is true
+                If MediaSource2TimeMSOffset < MediaSourceTimeLB And Timer_Fail_Stream2 = 0 And Scene2LBInactive = 0 Then
+                    ' LBR_Delay
+                    If LBR_Delay >= LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: If CooldownLog > CooldownLogTotal Then CooldownLog = CooldownLogTotal
+                    LBR_Delay_Plus = 1
+                End If
             End If
-
-            Multi1_CMD_LBR_4 "SRT"
         Case "SLS"
             ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
-            If SLS_Bitrate1 < SLS_BitrateLow1 And Timer_Fail_Stream1 = 0 And CooldownLog = 0 And LBR_Delay >= LBR_Delay_Total Then Multi1_CMD_LBR_1
+            If serverSelection%% = 0 Or serverSelection%% = 1 Then
+                If SLS_Bitrate1 < SLS_BitrateLow1 And Timer_Fail_Stream1 = 0 And CooldownLog = 0 And LBR_Delay >= LBR_Delay_Total Then Multi1_CMD_LBR_1
 
-            If SLS_Bitrate1 < SLS_BitrateLow1 And Timer_Fail_Stream1 = 0 Then
-                ' LBR_Delay
-                If LBR_Delay >= LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: If CooldownLog > CooldownLogTotal Then CooldownLog = CooldownLogTotal
-                LBR_Delay_Plus = 1
+                If SLS_Bitrate1 < SLS_BitrateLow1 And Timer_Fail_Stream1 = 0 Then
+                    ' LBR_Delay
+                    If LBR_Delay >= LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: If CooldownLog > CooldownLogTotal Then CooldownLog = CooldownLogTotal
+                    LBR_Delay_Plus = 1
+                End If
+                Multi1_CMD_LBR_2
             End If
-
-            Multi1_CMD_LBR_2
 
             ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
-            If SLS_Bitrate2 < SLS_BitrateLow2 And Timer_Fail_Stream2 = 0 And CooldownLog = 0 And LBR_Delay >= LBR_Delay_Total And Scene2LBInactive = 0 Then Multi1_CMD_LBR_3
+            If serverSelection%% = 0 Or serverSelection%% = 2 Then
+                If SLS_Bitrate2 < SLS_BitrateLow2 And Timer_Fail_Stream2 = 0 And CooldownLog = 0 And LBR_Delay >= LBR_Delay_Total And Scene2LBInactive = 0 Then Multi1_CMD_LBR_3
 
-            ' Disable Scene #2 LBR if Scene2LBRDisabled is true
-            If SLS_Bitrate2 < SLS_BitrateLow2 And Timer_Fail_Stream2 = 0 And Scene2LBInactive = 0 Then
-                ' LBR_Delay
-                If LBR_Delay >= LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: If CooldownLog > CooldownLogTotal Then CooldownLog = CooldownLogTotal
-                LBR_Delay_Plus = 1
+                ' Disable Scene #2 LBR if Scene2LBRDisabled is true
+                If SLS_Bitrate2 < SLS_BitrateLow2 And Timer_Fail_Stream2 = 0 And Scene2LBInactive = 0 Then
+                    ' LBR_Delay
+                    If LBR_Delay >= LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: If CooldownLog > CooldownLogTotal Then CooldownLog = CooldownLogTotal
+                    LBR_Delay_Plus = 1
+                End If
+            End If
+        Case "NGINX"
+            ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
+            If serverSelection%% = 0 Or serverSelection%% = 1 Then
+                If RTMP_Bitrate1 < RTMP_BitrateLow1 And Timer_Fail_Stream1 = 0 And CooldownLog = 0 And LBR_Delay >= LBR_Delay_Total Then Multi1_CMD_LBR_1
+
+                If RTMP_Bitrate1 < RTMP_BitrateLow1 And Timer_Fail_Stream1 = 0 Then
+                    ' LBR_Delay
+                    If LBR_Delay >= LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: If CooldownLog > CooldownLogTotal Then CooldownLog = CooldownLogTotal
+                    LBR_Delay_Plus = 1
+                End If
+                Multi1_CMD_LBR_2
             End If
 
-            Multi1_CMD_LBR_4 "SLS"
-        Case "NGINX"
-            ''TODO
+            ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
+            If serverSelection%% = 0 Or serverSelection%% = 2 Then
+                If RTMP_Bitrate2 < RTMP_BitrateLow2 And Timer_Fail_Stream2 = 0 And CooldownLog = 0 And LBR_Delay >= LBR_Delay_Total And Scene2LBInactive = 0 Then Multi1_CMD_LBR_3
+
+                ' Disable Scene #2 LBR if Scene2LBRDisabled is true
+                If RTMP_Bitrate2 < RTMP_BitrateLow2 And Timer_Fail_Stream2 = 0 And Scene2LBInactive = 0 Then
+                    ' LBR_Delay
+                    If LBR_Delay >= LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: If CooldownLog > CooldownLogTotal Then CooldownLog = CooldownLogTotal
+                    LBR_Delay_Plus = 1
+                End If
+            End If
     End Select
 
 End Sub
@@ -4883,7 +5109,8 @@ Sub Multi1_CMD_LBR_3
 
 End Sub
 
-Sub Multi1_CMD_LBR_4 (serverType As String)
+Sub Multi1_CMD_LBR_4z (serverType As String)
+    ' Only called when serverSelection%% = 2 otherwise LBR malfuntions with mixed servers
 
     If Timer_Fail_Stream1 = 0 And Timer_Fail_Stream2 = 0 Then
 
@@ -4911,7 +5138,16 @@ Sub Multi1_CMD_LBR_4 (serverType As String)
                         If Server_2 = "SLS" Then LBR_Delay_Minus = 1
                 End Select
             Case "NGINX"
-                ''TODO
+                ' Bitrate can be used here. Case 960 - 1040 is invalid.
+                Select Case RTMP_Bitrate1
+                    Case Is > RTMP_BitrateLow1, 0
+                        If Server_1 = "NGINX" Then LBR_Delay_Minus = 1
+                End Select
+                ' Bitrate can be used here. Case 960 - 1040 is invalid.
+                Select Case RTMP_Bitrate2
+                    Case Is > RTMP_BitrateLow2, 0
+                        If Server_2 = "NGINX" Then LBR_Delay_Minus = 1
+                End Select
         End Select
 
 
@@ -4925,7 +5161,6 @@ Sub Multi1_CMD_LBR_4 (serverType As String)
     Else
 
         ' LBR_Delay stream 1 or 2
-
 
         Select Case serverType$
             Case "SRT"
@@ -4958,7 +5193,20 @@ Sub Multi1_CMD_LBR_4 (serverType As String)
                     End Select
                 End If
             Case "NGINX"
-                ''TODO
+                ' Bitrate can be used here. Case 960 - 1040 is invalid.
+                If Timer_Fail_Stream1 = 0 Then
+                    Select Case RTMP_Bitrate1
+                        Case Is > RTMP_BitrateLow1, 0
+                            If Server_1 = "NGINX" Then LBR_Delay_Minus = 1
+                    End Select
+                End If
+                ' Bitrate can be used here. Case 960 - 1040 is invalid.
+                If Timer_Fail_Stream2 = 0 Then
+                    Select Case RTMP_Bitrate2
+                        Case Is > RTMP_BitrateLow2, 0
+                            If Server_2 = "NGINX" Then LBR_Delay_Minus = 1
+                    End Select
+                End If
         End Select
 
         If LBR_Delay_Plus = 1 Then LBR_Delay = LBR_Delay + 1: If LBR_Delay > LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total
@@ -4967,62 +5215,242 @@ Sub Multi1_CMD_LBR_4 (serverType As String)
     End If
 
 
+
     LBR_Delay_Minus = 0
     LBR_Delay_Plus = 0
 
 
-    If CooldownActive = 2 And CooldownLog = 0 Then
-        CooldownActive = 0
+    If serverSelection%% = 0 Or serverSelection%% = 2 Then
 
-        ' Switch to Low Bandwidth Scene #2 end
-        On Error GoTo App_Fail
-        If SceneLBActive Then ' LBR fix Scene #2 end
-            If _FileExists(outputLB2 + "png") Then Name outputLB2 + "png" As outputLB_Temp2 + "png"
-            If _FileExists(outputLB2 + "gif") Then Name outputLB2 + "gif" As outputLB_Temp2 + "gif"
+        If CooldownActive = 2 And CooldownLog = 0 Then
+            CooldownActive = 0
 
-            ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
-            If streamsUp <> "0" And __returnPreviousScene = 1 And __returnPreviousSceneRemember = 0 Then
-                If Right$(Scene_Current, 4) = " LBR" Or Right$(previousScene, 4) = " LBR" Then
-                    ' titleScene1 cannot be changed so previousScene is used to change to LBR scene
+            ' Switch to Low Bandwidth Scene #2 end
+            On Error GoTo App_Fail
+            If SceneLBActive Then ' LBR fix Scene #2 end
+                If _FileExists(outputLB2 + "png") Then Name outputLB2 + "png" As outputLB_Temp2 + "png"
+                If _FileExists(outputLB2 + "gif") Then Name outputLB2 + "gif" As outputLB_Temp2 + "gif"
 
-                    If streamsUp = "2" Then
-                        If previousScene <> titleScene2 Or Scene_Current <> titleScene2 Then
-                            SRR = 1
+                ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
+                If streamsUp <> "0" And __returnPreviousScene = 1 And __returnPreviousSceneRemember = 0 Then
+                    If Right$(Scene_Current, 4) = " LBR" Or Right$(previousScene, 4) = " LBR" Then
+                        ' titleScene1 cannot be changed so previousScene is used to change to LBR scene
+
+                        If streamsUp = "2" Then
+                            If previousScene <> titleScene2 Or Scene_Current <> titleScene2 Then
+                                SRR = 1
+                            End If
                         End If
-                    End If
 
-                    If streamsUp = "12" Then
-                        If previousScene <> titleScene12 Or Scene_Current <> titleScene12 Then
-                            SRR = 1
+                        If streamsUp = "12" Then
+                            If previousScene <> titleScene12 Or Scene_Current <> titleScene12 Then
+                                SRR = 1
+                            End If
                         End If
-                    End If
 
+                    End If
                 End If
-            End If
 
-            If SRR = 1 Then ' previousScene is current scene name so " LBR" needs to be removed from the end
-                If Right$(previousScene, 4) = " LBR" Then Shell _Hide _DontWait shell_cmd_1 + Mid$(previousScene, 1, Len(previousScene) - 4) + shell_cmd_2
-                ' titleScene change should not be permanent when ReturnPreviousSceneRemember=false, so use titleScene Temp to revert
-                titleScene1 = titleScene1Temp: titleScene2 = titleScene2Temp: titleScene12 = titleScene12Temp
-                SRR = 0
+                If SRR = 1 Then ' previousScene is current scene name so " LBR" needs to be removed from the end
+                    If Right$(previousScene, 4) = " LBR" Then Shell _Hide _DontWait shell_cmd_1 + Mid$(previousScene, 1, Len(previousScene) - 4) + shell_cmd_2
+                    ' titleScene change should not be permanent when ReturnPreviousSceneRemember=false, so use titleScene Temp to revert
+                    titleScene1 = titleScene1Temp: titleScene2 = titleScene2Temp: titleScene12 = titleScene12Temp
+                    SRR = 0
+                Else
+                    ' Change scene for multi camera
+                    ' These two lines were the only code prior to LBR fix
+                    If Scene_Current = titleScene2 Then Shell _Hide _DontWait shell_cmd_1 + titleScene2 + shell_cmd_2
+                    If Scene_Current = titleScene12 Then Shell _Hide _DontWait shell_cmd_1 + titleScene12 + shell_cmd_2
+                End If
+
+            End If
+            On Error GoTo 0
+
+            If tmpFileRestore = 1 Then
+                tmpFileRestore = 0
             Else
-                ' Change scene for multi camera
-                ' These two lines were the only code prior to LBR fix
-                If Scene_Current = titleScene2 Then Shell _Hide _DontWait shell_cmd_1 + titleScene2 + shell_cmd_2
-                If Scene_Current = titleScene12 Then Shell _Hide _DontWait shell_cmd_1 + titleScene12 + shell_cmd_2
+                If __FileStatusOutput = 1 Then statusOutputToFile "[FULL BANDWIDTH]:[CAMERA #2] (" + _Trim$(Str$(CooldownDuration)) + " sec)"
+                If ConnectionsLog Then statusConnectionsLogToFile "[INFO] Bandwidth restored for stream #2, " + _Trim$(Str$(ConnectionsLog1Count)) + " times (" + _Trim$(Str$(CooldownDuration)) + " sec)"
             End If
-
+            ' Reset low bitrate duration seconds count
+            CooldownDuration = 0
         End If
-        On Error GoTo 0
 
-        If tmpFileRestore = 1 Then
-            tmpFileRestore = 0
-        Else
-            If __FileStatusOutput = 1 Then statusOutputToFile "[FULL BANDWIDTH]:[CAMERA #2] (" + _Trim$(Str$(CooldownDuration)) + " sec)"
-            If ConnectionsLog Then statusConnectionsLogToFile "[INFO] Bandwidth restored for stream #2, " + _Trim$(Str$(ConnectionsLog1Count)) + " times (" + _Trim$(Str$(CooldownDuration)) + " sec)"
+    End If
+
+End Sub
+
+Sub Multi1_CMD_LBR_4
+    ' Can only be called once per second else LBR malfuntions with mixed servers
+
+    SetCaption DebugTemp1LB, "LBR_Delay_Minus before"
+    SetCaption DebugTemp1LB2, Str$(LBR_Delay_Minus)
+    SetCaption DebugTemp2LB, "LBR_Delay_Plus before"
+    SetCaption DebugTemp2LB2, Str$(LBR_Delay_Plus)
+    'SetCaption DebugTemp3LB, "MediaSource1TimeLog"
+    'SetCaption DebugTemp3LB2, Str$(MediaSource1TimeLog)
+    'SetCaption DebugTemp4LB, "RTMP_Uptime1"
+    'SetCaption DebugTemp4LB2, Str$(RTMP_Uptime1)
+
+    If Timer_Fail_Stream1 = 0 And Timer_Fail_Stream2 = 0 Then
+
+        ' LBR_Delay streams 1+2
+
+        Select Case MediaSource1TimeMSOffset
+            Case 960 To 1040, 0
+                If Server_1 = "SRT" Then LBR_Delay_Minus = 1
+        End Select
+        Select Case MediaSource2TimeMSOffset
+            Case 960 To 1040, 0
+                If Server_2 = "SRT" Then LBR_Delay_Minus = 1
+        End Select
+        Select Case SLS_Bitrate1 ' Bitrate can be used here. Case 960 - 1040 is invalid.
+            Case Is > SLS_BitrateLow1, 0
+                If Server_1 = "SLS" Then LBR_Delay_Minus = 1
+        End Select
+        Select Case SLS_Bitrate2 ' Bitrate can be used here. Case 960 - 1040 is invalid.
+            Case Is > SLS_BitrateLow2, 0
+                If Server_2 = "SLS" Then LBR_Delay_Minus = 1
+        End Select
+        Select Case RTMP_Bitrate1 ' Bitrate can be used here. Case 960 - 1040 is invalid.
+            Case Is > RTMP_BitrateLow1, 0
+                If Server_1 = "NGINX" Then LBR_Delay_Minus = 1
+        End Select
+        Select Case RTMP_Bitrate2 ' Bitrate can be used here. Case 960 - 1040 is invalid.
+            Case Is > RTMP_BitrateLow2, 0
+                If Server_2 = "NGINX" Then LBR_Delay_Minus = 1
+        End Select
+
+
+        If LBR_Delay_Plus = 1 Then
+            LBR_Delay = LBR_Delay + 1: If LBR_Delay > LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total
+        ElseIf LBR_Delay_Minus = 1 Then
+            LBR_Delay = LBR_Delay - 1: If LBR_Delay <= 0 Then LBR_Delay = 0
         End If
-        ' Reset low bitrate duration seconds count
-        CooldownDuration = 0
+
+
+    Else
+
+        ' LBR_Delay stream 1 or 2
+
+        Select Case serverType$
+            Case "SRT"
+                If Timer_Fail_Stream1 = 0 Then
+                    Select Case MediaSource1TimeMSOffset
+                        Case 960 To 1040, 0
+                            If Server_1 = "SRT" Then LBR_Delay_Minus = 1
+                    End Select
+                End If
+
+                If Timer_Fail_Stream2 = 0 Then
+                    Select Case MediaSource2TimeMSOffset
+                        Case 960 To 1040, 0
+                            If Server_2 = "SRT" Then LBR_Delay_Minus = 1
+                    End Select
+                End If
+            Case "SLS"
+                ' Bitrate can be used here. Case 960 - 1040 is invalid.
+                If Timer_Fail_Stream1 = 0 Then
+                    Select Case SLS_Bitrate1
+                        Case Is > SLS_BitrateLow1, 0
+                            If Server_1 = "SLS" Then LBR_Delay_Minus = 1
+                    End Select
+                End If
+                ' Bitrate can be used here. Case 960 - 1040 is invalid.
+                If Timer_Fail_Stream2 = 0 Then
+                    Select Case SLS_Bitrate2
+                        Case Is > SLS_BitrateLow2, 0
+                            If Server_2 = "SLS" Then LBR_Delay_Minus = 1
+                    End Select
+                End If
+            Case "NGINX"
+                ' Bitrate can be used here. Case 960 - 1040 is invalid.
+                If Timer_Fail_Stream1 = 0 Then
+                    Select Case RTMP_Bitrate1
+                        Case Is > RTMP_BitrateLow1, 0
+                            If Server_1 = "NGINX" Then LBR_Delay_Minus = 1
+                    End Select
+                End If
+                ' Bitrate can be used here. Case 960 - 1040 is invalid.
+                If Timer_Fail_Stream2 = 0 Then
+                    Select Case RTMP_Bitrate2
+                        Case Is > RTMP_BitrateLow2, 0
+                            If Server_2 = "NGINX" Then LBR_Delay_Minus = 1
+                    End Select
+                End If
+        End Select
+
+        If LBR_Delay_Plus = 1 Then LBR_Delay = LBR_Delay + 1: If LBR_Delay > LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total
+        If LBR_Delay_Minus = 1 Then LBR_Delay = LBR_Delay - 1: If LBR_Delay <= 0 Then LBR_Delay = 0
+
+    End If
+
+    SetCaption DebugTemp3LB, "LBR_Delay_Minus after"
+    SetCaption DebugTemp3LB2, Str$(LBR_Delay_Minus)
+    SetCaption DebugTemp4LB, "LBR_Delay_Plus after"
+    SetCaption DebugTemp4LB2, Str$(LBR_Delay_Plus)
+
+
+    LBR_Delay_Minus = 0
+    LBR_Delay_Plus = 0
+
+
+    If serverSelection%% = 0 Or serverSelection%% = 2 Then
+
+        If CooldownActive = 2 And CooldownLog = 0 Then
+            CooldownActive = 0
+
+            ' Switch to Low Bandwidth Scene #2 end
+            On Error GoTo App_Fail
+            If SceneLBActive Then ' LBR fix Scene #2 end
+                If _FileExists(outputLB2 + "png") Then Name outputLB2 + "png" As outputLB_Temp2 + "png"
+                If _FileExists(outputLB2 + "gif") Then Name outputLB2 + "gif" As outputLB_Temp2 + "gif"
+
+                ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
+                If streamsUp <> "0" And __returnPreviousScene = 1 And __returnPreviousSceneRemember = 0 Then
+                    If Right$(Scene_Current, 4) = " LBR" Or Right$(previousScene, 4) = " LBR" Then
+                        ' titleScene1 cannot be changed so previousScene is used to change to LBR scene
+
+                        If streamsUp = "2" Then
+                            If previousScene <> titleScene2 Or Scene_Current <> titleScene2 Then
+                                SRR = 1
+                            End If
+                        End If
+
+                        If streamsUp = "12" Then
+                            If previousScene <> titleScene12 Or Scene_Current <> titleScene12 Then
+                                SRR = 1
+                            End If
+                        End If
+
+                    End If
+                End If
+
+                If SRR = 1 Then ' previousScene is current scene name so " LBR" needs to be removed from the end
+                    If Right$(previousScene, 4) = " LBR" Then Shell _Hide _DontWait shell_cmd_1 + Mid$(previousScene, 1, Len(previousScene) - 4) + shell_cmd_2
+                    ' titleScene change should not be permanent when ReturnPreviousSceneRemember=false, so use titleScene Temp to revert
+                    titleScene1 = titleScene1Temp: titleScene2 = titleScene2Temp: titleScene12 = titleScene12Temp
+                    SRR = 0
+                Else
+                    ' Change scene for multi camera
+                    ' These two lines were the only code prior to LBR fix
+                    If Scene_Current = titleScene2 Then Shell _Hide _DontWait shell_cmd_1 + titleScene2 + shell_cmd_2
+                    If Scene_Current = titleScene12 Then Shell _Hide _DontWait shell_cmd_1 + titleScene12 + shell_cmd_2
+                End If
+
+            End If
+            On Error GoTo 0
+
+            If tmpFileRestore = 1 Then
+                tmpFileRestore = 0
+            Else
+                If __FileStatusOutput = 1 Then statusOutputToFile "[FULL BANDWIDTH]:[CAMERA #2] (" + _Trim$(Str$(CooldownDuration)) + " sec)"
+                If ConnectionsLog Then statusConnectionsLogToFile "[INFO] Bandwidth restored for stream #2, " + _Trim$(Str$(ConnectionsLog1Count)) + " times (" + _Trim$(Str$(CooldownDuration)) + " sec)"
+            End If
+            ' Reset low bitrate duration seconds count
+            CooldownDuration = 0
+        End If
+
     End If
 
 End Sub
@@ -5032,14 +5460,14 @@ Sub Timer01
     td_update = Timer(.001) - timer1
     timer1 = Timer(.001)
 
-    'SetCaption DebugTemp1LB, "MediaSource1TimeMSOffset"
-    'SetCaption DebugTemp1LB2, STR$(MediaSource1TimeMSOffset)
-    'SetCaption DebugTemp2LB, "MediaSourceTimeLB"
-    'SetCaption DebugTemp2LB2, STR$(MediaSourceTimeLB)
-    'SetCaption DebugTemp3LB, "Timer_Fail_Stream1"
-    'SetCaption DebugTemp3LB2, STR$(Timer_Fail_Stream1)
-    'SetCaption DebugTemp4LB, "Timer_Fail_Stream2"
-    'SetCaption DebugTemp4LB2, STR$(Timer_Fail_Stream2)
+    'SetCaption DebugTemp1LB, "MediaSource1TimeMS - MediaSource1TimeLog"
+    'SetCaption DebugTemp1LB2, Str$(MediaSource1TimeMS - MediaSource1TimeLog)
+    'SetCaption DebugTemp2LB, "MediaSource1TimeMS"
+    'SetCaption DebugTemp2LB2, Str$(MediaSource1TimeMS)
+    'SetCaption DebugTemp3LB, "MediaSource1TimeLog"
+    'SetCaption DebugTemp3LB2, Str$(MediaSource1TimeLog)
+    'SetCaption DebugTemp4LB, "RTMP_Uptime1"
+    'SetCaption DebugTemp4LB2, Str$(RTMP_Uptime1)
 
     CooldownLog = CooldownLog - 1
     If CooldownLog < 0 Then CooldownLog = 0
@@ -5055,18 +5483,37 @@ Sub Timer01
     ' Get Media Source times (1 stream) ------------------------------------------------------------------------------------------------------------------------------
     If __MultiCameraSwitch = 0 Then
 
-        If SLS_1_Enabled = "false" Then Multi0 "SRT": Server_1 = "SRT"
-        If SLS_1_Enabled = "true" Then Multi0 "SLS": Server_1 = "SLS"
+        If SLS_1_Enabled = "false" And RTMP_1_Enabled = "false" Then Multi0 "SRT": Server_1 = "SRT"
+        If SLS_1_Enabled = "true" And RTMP_1_Enabled = "false" Then Multi0 "SLS": Server_1 = "SLS"
+        If RTMP_1_Enabled = "true" And SLS_1_Enabled = "false" Then Multi0 "NGINX": Server_1 = "NGINX"
 
     End If
 
     If __MultiCameraSwitch = 1 Then
         ' Get Media Source times (2 streams) ------------------------------------------------------------------------------------------------------------------------------
 
-        If SLS_1_Enabled = "false" And SLS_2_Enabled = "false" Then Multi1 "SRT", 0: Server_1 = "SRT": Server_2 = "SRT"
-        If SLS_1_Enabled = "false" And SLS_2_Enabled = "true" Then Multi1 "SRT", 1: Multi1 "SLS", 2: Server_1 = "SRT": Server_2 = "SLS"
-        If SLS_1_Enabled = "true" And SLS_2_Enabled = "false" Then Multi1 "SLS", 1: Multi1 "SRT", 2: Server_1 = "SLS": Server_2 = "SRT"
-        If SLS_1_Enabled = "true" And SLS_2_Enabled = "true" Then Multi1 "SLS", 0: Server_1 = "SLS": Server_2 = "SLS"
+        If SLS_Active = 0 And RTMP_Active = 0 Then
+            Multi1 "SRT", 0: Server_1 = "SRT": Server_2 = "SRT"
+        End If
+
+        If SLS_Active = 1 And RTMP_Active = 0 Then
+            If SLS_1_Enabled = "true" And SLS_2_Enabled = "true" Then Multi1 "SLS", 0: Server_1 = "SLS": Server_2 = "SLS"
+            If SLS_1_Enabled = "true" And SLS_2_Enabled = "false" Then Multi1 "SLS", 1: Multi1 "SRT", 2: Server_1 = "SLS": Server_2 = "SRT"
+            If SLS_1_Enabled = "false" And SLS_2_Enabled = "true" Then Multi1 "SRT", 1: Multi1 "SLS", 2: Server_1 = "SRT": Server_2 = "SLS"
+        End If
+
+        If SLS_Active = 0 And RTMP_Active = 1 Then
+            If RTMP_1_Enabled = "true" And RTMP_2_Enabled = "true" Then Multi1 "NGINX", 0: Server_1 = "NGINX": Server_2 = "NGINX"
+            If RTMP_1_Enabled = "true" And RTMP_2_Enabled = "false" Then Multi1 "NGINX", 1: Multi1 "SRT", 2: Server_1 = "NGINX": Server_2 = "SRT"
+            If RTMP_1_Enabled = "false" And RTMP_2_Enabled = "true" Then Multi1 "SRT", 1: Multi1 "NGINX", 2: Server_1 = "SRT": Server_2 = "NGINX"
+        End If
+
+        If SLS_Active = 1 And RTMP_Active = 1 Then
+            If SLS_1_Enabled = "true" And SLS_2_Enabled = "false" Then Multi1 "SLS", 1: Multi1 "NGINX", 2: Server_1 = "SLS": Server_2 = "NGINX"
+            If SLS_1_Enabled = "false" And SLS_2_Enabled = "true" Then Multi1 "NGINX", 1: Multi1 "SLS", 2: Server_1 = "NGINX": Server_2 = "SLS"
+        End If
+
+        Multi1_CMD_LBR_4 ' Can't be called more than once
 
     End If
 
@@ -5186,6 +5633,43 @@ Sub Timer01
     If Val(tout) >= .5 And CooldownLog = 0 Then SetCaption StatusLB, "WebSocket ping too high, try another " + c34 + "NodejsFileSystem" + c34 + " if this persists...": updateDisplay = 1 ' Display error if WebSocket ping is too high
     SetCaption (tPingOutLB), LTrim$(Str$(Val(tout) * 1000)) + " ms"
 
+
+    ' NGINX RTMP Server
+    If RTMP_Active = 1 And __MultiCameraSwitch = 0 Then
+        If RTMP_Bitrate1 > RTMP_BitrateLow1 Then Control(MultiCameraSwitchStatusLB).ForeColor = GREEN_OK Else Control(MultiCameraSwitchStatusLB).ForeColor = RED_WARNING
+        If RTMP_Bitrate1 < RTMP_BitrateFail1 Or RTMP_Bitrate1 = 0 Then Control(MultiCameraSwitchStatusLB).ForeColor = RED_FAIL
+        Select Case RTMP_Bitrate1
+            Case 0 To 99
+                If RTMP_Kbps_Precision <> "nerd" Then SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(RTMP_Bitrate1 / 100))) + " Kbps" Else SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(RTMP_Bitrate1))) + " Kbps"
+            Case Is >= 100
+                If RTMP_Kbps_Precision <> "nerd" Then SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(RTMP_Bitrate1 / 100))) + "00 Kbps" Else SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(RTMP_Bitrate1))) + " Kbps"
+        End Select
+    End If
+
+    If RTMP_Active = 1 And MultiCameraSwitch = "true" Then
+        If SLS_1_Enabled = "false" Then If RTMP_Bitrate1 > RTMP_BitrateLow1 Then Control(Bitrate_Stream_1LB).ForeColor = GREEN_OK Else Control(Bitrate_Stream_1LB).ForeColor = RED_WARNING
+        If SLS_2_Enabled = "false" Then If RTMP_Bitrate2 > RTMP_BitrateLow2 Then Control(Bitrate_Stream_2LB).ForeColor = GREEN_OK Else Control(Bitrate_Stream_2LB).ForeColor = RED_WARNING
+        If SLS_1_Enabled = "false" Then If RTMP_Bitrate1 < RTMP_BitrateFail1 Or RTMP_Bitrate1 = 0 Then Control(Bitrate_Stream_1LB).ForeColor = RED_FAIL
+        If SLS_2_Enabled = "false" Then If RTMP_Bitrate2 < RTMP_BitrateFail1 Or RTMP_Bitrate2 = 0 Then Control(Bitrate_Stream_2LB).ForeColor = RED_FAIL
+        If SLS_1_Enabled = "false" Then
+            Select Case RTMP_Bitrate1
+                Case 0 To 99
+                    If RTMP_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(RTMP_Bitrate1 / 100))) + " Kbps" Else SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(RTMP_Bitrate1))) + " Kbps"
+                Case Is >= 100
+                    If RTMP_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(RTMP_Bitrate1 / 100))) + "00 Kbps" Else SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(RTMP_Bitrate1))) + " Kbps"
+            End Select
+        End If
+        If SLS_2_Enabled = "false" Then
+            Select Case RTMP_Bitrate2
+                Case 0 To 99
+                    If RTMP_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(RTMP_Bitrate2 / 100))) + " Kbps" Else SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(RTMP_Bitrate2))) + " Kbps"
+                Case Is >= 100
+                    If RTMP_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(RTMP_Bitrate2 / 100))) + "00 Kbps" Else SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(RTMP_Bitrate2))) + " Kbps"
+            End Select
+        End If
+    End If
+
+
     ' SRT Live Server
     If SLS_Active = 1 And __MultiCameraSwitch = 0 Then
         If SLS_Bitrate1 > SLS_BitrateLow1 Then Control(MultiCameraSwitchStatusLB).ForeColor = GREEN_OK Else Control(MultiCameraSwitchStatusLB).ForeColor = RED_WARNING
@@ -5197,22 +5681,27 @@ Sub Timer01
                 If SLS_Kbps_Precision <> "nerd" Then SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(SLS_Bitrate1 / 100))) + "00 Kbps" Else SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(SLS_Bitrate1))) + " Kbps"
         End Select
     End If
-    If SLS_Active = 1 And MultiCameraSwitch = "true" Then
-        If SLS_Bitrate1 > SLS_BitrateLow1 Then Control(Bitrate_Stream_1LB).ForeColor = GREEN_OK Else Control(Bitrate_Stream_1LB).ForeColor = RED_WARNING
-        If SLS_Bitrate2 > SLS_BitrateLow2 Then Control(Bitrate_Stream_2LB).ForeColor = GREEN_OK Else Control(Bitrate_Stream_2LB).ForeColor = RED_WARNING
-        If SLS_Bitrate1 < SLS_BitrateFail1 Or SLS_Bitrate1 = 0 Then Control(Bitrate_Stream_1LB).ForeColor = RED_FAIL: If SLS_Bitrate2 < SLS_BitrateFail1 Or SLS_Bitrate2 = 0 Then Control(Bitrate_Stream_2LB).ForeColor = RED_FAIL
-        Select Case SLS_Bitrate1
-            Case 0 To 99
-                If SLS_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(SLS_Bitrate1 / 100))) + " Kbps" Else SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(SLS_Bitrate1))) + " Kbps"
-            Case Is >= 100
-                If SLS_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(SLS_Bitrate1 / 100))) + "00 Kbps" Else SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(SLS_Bitrate1))) + " Kbps"
-        End Select
-        Select Case SLS_Bitrate2
-            Case 0 To 99
-                If SLS_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(SLS_Bitrate2 / 100))) + " Kbps" Else SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(SLS_Bitrate2))) + " Kbps"
-            Case Is >= 100
-                If SLS_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(SLS_Bitrate2 / 100))) + "00 Kbps" Else SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(SLS_Bitrate2))) + " Kbps"
-        End Select
+
+    If SLS_Active = 1 And __MultiCameraSwitch = 1 Then
+        If RTMP_1_Enabled = "false" Then If SLS_Bitrate1 > SLS_BitrateLow1 Then Control(Bitrate_Stream_1LB).ForeColor = GREEN_OK Else Control(Bitrate_Stream_1LB).ForeColor = RED_WARNING
+        If RTMP_2_Enabled = "false" Then If SLS_Bitrate2 > SLS_BitrateLow2 Then Control(Bitrate_Stream_2LB).ForeColor = GREEN_OK Else Control(Bitrate_Stream_2LB).ForeColor = RED_WARNING
+        If RTMP_1_Enabled = "false" Then If SLS_Bitrate1 < SLS_BitrateFail1 Or SLS_Bitrate1 = 0 Then Control(Bitrate_Stream_1LB).ForeColor = RED_FAIL: If SLS_Bitrate2 < SLS_BitrateFail1 Or SLS_Bitrate2 = 0 Then Control(Bitrate_Stream_2LB).ForeColor = RED_FAIL
+        If RTMP_1_Enabled = "false" Then
+            Select Case SLS_Bitrate1
+                Case 0 To 99
+                    If SLS_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(SLS_Bitrate1 / 100))) + " Kbps" Else SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(SLS_Bitrate1))) + " Kbps"
+                Case Is >= 100
+                    If SLS_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(SLS_Bitrate1 / 100))) + "00 Kbps" Else SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(SLS_Bitrate1))) + " Kbps"
+            End Select
+        End If
+        If RTMP_2_Enabled = "false" Then
+            Select Case SLS_Bitrate2
+                Case 0 To 99
+                    If SLS_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(SLS_Bitrate2 / 100))) + " Kbps" Else SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(SLS_Bitrate2))) + " Kbps"
+                Case Is >= 100
+                    If SLS_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(SLS_Bitrate2 / 100))) + "00 Kbps" Else SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(SLS_Bitrate2))) + " Kbps"
+            End Select
+        End If
     End If
 
     If srt_warmup = 0 Then
@@ -5246,10 +5735,19 @@ Sub Timer01
 
     SetCaption (Stream_Fail_DelayLB), calc_srt$(Stream_Fail_Delay, 1) + calc_srt_sec$
     If Timer_Fail And MediaSource1Time = 0 And MediaSource2Time = 0 Then Control(Scene_CurrentLB).ForeColor = RED_FAIL Else Control(Scene_CurrentLB).ForeColor = GREEN_SCENE_OK
-    If SLS_Active = 0 And __MultiCameraSwitch = 0 Then SetCaption (MultiCameraSwitchStatusLB), "Disabled"
+    If SLS_Active = 0 And RTMP_Active = 0 And __MultiCameraSwitch = 0 Then SetCaption (MultiCameraSwitchStatusLB), "Disabled"
 
-    If Timer_Fail_Stream1 Then SetCaption (Stream1), "Stream #1 (Offline)": Control(Stream1).ForeColor = RED_FAIL Else SetCaption (Stream1), "Stream #1": Control(Stream1).ForeColor = GREEN_STREAM_OK
-    If Timer_Fail_Stream2 Then SetCaption (Stream2), "Stream #2 (Offline)": Control(Stream2).ForeColor = RED_FAIL Else SetCaption (Stream2), "Stream #2": Control(Stream2).ForeColor = GREEN_STREAM_OK
+    If RTMP_Width1 And RTMP_Height1 Then Server_Display1 = " / " + LTrim$(Str$(RTMP_Width1)) + "x" + LTrim$(Str$(RTMP_Height1))
+    If RTMP_Width2 And RTMP_Height2 Then Server_Display2 = " / " + LTrim$(Str$(RTMP_Width2)) + "x" + LTrim$(Str$(RTMP_Height2))
+
+    If SLS_1_Enabled = "true" Then Server_Display1 = "  //  [SLS]"
+    If SLS_2_Enabled = "true" Then Server_Display2 = "  //  [SLS]"
+    If RTMP_1_Enabled = "true" Then Server_Display1 = "  //  [NGINX]"
+    If RTMP_2_Enabled = "true" Then Server_Display2 = "  //  [NGINX]"
+    If SLS_1_Enabled = "false" And RTMP_1_Enabled = "false" Then Server_Display1 = "  //  [SRT]"
+    If SLS_2_Enabled = "false" And RTMP_2_Enabled = "false" Then Server_Display2 = "  //  [SRT]"
+    If Timer_Fail_Stream1 Then SetCaption (Stream1), "Stream #1" + Server_Display1 + " ": Control(Stream1).ForeColor = RED_FAIL Else SetCaption (Stream1), "Stream #1" + Server_Display1: Control(Stream1).ForeColor = GREEN_STREAM_OK
+    If Timer_Fail_Stream2 Then SetCaption (Stream2), "Stream #2" + Server_Display2 + " ": Control(Stream2).ForeColor = RED_FAIL Else SetCaption (Stream2), "Stream #2" + Server_Display2: Control(Stream2).ForeColor = GREEN_STREAM_OK
 
     If __MultiCameraSwitch = 1 Then
         SetCaption (MultiCameraSwitchStatusLB), "Enabled"
@@ -5885,6 +6383,15 @@ Sub Timer01
     End If
 
     If srt_warmup = 1 And returnFirstCheck = 1 And __MultiCameraSwitch = 1 And previousSceneDisplay = "" Then RefreshDisplayRequest = 1: Error_msg = "- Variable/s for scenes empty, check if OBS is open." + Chr$(10) + "- If OBS is open, check communication is available via Node.js or obs-websocket-http.": Error_msg_2$ = "- If Node.js is selected, check OBS WebSockets options are correctly set. (Error: #6)": _Delay 3
+
+    If RTMP_Active = 1 Then
+        ' Temp2 variables
+        RTMP_Bytes_In_Temp2 = RTMP_Bytes_In
+
+        ' Temp_stream1 & Temp_stream2 variables
+        multiStream1_Temp2 = multiStream1
+        multiStream2_Temp2 = multiStream2
+    End If
 
     If Exe_Fail_First = 0 Then
         Timer_Fail_First = Timer_Fail_First + 1
