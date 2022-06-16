@@ -2,7 +2,7 @@ Loopy SRT Stats Monitor
 =======================
 
 <p>
-    <p><a href="https://github.com/loopy750/SRT-Stats-Monitor/releases/latest"><img src="./srt_stats_monitor.png" alt="Loopy SRT Stats Monitor"></a></p>
+    <p><a href="https://github.com/loopy750/SRT-Stats-Monitor/releases/latest"><img src="./modifications/resources/srt_stats_monitor.png" alt="Loopy SRT Stats Monitor"></a></p>
     <a href="https://github.com/loopy750/SRT-Stats-Monitor/releases/latest"><img src="https://img.shields.io/github/v/release/loopy750/SRT-Stats-Monitor?include_prereleases" alt="Download"></a>
 </p>
 
