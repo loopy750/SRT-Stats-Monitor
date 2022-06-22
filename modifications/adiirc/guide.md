@@ -1,4 +1,4 @@
-- Go to: <a href="https://www.adiirc.com/" target="_blank">https://www.adiirc.com/</a>
+- Go to: [https://www.adiirc.com/](https://www.adiirc.com/)
 - In this example we're downloading "**64 Bit - Portable version**"
 
 ![guide_1](/modifications/adiirc/guide_1.png)
@@ -15,7 +15,7 @@
 
 ![guide_3](/modifications/adiirc/guide_3.png)
 
-- To obtain your password/OAuth token, go to <a href="https://twitchapps.com/tmi/" target="_blank">https://twitchapps.com/tmi/</a>
+- To obtain your password/OAuth token, go to [https://twitchapps.com/tmi/](https://twitchapps.com/tmi/)
 - Click **"Authorize"** if you trust **"Twitch Chat OAuth Token Generator"** and copy/paste the whole password into AdiIRC
 
 ![guide_4](/modifications/adiirc/guide_4.png)
