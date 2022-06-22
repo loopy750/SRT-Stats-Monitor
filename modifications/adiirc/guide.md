@@ -1,3 +1,6 @@
+Configuring AdiIRC
+==================
+
 - Go to: [https://www.adiirc.com/](https://www.adiirc.com/)
 - In this example we're downloading "**64 Bit - Portable version**"
 
@@ -7,11 +10,12 @@
 - Edit **_vars.ini_** with your Twitch username, eg: ```%channelName=#your_twitch_username```
 - Copy **_vars.ini_** to the AdiIRC root folder
 - Create a ```Scripts``` folder within the AdiIRC root folder and copy **_outputSRT.ini_**
+- Copy **_outputBitrate.ini_** to the ```Scripts``` folder if you plan to use ```!b``` to output bitrate of compatible servers in chat
 
 ![guide_2](/modifications/adiirc/guide_2.png)
 
 - Launch **_AdiIRC.exe_**
-- Server Name is ```irc.chat.twitch.tv``` and Port is ```6667```
+- **Server Name** is ```irc.chat.twitch.tv``` and **Port** is ```6667```
 
 ![guide_3](/modifications/adiirc/guide_3.png)
 
@@ -21,5 +25,5 @@
 ![guide_4](/modifications/adiirc/guide_4.png)
 
 - Click "**Log On**"
-- Press _ALT+R_ to open Scripts window and load **_outputSRT.ini_**
+- Press _ALT_ + _R_ to open Scripts window and load scripts within that folder
 - Close and reopen AdiIRC
