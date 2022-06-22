@@ -120,6 +120,9 @@ Common Shared file224 As String
 Common Shared FileStatusOutput As String
 Common Shared __FileStatusOutput As _Byte
 Common Shared outputBitrateFile As String
+Common Shared bitrateOutput As String
+Common Shared bitrateOutput1Display As String
+Common Shared bitrateOutput2Display As String
 Common Shared outputStatusFile As String
 Common Shared outputConnectionsLogFile As String
 Common Shared outputKbpsFile1 As String
@@ -845,7 +848,7 @@ Sub __UI_OnLoad
             If _FileExists(config_dir + "\obs-websocket-http-v1-Windows.exe") Then HTTP_File = config_dir + "\obs-websocket-http-v1-Windows.exe"
             If _FileExists(config_dir + "\obs-websocket-http-Windows.exe") Then HTTP_File = config_dir + "\obs-websocket-http-Windows.exe"
             If _FileExists(config_dir + "\obs-websocket-http.exe") Then HTTP_File = config_dir + "\obs-websocket-http.exe"
-            If OS = "WINDOWS" And _FileExists(HTTP_File) Then Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW: _Delay 1
+            If OS = "WINDOWS" And _FileExists(HTTP_File) Then Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
         End If
 
 
@@ -991,7 +994,7 @@ Sub __UI_OnLoad
         RTMP_Header = RTMP_Header + "Accept-Encoding: identity" + RTMP_EOL
         RTMP_Header = RTMP_Header + "Host: " + RTMP_Server_IP + ":" + RTMP_Server_Port + RTMP_EOL
         RTMP_Header = RTMP_Header + "Connection: Keep-Alive" + RTMP_EOL
-        RTMP_Header = RTMP_Header + RTMP_EOL + RTMP_EOL
+        RTMP_Header = RTMP_Header + RTMP_EOL
 
         RTMP_Port_Client = "TCP/IP:" + RTMP_Server_Port + ":"
 
@@ -1205,6 +1208,7 @@ Sub __UI_OnLoad
             If Desktop_Width_Position = -1 And Desktop_Height_Position = -1 Then _ScreenMove _Middle Else _ScreenMove Desktop_Width_Position, Desktop_Height_Position
         End If
     End If
+    If OS = "WINDOWS" And _FileExists(HTTP_File) Then _Delay 1.5
     If returnPreviousScene = "true" Then __returnPreviousScene = 1 Else __returnPreviousScene = 0
     If FileStatusOutput = "true" Then __FileStatusOutput = 1 Else __FileStatusOutput = 0
     If returnPreviousSceneRemember = "true" Then __returnPreviousSceneRemember = 1 Else __returnPreviousSceneRemember = 0
@@ -2097,7 +2101,7 @@ Sub __UI_OnLoad
             Get #128, , JSON
             Close #128
             If GetKey("obsWebSocketVersion", JSON) = "" Then
-                Error_msg = "- OBS " + c34 + "WebSockets Server" + c34 + " connection failed. Correctly configure " + c34 + "HTTPBindAddress, HTTPBindPort" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check OBS Studio is open,  " + c34 + "WebSockets Server" + c34 + " is enabled in OBS Studio, and " + c34 + "obs-websocket-http" + c34 + " is installed.": Error_3rd_line = "- Check " + c34 + "WebSocketConnection" + c34 + " in " + c34 + "config.ini" + c34 + " is set to the required connection method."
+                Error_msg = "- OBS " + c34 + "WebSockets Server" + c34 + " connection failed. Correctly configure " + c34 + "HTTPBindAddress, HTTPBindPort" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check OBS Studio is open,  " + c34 + "WebSockets Server" + c34 + " is enabled in OBS Studio, and " + c34 + "obs-websocket-http" + c34 + " is installed.": Error_3rd_line = "- Check " + c34 + "WebSocketConnection" + c34 + " in " + c34 + "config.ini" + c34 + " is set to the required connection method. " + c34 + "obs-websocket-http" + c34 + " requires OBS WebSocket 5.x."
                 ErrorDisplay (6)
             Else
                 checkWebSocketVersion$ = GetKey("obsWebSocketVersion", JSON)
@@ -3901,7 +3905,7 @@ Sub ErrorDisplay (ErrorTestVal)
         _Display
         _Delay 0.5
         Error_3rd_line = ""
-        For Error_Exit = 1 To 60
+        For Error_Exit = 1 To 120
             _Delay 0.5
             If _Exit Then System
             If InKey$ <> "" Then System
@@ -5640,9 +5644,13 @@ Sub Timer01
         If RTMP_Bitrate1 < RTMP_BitrateFail1 Or RTMP_Bitrate1 = 0 Then Control(MultiCameraSwitchStatusLB).ForeColor = RED_FAIL
         Select Case RTMP_Bitrate1
             Case 0 To 99
-                If RTMP_Kbps_Precision <> "nerd" Then SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(RTMP_Bitrate1 / 100))) + " Kbps" Else SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(RTMP_Bitrate1))) + " Kbps"
+                'If RTMP_Kbps_Precision <> "nerd" Then SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(RTMP_Bitrate1 / 100))) + " Kbps" Else SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(RTMP_Bitrate1))) + " Kbps"
+                If RTMP_Kbps_Precision <> "nerd" Then bitrateOutput1Display = _Trim$(Str$(Int(RTMP_Bitrate1 / 100))) + " Kbps" Else bitrateOutput1Display = _Trim$(Str$(Int(RTMP_Bitrate1))) + " Kbps"
+                SetCaption MultiCameraSwitchStatusLB, bitrateOutput1Display
             Case Is >= 100
-                If RTMP_Kbps_Precision <> "nerd" Then SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(RTMP_Bitrate1 / 100))) + "00 Kbps" Else SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(RTMP_Bitrate1))) + " Kbps"
+                'If RTMP_Kbps_Precision <> "nerd" Then SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(RTMP_Bitrate1 / 100))) + "00 Kbps" Else SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(RTMP_Bitrate1))) + " Kbps"
+                If RTMP_Kbps_Precision <> "nerd" Then bitrateOutput1Display = _Trim$(Str$(Int(RTMP_Bitrate1 / 100))) + "00 Kbps" Else bitrateOutput1Display = _Trim$(Str$(Int(RTMP_Bitrate1))) + " Kbps"
+                SetCaption MultiCameraSwitchStatusLB, bitrateOutput1Display
         End Select
     End If
 
@@ -5654,17 +5662,25 @@ Sub Timer01
         If SLS_1_Enabled = "false" Then
             Select Case RTMP_Bitrate1
                 Case 0 To 99
-                    If RTMP_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(RTMP_Bitrate1 / 100))) + " Kbps" Else SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(RTMP_Bitrate1))) + " Kbps"
+                    'If RTMP_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(RTMP_Bitrate1 / 100))) + " Kbps" Else SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(RTMP_Bitrate1))) + " Kbps"
+                    If RTMP_Kbps_Precision <> "nerd" Then bitrateOutput1Display = _Trim$(Str$(Int(RTMP_Bitrate1 / 100))) + " Kbps" Else bitrateOutput1Display = _Trim$(Str$(Int(RTMP_Bitrate1))) + " Kbps"
+                    SetCaption Bitrate_Stream_1LB, bitrateOutput1Display
                 Case Is >= 100
-                    If RTMP_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(RTMP_Bitrate1 / 100))) + "00 Kbps" Else SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(RTMP_Bitrate1))) + " Kbps"
+                    'If RTMP_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(RTMP_Bitrate1 / 100))) + "00 Kbps" Else SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(RTMP_Bitrate1))) + " Kbps"
+                    If RTMP_Kbps_Precision <> "nerd" Then bitrateOutput1Display = _Trim$(Str$(Int(RTMP_Bitrate1 / 100))) + "00 Kbps" Else bitrateOutput1Display = _Trim$(Str$(Int(RTMP_Bitrate1))) + " Kbps"
+                    SetCaption Bitrate_Stream_1LB, bitrateOutput1Display
             End Select
         End If
         If SLS_2_Enabled = "false" Then
             Select Case RTMP_Bitrate2
                 Case 0 To 99
-                    If RTMP_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(RTMP_Bitrate2 / 100))) + " Kbps" Else SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(RTMP_Bitrate2))) + " Kbps"
+                    'If RTMP_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(RTMP_Bitrate2 / 100))) + " Kbps" Else SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(RTMP_Bitrate2))) + " Kbps"
+                    If RTMP_Kbps_Precision <> "nerd" Then bitrateOutput2Display = _Trim$(Str$(Int(RTMP_Bitrate2 / 100))) + " Kbps" Else bitrateOutput2Display = _Trim$(Str$(Int(RTMP_Bitrate2))) + " Kbps"
+                    SetCaption Bitrate_Stream_2LB, bitrateOutput2Display
                 Case Is >= 100
-                    If RTMP_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(RTMP_Bitrate2 / 100))) + "00 Kbps" Else SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(RTMP_Bitrate2))) + " Kbps"
+                    'If RTMP_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(RTMP_Bitrate2 / 100))) + "00 Kbps" Else SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(RTMP_Bitrate2))) + " Kbps"
+                    If RTMP_Kbps_Precision <> "nerd" Then bitrateOutput2Display = _Trim$(Str$(Int(RTMP_Bitrate2 / 100))) + "00 Kbps" Else bitrateOutput2Display = _Trim$(Str$(Int(RTMP_Bitrate2))) + " Kbps"
+                    SetCaption Bitrate_Stream_2LB, bitrateOutput2Display
             End Select
         End If
     End If
@@ -5676,9 +5692,13 @@ Sub Timer01
         If SLS_Bitrate1 < SLS_BitrateFail1 Or SLS_Bitrate1 = 0 Then Control(MultiCameraSwitchStatusLB).ForeColor = RED_FAIL
         Select Case SLS_Bitrate1
             Case 0 To 99
-                If SLS_Kbps_Precision <> "nerd" Then SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(SLS_Bitrate1 / 100))) + " Kbps" Else SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(SLS_Bitrate1))) + " Kbps"
+                'If SLS_Kbps_Precision <> "nerd" Then SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(SLS_Bitrate1 / 100))) + " Kbps" Else SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(SLS_Bitrate1))) + " Kbps"
+                If SLS_Kbps_Precision <> "nerd" Then bitrateOutput1Display = _Trim$(Str$(Int(SLS_Bitrate1 / 100))) + " Kbps" Else bitrateOutput1Display = _Trim$(Str$(Int(SLS_Bitrate1))) + " Kbps"
+                SetCaption MultiCameraSwitchStatusLB, bitrateOutput1Display
             Case Is >= 100
-                If SLS_Kbps_Precision <> "nerd" Then SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(SLS_Bitrate1 / 100))) + "00 Kbps" Else SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(SLS_Bitrate1))) + " Kbps"
+                'If SLS_Kbps_Precision <> "nerd" Then SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(SLS_Bitrate1 / 100))) + "00 Kbps" Else SetCaption MultiCameraSwitchStatusLB, _Trim$(Str$(Int(SLS_Bitrate1))) + " Kbps"
+                If SLS_Kbps_Precision <> "nerd" Then bitrateOutput1Display = _Trim$(Str$(Int(SLS_Bitrate1 / 100))) + "00 Kbps" Else bitrateOutput1Display = _Trim$(Str$(Int(SLS_Bitrate1))) + " Kbps"
+                SetCaption MultiCameraSwitchStatusLB, bitrateOutput1Display
         End Select
     End If
 
@@ -5689,17 +5709,25 @@ Sub Timer01
         If RTMP_1_Enabled = "false" Then
             Select Case SLS_Bitrate1
                 Case 0 To 99
-                    If SLS_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(SLS_Bitrate1 / 100))) + " Kbps" Else SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(SLS_Bitrate1))) + " Kbps"
+                    'If SLS_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(SLS_Bitrate1 / 100))) + " Kbps" Else SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(SLS_Bitrate1))) + " Kbps"
+                    If SLS_Kbps_Precision <> "nerd" Then bitrateOutput1Display = _Trim$(Str$(Int(SLS_Bitrate1 / 100))) + " Kbps" Else bitrateOutput1Display = _Trim$(Str$(Int(SLS_Bitrate1))) + " Kbps"
+                    SetCaption Bitrate_Stream_1LB, bitrateOutput1Display
                 Case Is >= 100
-                    If SLS_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(SLS_Bitrate1 / 100))) + "00 Kbps" Else SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(SLS_Bitrate1))) + " Kbps"
+                    'If SLS_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(SLS_Bitrate1 / 100))) + "00 Kbps" Else SetCaption Bitrate_Stream_1LB, _Trim$(Str$(Int(SLS_Bitrate1))) + " Kbps"
+                    If SLS_Kbps_Precision <> "nerd" Then bitrateOutput1Display = _Trim$(Str$(Int(SLS_Bitrate1 / 100))) + "00 Kbps" Else bitrateOutput1Display = _Trim$(Str$(Int(SLS_Bitrate1))) + " Kbps"
+                    SetCaption Bitrate_Stream_1LB, bitrateOutput1Display
             End Select
         End If
         If RTMP_2_Enabled = "false" Then
             Select Case SLS_Bitrate2
                 Case 0 To 99
-                    If SLS_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(SLS_Bitrate2 / 100))) + " Kbps" Else SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(SLS_Bitrate2))) + " Kbps"
+                    'If SLS_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(SLS_Bitrate2 / 100))) + " Kbps" Else SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(SLS_Bitrate2))) + " Kbps"
+                    If SLS_Kbps_Precision <> "nerd" Then bitrateOutput2Display = _Trim$(Str$(Int(SLS_Bitrate2 / 100))) + " Kbps" Else bitrateOutput2Display = _Trim$(Str$(Int(SLS_Bitrate2))) + " Kbps"
+                    SetCaption Bitrate_Stream_2LB, bitrateOutput2Display
                 Case Is >= 100
-                    If SLS_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(SLS_Bitrate2 / 100))) + "00 Kbps" Else SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(SLS_Bitrate2))) + " Kbps"
+                    'If SLS_Kbps_Precision <> "nerd" Then SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(SLS_Bitrate2 / 100))) + "00 Kbps" Else SetCaption Bitrate_Stream_2LB, _Trim$(Str$(Int(SLS_Bitrate2))) + " Kbps"
+                    If SLS_Kbps_Precision <> "nerd" Then bitrateOutput2Display = _Trim$(Str$(Int(SLS_Bitrate2 / 100))) + "00 Kbps" Else bitrateOutput2Display = _Trim$(Str$(Int(SLS_Bitrate2))) + " Kbps"
+                    SetCaption Bitrate_Stream_2LB, bitrateOutput2Display
             End Select
         End If
     End If
@@ -6213,6 +6241,15 @@ Sub Timer01
 
     Exit_returnPreviousSceneCheck:
     ' ---------------------------------------------------------------
+
+    If __FileStatusOutput = 1 Then
+        If __MultiCameraSwitch = 0 Then
+            bitrateOutput = "Bitrate: (#1: " + _Trim$(bitrateOutput1Display) + ")"
+        Else
+            bitrateOutput = "Bitrate: (#1: " + _Trim$(bitrateOutput1Display) + ") (#2: " + _Trim$(bitrateOutput2Display) + ")"
+        End If
+        statusBitrateToFile bitrateOutput
+    End If
 
     Scene_Bypass_Log = 0
 
