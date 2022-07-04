@@ -3,7 +3,7 @@
 ': Fellippe Heitor, 2016-2021 - fellippe@qb64.org - @fellippeheitor
 ': https://github.com/FellippeHeitor/InForm
 '-----------------------------------------------------------
-SUB __UI_LoadForm
+SUB __UI_LoadForm_Light
 
     DIM __UI_NewID AS LONG, __UI_RegisterResult AS LONG
 
@@ -12,7 +12,7 @@ SUB __UI_LoadForm
     SetCaption __UI_NewID, "Loopy SRT Monitor"
     Control(__UI_NewID).Font = SetFont("phagspa.ttf?Nirmala.ttf?segoeui.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(1, 1, 1)
-    Control(__UI_NewID).BackColor = _RGB32(32, 34, 40)
+    Control(__UI_NewID).BackColor = _RGB32(233, 235, 237)
     Control(__UI_NewID).BorderColor = _RGB32(163, 166, 170)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).CenteredWindow = True
@@ -20,27 +20,27 @@ SUB __UI_LoadForm
     __UI_NewID = __UI_NewControl(__UI_Type_MenuBar, "FileMenu", 34, 22, 8, 0, 0)
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "File"
-    Control(__UI_NewID).ForeColor = _RGB32(255, 255, 255)
+    Control(__UI_NewID).ForeColor = _RGB32(3, 4, 5)
     Control(__UI_NewID).BorderColor = _RGB32(170, 166, 170)
     Control(__UI_NewID).HasBorder = False
 
     __UI_NewID = __UI_NewControl(__UI_Type_MenuBar, "OptionsMenu", 62, 22, 42, 0, 0)
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Options"
-    Control(__UI_NewID).ForeColor = _RGB32(255, 255, 255)
+    Control(__UI_NewID).ForeColor = _RGB32(3, 4, 5)
     Control(__UI_NewID).HasBorder = False
 
     __UI_NewID = __UI_NewControl(__UI_Type_MenuBar, "HelpMenu", 41, 22, 104, 0, 0)
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Help"
-    Control(__UI_NewID).ForeColor = _RGB32(255, 255, 255)
+    Control(__UI_NewID).ForeColor = _RGB32(3, 4, 5)
     Control(__UI_NewID).HasBorder = False
 
     __UI_NewID = __UI_NewControl(__UI_Type_Label, "Status", 752, 64, 20, 37, 0)
     __UI_RegisterResult = 0
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = True
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).BorderSize = 1
@@ -48,8 +48,8 @@ SUB __UI_LoadForm
     __UI_NewID = __UI_NewControl(__UI_Type_Label, "Settings", 752, 64, 20, 120, 0)
     __UI_RegisterResult = 0
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = True
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).BorderSize = 1
@@ -57,8 +57,8 @@ SUB __UI_LoadForm
     __UI_NewID = __UI_NewControl(__UI_Type_Label, "CurrentScene", 200, 106, 296, 204, 0)
     __UI_RegisterResult = 0
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = True
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).BorderSize = 1
@@ -66,9 +66,9 @@ SUB __UI_LoadForm
     __UI_NewID = __UI_NewControl(__UI_Type_Label, "DebugFrame", 752, 59, 20, 329, 0)
     __UI_RegisterResult = 0
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(33, 4, 4)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = True
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).BorderSize = 1
@@ -77,9 +77,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Stream #1"
     Control(__UI_NewID).Font = SetFont("phagspa.ttf?micross.ttf?seguisb.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(64, 252, 48)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(5, 5, 9)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = True
     Control(__UI_NewID).BorderSize = 1
 
@@ -87,18 +87,18 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Stream #2"
     Control(__UI_NewID).Font = SetFont("phagspa.ttf?micross.ttf?seguisb.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(64, 252, 48)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(5, 5, 9)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = True
     Control(__UI_NewID).BorderSize = 1
 
     __UI_NewID = __UI_NewControl(__UI_Type_Label, "versionFrame", 752, 59, 20, 329, 0)
     __UI_RegisterResult = 0
     Control(__UI_NewID).Font = SetFont("phagspa.ttf?seguisb.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(32, 128, 16)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = True
     Control(__UI_NewID).VAlign = __UI_Bottom
     Control(__UI_NewID).BorderSize = 1
@@ -118,7 +118,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(3, 4, 4)
     Control(__UI_NewID).BackColor = _RGB32(160, 164, 168)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -129,7 +129,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(3, 4, 4)
     Control(__UI_NewID).BackColor = _RGB32(160, 164, 168)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -140,7 +140,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(3, 4, 4)
     Control(__UI_NewID).BackColor = _RGB32(160, 164, 168)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -150,8 +150,8 @@ SUB __UI_LoadForm
     SetCaption __UI_NewID, "Timer_Fail"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(131, 151, 163)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -161,8 +161,8 @@ SUB __UI_LoadForm
     SetCaption __UI_NewID, "Timer_Fail_Count"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(131, 151, 163)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -172,8 +172,8 @@ SUB __UI_LoadForm
     SetCaption __UI_NewID, "tPingOut#"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(131, 151, 163)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -183,8 +183,8 @@ SUB __UI_LoadForm
     SetCaption __UI_NewID, "td_update"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(131, 151, 163)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -195,7 +195,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(3, 4, 4)
     Control(__UI_NewID).BackColor = _RGB32(160, 164, 168)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -206,7 +206,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(3, 4, 4)
     Control(__UI_NewID).BackColor = _RGB32(160, 164, 168)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -215,9 +215,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Stream_Fail_Delay"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(142, 166, 143)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(5, 5, 9)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -226,9 +226,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "MultiCameraSwitchStatus"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(142, 166, 143)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(5, 5, 9)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -237,9 +237,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Timer"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(33, 4, 4)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
     Control(__UI_NewID).BackColor = _RGB32(195, 4, 4)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -248,9 +248,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Timer (snapshot)"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(33, 4, 4)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
     Control(__UI_NewID).BackColor = _RGB32(195, 4, 4)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -259,9 +259,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "td_display"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(33, 4, 4)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
     Control(__UI_NewID).BackColor = _RGB32(195, 4, 4)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -270,9 +270,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "mouseX"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(33, 4, 4)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
     Control(__UI_NewID).BackColor = _RGB32(195, 4, 4)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -281,9 +281,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "mouseY"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(33, 4, 4)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
     Control(__UI_NewID).BackColor = _RGB32(195, 4, 4)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -292,9 +292,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "_ERRORLINE"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(33, 4, 4)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
     Control(__UI_NewID).BackColor = _RGB32(195, 4, 4)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -303,9 +303,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Debug_Timer"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(235, 96, 57)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -314,9 +314,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Debug_Timer_Snapshot"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(235, 96, 57)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -325,9 +325,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "td_display"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(235, 96, 57)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -336,9 +336,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "mouseX"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(235, 96, 57)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -347,9 +347,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "mouseY"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(235, 96, 57)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -358,9 +358,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "_ERRORLINE"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(235, 96, 57)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -369,9 +369,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Stream uptime"
     Control(__UI_NewID).Font = SetFont("LatoWeb-Bold.ttf?segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(185, 221, 200)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(5, 5, 9)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).Align = __UI_Right
     Control(__UI_NewID).VAlign = __UI_Middle
@@ -381,9 +381,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Stream fail timer"
     Control(__UI_NewID).Font = SetFont("LatoWeb-Bold.ttf?segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(185, 221, 200)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(5, 5, 9)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).Align = __UI_Right
     Control(__UI_NewID).VAlign = __UI_Middle
@@ -393,9 +393,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Uptime_Stream_1"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(185, 181, 211)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(5, 5, 9)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
 
@@ -403,9 +403,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Timer_Fail_Stream1"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(185, 181, 211)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(5, 5, 9)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
 
@@ -413,8 +413,8 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Scene_Current"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?ebrimabd.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf?/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 18)
-    Control(__UI_NewID).ForeColor = _RGB32(155, 255, 240)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
+    Control(__UI_NewID).ForeColor = _RGB32(5, 5, 9)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
     Control(__UI_NewID).BorderColor = _RGB32(10, 160, 188)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).Align = __UI_Center
@@ -424,8 +424,8 @@ SUB __UI_LoadForm
     __UI_NewID = __UI_NewControl(__UI_Type_PictureBox, "PictureBox1", 64, 64, 364, 236, 0)
     __UI_RegisterResult = 0
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).BackStyle = __UI_Transparent
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).Align = __UI_Center
@@ -436,9 +436,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Stream uptime"
     Control(__UI_NewID).Font = SetFont("LatoWeb-Bold.ttf?segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(185, 221, 200)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(5, 5, 9)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).Align = __UI_Right
     Control(__UI_NewID).VAlign = __UI_Middle
@@ -448,9 +448,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Stream fail timer"
     Control(__UI_NewID).Font = SetFont("LatoWeb-Bold.ttf?segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(185, 221, 200)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(5, 5, 9)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).Align = __UI_Right
     Control(__UI_NewID).VAlign = __UI_Middle
@@ -460,9 +460,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Uptime_Stream_2"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(185, 181, 211)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(5, 5, 9)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
 
@@ -470,9 +470,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Timer_Fail_Stream2"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(185, 181, 211)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(5, 5, 9)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
 
@@ -545,9 +545,9 @@ SUB __UI_LoadForm
     __UI_NewID = __UI_NewControl(__UI_Type_PictureBox, "PictureBoxLogoBottom", 401, 30, 194, 344, 0)
     __UI_RegisterResult = 0
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(33, 4, 4)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).Align = __UI_Center
     Control(__UI_NewID).VAlign = __UI_Middle
@@ -559,7 +559,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(3, 4, 4)
     Control(__UI_NewID).BackColor = _RGB32(160, 164, 168)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -570,7 +570,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(3, 4, 4)
     Control(__UI_NewID).BackColor = _RGB32(160, 164, 168)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -579,9 +579,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Stream_Uptime"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(142, 166, 143)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(5, 5, 9)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -590,9 +590,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Stream_Fail_Timer"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(142, 166, 143)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(5, 5, 9)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -602,8 +602,8 @@ SUB __UI_LoadForm
     SetCaption __UI_NewID, "Timer_Fail_Count_2"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(131, 151, 163)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -614,7 +614,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(3, 4, 4)
     Control(__UI_NewID).BackColor = _RGB32(160, 164, 168)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -624,8 +624,8 @@ SUB __UI_LoadForm
     SetCaption __UI_NewID, "tIPPingOut#"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(131, 151, 163)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -636,7 +636,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(3, 4, 4)
     Control(__UI_NewID).BackColor = _RGB32(160, 164, 168)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -647,7 +647,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(3, 4, 4)
     Control(__UI_NewID).BackColor = _RGB32(160, 164, 168)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -656,9 +656,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Low BR"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(33, 4, 4)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
     Control(__UI_NewID).BackColor = _RGB32(195, 4, 4)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -667,9 +667,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "br_countdown"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(235, 96, 57)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -678,9 +678,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "MS #1"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(33, 4, 4)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
     Control(__UI_NewID).BackColor = _RGB32(195, 4, 4)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -689,9 +689,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "ms_play"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(235, 96, 57)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -702,7 +702,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(3, 4, 4)
     Control(__UI_NewID).BackColor = _RGB32(160, 164, 168)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -711,9 +711,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Low_Bitrate_Status"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(142, 166, 143)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(5, 5, 9)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -722,9 +722,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "MS #2"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(33, 4, 4)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
     Control(__UI_NewID).BackColor = _RGB32(195, 4, 4)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -733,9 +733,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "ms_play2"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(235, 96, 57)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -786,9 +786,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "LBR Del"
     Control(__UI_NewID).Font = SetFont("segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(33, 4, 4)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
     Control(__UI_NewID).BackColor = _RGB32(195, 4, 4)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -797,9 +797,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "br_delay"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(235, 96, 57)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).Padding = 10
@@ -807,9 +807,9 @@ SUB __UI_LoadForm
     __UI_NewID = __UI_NewControl(__UI_Type_Label, "DebugFrameTemp", 753, 59, 20, 123, 0)
     __UI_RegisterResult = 0
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(33, 4, 4)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(32, 9, 10)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = True
     Control(__UI_NewID).VAlign = __UI_Middle
     Control(__UI_NewID).BorderSize = 1
@@ -890,9 +890,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Bitrate"
     Control(__UI_NewID).Font = SetFont("LatoWeb-Bold.ttf?segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(185, 221, 200)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(5, 5, 9)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).Align = __UI_Right
     Control(__UI_NewID).VAlign = __UI_Middle
@@ -902,9 +902,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Bitrate_Stream_1"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(185, 181, 211)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(5, 5, 9)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
 
@@ -912,9 +912,9 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Bitrate"
     Control(__UI_NewID).Font = SetFont("LatoWeb-Bold.ttf?segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(185, 221, 200)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(5, 5, 9)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).Align = __UI_Right
     Control(__UI_NewID).VAlign = __UI_Middle
@@ -924,15 +924,15 @@ SUB __UI_LoadForm
     __UI_RegisterResult = 0
     SetCaption __UI_NewID, "Bitrate_Stream_2"
     Control(__UI_NewID).Font = SetFont("seguisb.ttf?phagspa.ttf?segoeui.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf", 12)
-    Control(__UI_NewID).ForeColor = _RGB32(185, 181, 211)
-    Control(__UI_NewID).BackColor = _RGB32(20, 28, 36)
-    Control(__UI_NewID).BorderColor = _RGB32(10, 12, 15)
+    Control(__UI_NewID).ForeColor = _RGB32(5, 5, 9)
+    Control(__UI_NewID).BackColor = _RGB32(220, 219, 223)
+    Control(__UI_NewID).BorderColor = _RGB32(212, 212, 214)
     Control(__UI_NewID).HasBorder = False
     Control(__UI_NewID).VAlign = __UI_Middle
 
 END SUB
 
-SUB __UI_AssignIDs
+SUB __UI_AssignIDs_Light
     LoopySRTMonitor = __UI_GetID("LoopySRTMonitor")
     FileMenu = __UI_GetID("FileMenu")
     OptionsMenu = __UI_GetID("OptionsMenu")
