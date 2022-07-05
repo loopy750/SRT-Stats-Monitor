@@ -91,7 +91,16 @@ AdiIRC
 
 [AdiIRC](https://www.adiirc.com/) is a free alternative to mIRC. If you have set ```FileStatusOutput=true``` for the purpose of outputting the stream status to a chat room, a sample script is supplied here. Edit [vars.ini](https://raw.githubusercontent.com/loopy750/SRT-Stats-Monitor/master/modifications/adiirc/vars.ini) with your channel name, and place in AdiIRC's root folder. Then load the [outputSRT.ini](https://raw.githubusercontent.com/loopy750/SRT-Stats-Monitor/master/modifications/adiirc/outputSRT.ini) script. Alt+R can be used to quickly access scripts.
 
-A guide to connect AdiIRC to your Twitch chatroom can be found [here](./modifications/adiirc/guide.md).
+A guide to connect AdiIRC to your Twitch chatroom can be found [here](./modifications/adiirc/guide/README.md).
+
+Scripts can also be used to create chat commands. The following are some scripts that can be used and/or edited as required, or you can create your own.
+
+| Command         | Notes                                                                                                    | Link             |
+| --------------- | -------------                                                                                            | ---------------  |
+| !b              | Admin, mod or user can retrieve current bitrate/s for SLS or NGINX stream/s                              | [outputBitrate.ini](https://raw.githubusercontent.com/loopy750/SRT-Stats-Monitor/main/modifications/adiirc/outputBitrate.ini) |
+| !s [scene] | Admin or mod (rename ```moderator_name_1```) can manually change to any OBS Studio scene (obs-websocket-http)   | [setScene.ini](https://raw.githubusercontent.com/loopy750/SRT-Stats-Monitor/main/modifications/adiirc/setScene.ini) |
+| !s [scene] | Admin or mod (rename ```moderator_name_1```) can manually change to any OBS Studio scene (obs-websocket-js 4.x) | [setScene_js4.ini](https://raw.githubusercontent.com/loopy750/SRT-Stats-Monitor/main/modifications/adiirc/setScene_js4.ini) |
+| !s [scene] | Admin or mod (rename ```moderator_name_1```) can manually change to any OBS Studio scene (obs-websocket-js 5.x) | [setScene_js5.ini](https://raw.githubusercontent.com/loopy750/SRT-Stats-Monitor/main/modifications/adiirc/setScene_js5.ini) |
 
 
 ADDITIONAL STEPS
