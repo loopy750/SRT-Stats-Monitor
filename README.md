@@ -37,6 +37,7 @@ Programs to download
 --------------------
 OBS Studio - [https://obsproject.com/](https://obsproject.com/)  
 OBS WebSocket - [https://github.com/Palakis/obs-websocket/releases/latest](https://github.com/Palakis/obs-websocket/releases/latest)  
+obs-websocket-http - [https://github.com/IRLToolkit/obs-websocket-http/releases/latest](https://github.com/IRLToolkit/obs-websocket-http/releases/latest)   
 Node.js - [https://nodejs.org/](https://nodejs.org/)  
 VLC 64-bit - [https://www.videolan.org/vlc/](https://www.videolan.org/vlc/)  
 OBS Tablet Remote - [http://t2t2.github.io/obs-tablet-remote/](http://t2t2.github.io/obs-tablet-remote/)
@@ -44,6 +45,7 @@ OBS Tablet Remote - [http://t2t2.github.io/obs-tablet-remote/](http://t2t2.githu
 Known OBS SRT issues
 --------------------
 * [SRT streams have trouble connecting/reconnecting while Recording is running](https://github.com/obsproject/obs-studio/issues/4596)
+* [obs-websocket-http doesn't reconnect on connection loss](https://github.com/IRLToolkit/obs-websocket-http/issues/11)
 
 INSTALLATION
 ============
