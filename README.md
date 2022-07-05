@@ -38,7 +38,7 @@ Programs to download
 OBS Studio - [https://obsproject.com/](https://obsproject.com/)  
 OBS WebSocket - [https://github.com/Palakis/obs-websocket/releases/latest](https://github.com/Palakis/obs-websocket/releases/latest)  
 obs-websocket-http - [https://github.com/IRLToolkit/obs-websocket-http/releases/latest](https://github.com/IRLToolkit/obs-websocket-http/releases/latest)   
-Node.js - [https://nodejs.org/](https://nodejs.org/)  
+Node.js - [https://nodejs.org/](https://nodejs.org/) <sup>_(not required if using obs-websocket-http)_</sup>  
 VLC 64-bit - [https://www.videolan.org/vlc/](https://www.videolan.org/vlc/)  
 OBS Tablet Remote - [http://t2t2.github.io/obs-tablet-remote/](http://t2t2.github.io/obs-tablet-remote/)
 
