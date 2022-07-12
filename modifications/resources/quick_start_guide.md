@@ -1,7 +1,7 @@
 Quick Start Guide
 =================
 
-For new installs, this is a quick guide to get everything working. All **Readme.md** & **Readme.txt** instructions must then be read and followed for your scenes and connections to function correctly.
+For new installs, this is a quick guide to get everything working. All **README.md** & **Readme.txt** instructions must then be read and followed for your scenes and connections to function correctly.
 
 - Install the latest **OBS WebSocket** - [OBS WebSocket GitHub](https://github.com/Palakis/obs-websocket/releases/latest)
 - Open **OBS Studio** and configure **OBS WebSocket** _Server Port_ as ```4455``` and _Server Password_ as ```PassWS```
