@@ -50,6 +50,9 @@ Known OBS SRT issues
 INSTALLATION
 ============
 
+[Quick Start Guide](https://github.com/loopy750/SRT-Stats-Monitor/blob/main/modifications/resources/quick_start_guide.md)
+-----------------
+
 OBS Studio
 ----------
 This guide assumes you have OBS installed and have spent time streaming and an understanding of how it works.
