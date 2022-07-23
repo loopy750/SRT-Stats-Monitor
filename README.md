@@ -47,6 +47,31 @@ Known OBS SRT issues
 * [SRT streams have trouble connecting/reconnecting while Recording is running](https://github.com/obsproject/obs-studio/issues/4596)
 * [obs-websocket-http doesn't reconnect on connection loss](https://github.com/IRLToolkit/obs-websocket-http/issues/11)
 
+OBS WebSocket 5.x vs OBS WebSocket 4.x
+======================================
+
+Barring any issues or bugs, **OBS WebSocket 5.0.0** is expected to be packaged with **OBS 28**. It is currently available now separately for download. Unfortunately all applications are not yet compatible with **OBS WebSocket 5.x**.
+
+**Loopy SRT Monitor** however is compatible with both **OBS WebSocket 5.x** and **OBS WebSocket 4.9.1**, and will automatically detect and run what has been configured. If you still require compatibility with **OBS WebSocket 4.9.1**, this allows you one of the following options:
+
+Option #1
+---
+
+- Following installation, continue to use **OBS WebSocket 4.9.1**, and run ```install.cmd``` with option ```2```. This will download ```obs-websocket-js 4.0.3```, the last version to be compatible with **OBS WebSocket 4.x**.
+
+- **Loopy SRT Monitor** configuration file ```config.ini``` must then be edited with the ```WebSocketConnection``` setting changed to ```obs-websocket-js```. ```obs-websocket-http``` will not work with **OBS WebSocket 4.x**.
+
+Option #2
+---
+
+- Following installation, download and install the latest ```obs-websocket-5.x```, followed by ```obs-websocket-4.9.1-compat```. Available in the **OBS -> Tools** menu should now be two independent settings, one for _4.x compat_, and one for _5.x_. Server Port numbers cannot be the same.
+
+- To continue using **obs-websocket-js**, run ```install.cmd``` with option ```1```. If not already downloaded, this will download the latest ```obs-websocket-js``` compatible with **OBS WebSocket 5.x**.
+
+- **Loopy SRT Monitor** configuration file ```config.ini``` must then be edited with the ```WebSocketConnection``` setting changed to ```obs-websocket-js```.
+
+- To use ```obs-websocket-http``` however, follow the instructions in the installation and/or _readme.txt_ file and confirm ```config.ini``` contains ```WebSocketConnection=obs-websocket-http```.
+
 INSTALLATION
 ============
 
