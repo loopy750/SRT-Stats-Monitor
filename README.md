@@ -75,7 +75,7 @@ Option #2
 INSTALLATION
 ============
 
-[Quick Start Guide](https://github.com/loopy750/SRT-Stats-Monitor/blob/main/modifications/resources/quick_start_guide.md)
+[Quick Start Guide (Resolve "Test #6 of 10 failed")](https://github.com/loopy750/SRT-Stats-Monitor/blob/main/modifications/resources/quick_start_guide.md)
 -----------------
 
 OBS Studio
