@@ -140,3 +140,7 @@ OS firewall and router settings may prevent connecting to your home PC from an e
 Investigate how to use your router's "Port Forwarding" setting for allowing connections to the selected port. For security reasons, this should only be enabled while in use. If port forwarding does not work for your connection, your ISP might have CG-NAT enabled for your service and/or certain ports blocked. Confirm whether or not this is the case, and if so, contact your ISP and ask that it be disabled.
 
 If you have been assigned a dynamic IP address from your ISP, [No-IP](https://www.noip.com/) is a great solution.
+
+---
+
+Send a tip - [https://github.com/loopy750/donate](https://github.com/loopy750/donate)
