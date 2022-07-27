@@ -11,3 +11,8 @@ For fresh installs, this is a quick guide to get everything working. All **READM
 - Open **OBS Studio** and configure **OBS WebSocket** _Server Port_ as ```4455``` and _Server Password_ as ```PassWS```
 - If using ```4.9.1-compat```, configure _Server Port_ as ```4444``` or a port that is unused by the latest **OBS WebSocket**
 - Open **Loopy SRT Monitor**
+
+Quick Start Video Guide
+=======================
+
+[![Loopy SRT Monitor - Quick Guide Setup - No Audio - Resolve Test #6 of 10 failed](https://img.youtube.com/vi/493X5a8SZnA/0.jpg)](https://www.youtube.com/watch?v=493X5a8SZnA)
