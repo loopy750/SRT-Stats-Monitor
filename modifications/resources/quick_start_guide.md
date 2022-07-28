@@ -1,6 +1,8 @@
 Quick Start Guide
 =================
 
+Resolving "Test #6 of 10 failed".
+
 For fresh installs, this is a quick guide to get everything working. All **README.md** & **Readme.txt** instructions must then be read and followed for your scenes and connections to function correctly.
 
 - To completely remove an installed version, use Windows _Add or remove programs_, followed by manually deleting the ```Documents\Loopy SRT Monitor``` folder.
