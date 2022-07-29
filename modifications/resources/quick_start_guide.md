@@ -12,6 +12,7 @@ For fresh installs, this is a quick guide to get everything working. All **READM
 - [obs-websocket-http GitHub](https://github.com/IRLToolkit/obs-websocket-http/releases) - Download **obs-websocket-http** and copy the .exe file as ```obs-websocket-http.exe``` to the ```Documents\Loopy SRT Monitor``` folder
 - Open **OBS Studio** and configure **OBS WebSocket** _Server Port_ as ```4455``` and _Server Password_ as ```PassWS```
 - If using ```4.9.1-compat```, configure _Server Port_ as ```4444``` or a port that is unused by the latest **OBS WebSocket**
+- Linux and macOS users will need to manually launch **obs-websocket-http** in Terminal
 - Open **Loopy SRT Monitor**
 
 Quick Start Video Guide
