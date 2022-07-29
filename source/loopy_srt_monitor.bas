@@ -516,12 +516,17 @@ Common Shared OS As String
 ' Always on top
 Dim Shared Myhwnd As Long
 $If WIN Then
-    Dim Shared y& ' Windows only
+        Dim Shared y& ' Windows only
 $End If
 
 ' Set variables on load: ---------------------------------------------------------------
+
 ' Linux only
 If Mid$(_OS$, 2, 5) = "LINUX" Then OS = "LINUX" Else OS = "WINDOWS"
+
+' macOS only
+If Mid$(_OS$, 2, 5) = "MACOS" Then OS = "LINUX"
+
 DIR_documents = _CWD$
 
 ' Set OS variables
@@ -599,9 +604,9 @@ Sub __UI_OnLoad
     ' Always on top: ------------------------------------------------------------------
     ' Windows only
     $If WIN Then
-        Declare Dynamic Library "user32"
+            Declare Dynamic Library "user32"
             Function SetWindowPos& (ByVal hWnd As Long, Byval hWndInsertAfter As _Offset, Byval X As Integer, Byval Y As Integer, Byval cx As Integer, Byval cy As Integer, Byval uFlags As _Offset)
-        End Declare
+            End Declare
     $End If
 
     Myhwnd = _WindowHandle
@@ -2817,13 +2822,13 @@ Sub __UI_Click (id As Long)
             If AlwaysOnTop <> 1 Then
                 AlwaysOnTop = 1
                 $If WIN Then
-                    If OS = "WINDOWS" Then y& = SetWindowPos&(Myhwnd, -1, 0, 0, 0, 0, &H2 + &H1 + &H40) ' Windows only
+                        If OS = "WINDOWS" Then y& = SetWindowPos&(Myhwnd, -1, 0, 0, 0, 0, &H2 + &H1 + &H40) ' Windows only
                 $End If
                 SetRadioButtonValue OptionsMenuAlwaysOnTop
             Else
                 AlwaysOnTop = 0
                 $If WIN Then
-                    If OS = "WINDOWS" Then y& = SetWindowPos&(Myhwnd, -2, 0, 0, 0, 0, &H2 + &H1 + &H40) ' Windows only
+                        If OS = "WINDOWS" Then y& = SetWindowPos&(Myhwnd, -2, 0, 0, 0, 0, &H2 + &H1 + &H40) ' Windows only
                 $End If
                 SetRadioButtonValue OptionsMenuAlwaysOnTop
             End If
@@ -4158,11 +4163,11 @@ Sub Multi0 (serverType$)
                         End Select
                         _Delay 1
                         $If WIN Then
-                            If OS = "WINDOWS" Then y& = SetWindowPos&(Myhwnd, -1, 0, 0, 0, 0, &H2 + &H1 + &H40) ' Windows only
+                                If OS = "WINDOWS" Then y& = SetWindowPos&(Myhwnd, -1, 0, 0, 0, 0, &H2 + &H1 + &H40) ' Windows only
                         $End If
                         _Delay 3.5
                         $If WIN Then
-                            If OS = "WINDOWS" Then y& = SetWindowPos&(Myhwnd, -2, 0, 0, 0, 0, &H2 + &H1 + &H40) ' Windows only
+                                If OS = "WINDOWS" Then y& = SetWindowPos&(Myhwnd, -2, 0, 0, 0, 0, &H2 + &H1 + &H40) ' Windows only
                         $End If
                     End If
             End Select
@@ -4524,11 +4529,11 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                         End Select
                         _Delay 1
                         $If WIN Then
-                            If OS = "WINDOWS" Then y& = SetWindowPos&(Myhwnd, -1, 0, 0, 0, 0, &H2 + &H1 + &H40) ' Windows only
+                                If OS = "WINDOWS" Then y& = SetWindowPos&(Myhwnd, -1, 0, 0, 0, 0, &H2 + &H1 + &H40) ' Windows only
                         $End If
                         _Delay 3.5
                         $If WIN Then
-                            If OS = "WINDOWS" Then y& = SetWindowPos&(Myhwnd, -2, 0, 0, 0, 0, &H2 + &H1 + &H40) ' Windows only
+                                If OS = "WINDOWS" Then y& = SetWindowPos&(Myhwnd, -2, 0, 0, 0, 0, &H2 + &H1 + &H40) ' Windows only
                         $End If
                     End If
             End Select
@@ -6075,11 +6080,11 @@ Sub Timer01
                     srt_warmup_file_scene = 1
                     ' No need to load another node.exe here because the .js file checks scene
                     $If WIN Then
-                        If OS = "WINDOWS" Then y& = SetWindowPos&(Myhwnd, -1, 0, 0, 0, 0, &H2 + &H1 + &H40) ' Windows only
+                            If OS = "WINDOWS" Then y& = SetWindowPos&(Myhwnd, -1, 0, 0, 0, 0, &H2 + &H1 + &H40) ' Windows only
                     $End If
                     _Delay 3.5
                     $If WIN Then
-                        If OS = "WINDOWS" Then y& = SetWindowPos&(Myhwnd, -2, 0, 0, 0, 0, &H2 + &H1 + &H40) ' Windows only
+                            If OS = "WINDOWS" Then y& = SetWindowPos&(Myhwnd, -2, 0, 0, 0, 0, &H2 + &H1 + &H40) ' Windows only
                     $End If
                 End If
         End Select
