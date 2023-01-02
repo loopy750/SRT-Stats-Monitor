@@ -2,7 +2,7 @@
 
 NOTE: If updating from a previous version !!!
 
-This program does not modify 'config.ini', it only reads it. v0.9.5 has three additional features that must be manually added to the [config] section to be enabled:
+This program does not modify 'config.ini', it only reads it. v1.0.1 has three additional features that must be manually added to the [config] section to be enabled:
 
 ```
 SLSServerIP2=127.0.0.1
