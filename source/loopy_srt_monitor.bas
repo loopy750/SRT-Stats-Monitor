@@ -108,6 +108,7 @@ Common Shared VerDate As String
 Common Shared VerPortable As String
 Common Shared bout As String
 Common Shared tout As String
+Common Shared tout_2 As String ' TIMEms optional second variable (v1.0.1)
 Common Shared Refresh_Request As Integer
 Common Shared RefreshDisplayRequest As Integer
 Common Shared ProgressCounter As Integer
@@ -152,6 +153,7 @@ Common Shared MediaSource2TimeMSOffsetDisplay As Long
 Common Shared MediaSource1TimeLog As Long
 Common Shared MediaSource2TimeLog As Long
 Common Shared MediaSourceTimeLB As Long
+Common Shared c10 As String
 Common Shared c34 As String
 Common Shared ErrorTestRunOnce As Integer
 Common Shared ErrorTestVal As Integer
@@ -165,9 +167,9 @@ Common Shared ConnectionsLog1Count As Integer
 Common Shared ConnectionsLog2Count As Integer
 Common Shared CooldownLog As Integer
 Common Shared CooldownLogTotal As Integer
+Common Shared CooldownLogWarn As Integer
 Common Shared CooldownStartup As Integer
 Common Shared CooldownActive As Integer
-Common Shared CooldownDuration As Integer
 Common Shared SceneLBActive As Integer
 Common Shared SceneLBActive_Temp_Disable As Integer
 Common Shared SceneLBActive_Temp_Disable_Display As String
@@ -209,8 +211,11 @@ Common Shared RIST_MediaSource2Time_Count As Double
 Common Shared SLS_1_Enabled As String ' SLS1Enabled=true
 Common Shared SLS_2_Enabled As String ' SLS2Enabled=true
 Common Shared SLS_Server_IP As String ' ServerIP=127.0.0.1
+Common Shared SLS_Server_IP_2 As String ' ServerIP=127.0.0.1 ' SLS IP #2 (v1.0.1)
 Common Shared SLS_Server_Port As String ' ServerPort=8181
+Common Shared SLS_Server_Port_2 As String ' ServerPort=8191 ' SLS IP #2 (v1.0.1)
 Common Shared SLS_Stats As String ' ServerStats=stats
+Common Shared SLS_Stats_2 As String ' ServerStats=stats ' SLS IP #2 (v1.0.1)
 Common Shared SLS_Publisher1 As String ' ServerPublisher1=live/stream/stream1
 Common Shared SLS_Publisher2 As String ' ServerPublisher1=live/stream/stream2
 Common Shared SLS_BitrateLow1 As Single ' BitrateLow1=800
@@ -218,11 +223,16 @@ Common Shared SLS_BitrateLow2 As Single ' BitrateLow2=800
 Common Shared SLS_BitrateFail1 As Single ' BitratFail1=400
 Common Shared SLS_BitrateFail2 As Single ' BitrateFail2=400
 Common Shared SLS_Ping1 As Double
+Common Shared SLS_Ping1_2 As Double ' SLS IP #2 (v1.0.1)
 Common Shared SLS_Ping2 As Double
+Common Shared SLS_Ping2_2 As Double ' SLS IP #2 (v1.0.1)
 Common Shared SLS_PingOut As Double
+Common Shared SLS_PingOut_2 As Double ' SLS IP #2 (v1.0.1)
 Common Shared SLS_Port_Client As String
+Common Shared SLS_Port_Client_2 As String ' SLS IP #2 (v1.0.1)
 Common Shared SLS_EOL As String
 Common Shared SLS_Header As String
+Common Shared SLS_Header_2 As String ' SLS IP #2 (v1.0.1)
 Common Shared SLS_Timer_GET As Single
 Common Shared SLS_GET_a As String
 Common Shared SLS_GET_a2 As String
@@ -231,16 +241,30 @@ Common Shared SLS_GET_i2 As Single
 Common Shared SLS_GET_i3 As Single
 Common Shared SLS_GET_l As Single
 Common Shared SLS_GET_d As String
+Common Shared SLS_GET_d_2 As String ' SLS IP #2 (v1.0.1)
 Common Shared SLS_Bitrate1 As Single
 Common Shared SLS_Bitrate2 As Single
 Common Shared sls_client As Single
+Common Shared sls_client_2 As Single ' SLS IP #2 (v1.0.1)
 Common Shared sls_stats.xml As String
+Common Shared sls_stats_2.xml As String ' SLS IP #2 (v1.0.1)
 Common Shared SLS_streams_seek As Integer
 Common Shared SLS_streams_found As Integer
 Common Shared SLS_Uptime1 As Integer
 Common Shared SLS_Uptime2 As Integer
 Common Shared SLS_Active As _Byte
+Common Shared SLS_2_Active As _Byte ' SLS IP #2 (v1.0.1)
+Common Shared Stream_Title_1 As String ' SLS IP #2 (v1.0.1)
+Common Shared Stream_Title_2 As String ' SLS IP #2 (v1.0.1)
 Common Shared SLS_Kbps_Precision As String
+Common Shared BELABOX_1_Found As Integer ' BELABOX
+Common Shared BELABOX_2_Found As Integer ' BELABOX
+Common Shared BELABOX_1_Uptime As Long ' BELABOX
+Common Shared BELABOX_2_Uptime As Long ' BELABOX
+Common Shared BELABOX_1_Offline As Integer ' BELABOX
+Common Shared BELABOX_2_Offline As Integer ' BELABOX
+Common Shared Server_Dummy_Time As Long
+Common Shared sls_stats_dummy.xml As String
 
 ' NGINX RTMP Server
 Dim Shared i_XML
@@ -312,6 +336,8 @@ Common Shared HTTP_Bind_Address As String
 Common Shared HTTP_Auth_Key As String
 Common Shared HTTP_Enabled As String
 Common Shared HTTP_File As String
+Common Shared HTTP_Filename As String
+Common Shared http_Delay As Double
 Common Shared http_media2_File As String
 
 ' obs-websocket-http CMD
@@ -358,7 +384,11 @@ Common Shared returnPreviousScene As String
 Common Shared shell_cmd_1 As String
 Common Shared shell_cmd_2 As String
 Common Shared ConnectionsLog_Check As String
+Common Shared PingLog As String
+Common Shared PingLogTimer As Double
 Common Shared segment_LBR As _Byte
+Common Shared FastStart As String
+Common Shared Dummy_Server As String
 
 Common Shared config_dir As String
 Common Shared nodejs_dir As String
@@ -398,17 +428,21 @@ Common Shared Exe_Fail_First_Stream2 As _Byte
 ' Fail icon
 Common Shared iconStatus As Long
 
+' Timers (Integer -> Long)
+Common Shared CooldownDuration As Long
+Common Shared Timer_Fail As Long
+Common Shared Timer_Fail_Stream1 As Long
+Common Shared Timer_Fail_Stream2 As Long
+Common Shared Timer_Fail_Output1 As Long
+Common Shared Timer_Fail_Output2 As Long
+Common Shared Timer_Limit As Long
+
 ' Timer01
 Common Shared mouseX As Integer
 Common Shared mouseY As Integer
-Common Shared Timer_Fail As Integer
 Common Shared Timer_Fail_Count As Integer
 Common Shared Timer_Fail_Count1 As Integer
 Common Shared Timer_Fail_Count2 As Integer
-Common Shared Timer_Fail_Stream1 As Integer
-Common Shared Timer_Fail_Stream2 As Integer
-Common Shared Timer_Fail_Output1 As Integer
-Common Shared Timer_Fail_Output2 As Integer
 Common Shared Timer_Fail_Output1_Str As String
 Common Shared Timer_Fail_Output2_Str As String
 Common Shared FullScreen As _Byte
@@ -519,9 +553,18 @@ $If WIN Then
     Dim Shared y& ' Windows only
 $End If
 
+$If VERSION < 3.4.1 Then
+        $ERROR Requires at least QB64 v3.4.1
+$End If
+
 ' Set variables on load: ---------------------------------------------------------------
+
 ' Linux only
 If Mid$(_OS$, 2, 5) = "LINUX" Then OS = "LINUX" Else OS = "WINDOWS"
+
+' macOS only
+If Mid$(_OS$, 2, 5) = "MACOS" Then OS = "LINUX"
+
 DIR_documents = _CWD$
 
 ' Set OS variables
@@ -543,6 +586,7 @@ Else
 End If
 
 q = _Exit
+c10 = Chr$(10)
 c34 = Chr$(34)
 BG = _RGB(32, 32, 32)
 Exe_OK = 1
@@ -555,10 +599,13 @@ SLS_Stats = "stats"
 SLS_Server_Port = "8181" ' Temp setting - config.ini should override
 SLS_Server_IP = "127.0.0.1" ' Temp setting - config.ini should override
 SLS_Port_Client = "TCP/IP:" + SLS_Server_Port + ":"
-SLS_Publisher1 = "live/stream/stream1" ' Temp setting - config.ini should override
-SLS_Publisher2 = "live/stream/stream2" ' Temp setting - config.ini should override
+SLS_Publisher1 = "publish/live/stream1" ' Temp setting - config.ini should override
+SLS_Publisher2 = "publish/live/stream2" ' Temp setting - config.ini should override
 SLS_EOL = Chr$(13) + Chr$(10)
 RTMP_EOL = Chr$(13) + Chr$(10)
+BELABOX_1_Uptime = 0 ' BELABOX
+BELABOX_2_Uptime = 0 ' BELABOX
+Timer_Limit = 35996400
 ' ---------------------------------------------------------------
 
 ' Error handling when enabled takes place here
@@ -579,8 +626,8 @@ Sub __UI_BeforeInit
     $VersionInfo:ProductName=Loopy SRT Monitor
     $VersionInfo:Comments=Monitor SRT Streams
     $VersionInfo:FileDescription=Loopy SRT Monitor
-    $VersionInfo:FILEVERSION#=0,9,6,0
-    $VersionInfo:ProductVersion=0,9,6,0
+    $VersionInfo:FILEVERSION#=1,0,1,0
+    $VersionInfo:ProductVersion=1,0,1,0
     $VersionInfo:LegalCopyright=loopy750
     $VersionInfo:OriginalFilename=loopy_srt_monitor.exe
     $Checking:On
@@ -589,9 +636,9 @@ Sub __UI_BeforeInit
         ' $EXEICON moved but still parsed on launch
         _Title "Loopy SRT Monitor - loopy750"
     End If
-    Ver = "0.9.5.1"
-    VerBeta = "0.9.6"
-    VerDate = "06/22"
+    Ver = "1.0.0"
+    VerBeta = "1.0.1"
+    VerDate = "01/23"
     VerPortable = "false"
 End Sub
 
@@ -814,9 +861,15 @@ Sub __UI_OnLoad
                     ' SRT Live server
                     If file4_var$ = "sls1enabled" Then SLS_1_Enabled = file4_val$
                     If file4_var$ = "sls2enabled" Then SLS_2_Enabled = file4_val$
-                    If file4_var$ = "slsserverip" Then SLS_Server_IP = file4_val$
-                    If file4_var$ = "slsserverport" Then SLS_Server_Port = file4_val$
-                    If file4_var$ = "slsserverstats" Then SLS_Stats = file4_val$
+                    If file4_var$ = "slsserverip" Then SLS_Server_IP = file4_val$ ' Backwards compatible
+                    If file4_var$ = "slsserverip1" Then SLS_Server_IP = file4_val$
+                    If file4_var$ = "slsserverip2" Then SLS_Server_IP_2 = file4_val$ ' SLS IP #2 (v1.0.1)
+                    If file4_var$ = "slsserverport" Then SLS_Server_Port = file4_val$ ' Backwards compatible
+                    If file4_var$ = "slsserverport1" Then SLS_Server_Port = file4_val$
+                    If file4_var$ = "slsserverport2" Then SLS_Server_Port_2 = file4_val$ ' SLS IP #2 (v1.0.1)
+                    If file4_var$ = "slsserverstats" Then SLS_Stats = file4_val$ ' Backwards compatible
+                    If file4_var$ = "slsserverstats1" Then SLS_Stats = file4_val$
+                    If file4_var$ = "slsserverstats2" Then SLS_Stats_2 = file4_val$ ' SLS IP #2 (v1.0.1)
                     If file4_var$ = "slsserverpublisher1" Then SLS_Publisher1 = file4_val$
                     If file4_var$ = "slsserverpublisher2" Then SLS_Publisher2 = file4_val$
                     If file4_var$ = "slsbitratelow1" Then SLS_BitrateLow1 = Val(file4_val$)
@@ -831,13 +884,18 @@ Sub __UI_OnLoad
                     If file4_var$ = "denyping" Then Deny_Ping = file4_val$
                     If file4_var$ = "kbpsprecision" Then SLS_Kbps_Precision = file4_val$
                     If file4_var$ = "leadingzero" Then Leading_Zero = file4_val$
+                    If file4_var$ = "pinglog" Then PingLog = file4_val$
+                    If file4_var$ = "faststart" Then FastStart = file4_val$
+                    If file4_var$ = "dummyserver" Then Dummy_Server = file4_val$
                 End If
             End If
         Loop Until EOF(4)
         Close #4
 
-        ' obs-websocket-http by default
-        HTTP_Enabled = "true"
+        ' Assume older version if WebSocketConnection does not exist
+        ' and use obs-websocket-js by default to work with older versions
+        If OBS_Connection = "" Then HTTP_Enabled = "false" Else HTTP_Enabled = "true"
+
         If OBS_Connection = "http" Or OBS_Connection = "obs-websocket-http" Then HTTP_Enabled = "true"
         If OBS_Connection = "js" Or OBS_Connection = "obs-websocket-js" Then HTTP_Enabled = "false"
 
@@ -845,10 +903,16 @@ Sub __UI_OnLoad
         If HTTP_Enabled = "true" And NodejsFileSystem = "2" Then NodejsFileSystem = "1" ' HTTP
         ' Automatically open obs-websocket-http if it's located in the folder
         If HTTP_Enabled = "true" Then
-            If _FileExists(config_dir + "\obs-websocket-http-v1-Windows.exe") Then HTTP_File = config_dir + "\obs-websocket-http-v1-Windows.exe"
-            If _FileExists(config_dir + "\obs-websocket-http-Windows.exe") Then HTTP_File = config_dir + "\obs-websocket-http-Windows.exe"
-            If _FileExists(config_dir + "\obs-websocket-http.exe") Then HTTP_File = config_dir + "\obs-websocket-http.exe"
-            If OS = "WINDOWS" And _FileExists(HTTP_File) Then Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
+            If _FileExists(config_dir + "\obs-websocket-http-v1-Windows.exe") Then HTTP_File = config_dir + "\obs-websocket-http-v1-Windows.exe": HTTP_Filename = "obs-websocket-http-v1-Windows.exe"
+            If _FileExists(config_dir + "\obs-websocket-http-v2-Windows.exe") Then HTTP_File = config_dir + "\obs-websocket-http-v2-Windows.exe": HTTP_Filename = "obs-websocket-http-v2-Windows.exe"
+            If _FileExists(config_dir + "\obs-websocket-http-Windows.exe") Then HTTP_File = config_dir + "\obs-websocket-http-Windows.exe": HTTP_Filename = "obs-websocket-http-Windows.exe"
+            If _FileExists(config_dir + "\obs-websocket-http.exe") Then HTTP_File = config_dir + "\obs-websocket-http.exe": HTTP_Filename = "obs-websocket-http.exe"
+            ' Automatically open obs-websocket-http
+            If OS = "WINDOWS" And _FileExists(HTTP_File) Then
+                Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
+                If FastStart <> "true" Then _Delay 1
+                Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
+            End If
         End If
 
 
@@ -868,7 +932,7 @@ Sub __UI_OnLoad
                 Select Case OS
                     Case "WINDOWS"
                         If Not _DirExists(nodejs_dir + "\node_modules\obs-websocket-js") And Not _DirExists(nodejs_dir + "\obs-websocket-js") Then
-                            Error_msg = "- " + c34 + "obs-websocket-js" + c34 + " not found, check if it exists in " + c34 + "\js\node_modules\obs-websocket-js" + c34 + " folder." + Chr$(10) + "- Install node.js from https://nodejs.org/ and then run install.cmd in the settings folder."
+                            Error_msg = "- " + c34 + "obs-websocket-js" + c34 + " not found, check if it exists in " + c34 + "\js\node_modules\obs-websocket-js" + c34 + " folder." + Chr$(10) + "- Install node.js from https://nodejs.org/ and then run " + c34 + "install.cmd" + c34 + " in the " + c34 + "Documents\Loopy SRT Monitor" + c34 + " folder."
                             ErrorDisplay (3)
                         End If
                     Case "LINUX"
@@ -925,7 +989,7 @@ Sub __UI_OnLoad
         End If
 
         ' ---------------------------------------------------------------
-        'NEW
+        'v1.0.0
         '---
         'SceneLBRDelay=0
         'jsEncoding=json
@@ -934,15 +998,23 @@ Sub __UI_OnLoad
         'ColorTheme=Default
         'AllowResize=false
         '
+        'v1.0.1
+        '------
+        'SLSServerIP2=127.0.0.1
+        'SLSServerPort2=8191
+        'SLSServerStats2=stats
+        '
         'UNDOCUMENTED
         '------------
         'MediaSourceTime=800
         'CooldownTotal=8
         'ForceDebugOnStartup=false
         'DebugTemp=false
-        'DenyPing=true
+        'DenyPing=false
         'KbpsPrecision=false
         'LeadingZero=false
+        'PingLog=false
+        'FastStart=false
         ' ---------------------------------------------------------------
 
         If Scene_Bypass = "" Then Scene_Bypass = "none"
@@ -969,6 +1041,7 @@ Sub __UI_OnLoad
         If js_Encoding <> "msgpack" And js_Encoding <> "json" Then js_Encoding = "json" ' obs-websocket-js connection encoding
         If Nodejs_Access <> "legacy" Then Nodejs_Access = "fast"
         If Leading_Zero = "true" Then leadingZero = 1
+        If SLS_Kbps_Precision = "true" Then SLS_Kbps_Precision = "nerd"
 
         ' SRT Live Server
         SLS_Header = ""
@@ -983,6 +1056,40 @@ Sub __UI_OnLoad
         SLS_Header = SLS_Header + SLS_EOL
 
         SLS_Port_Client = "TCP/IP:" + SLS_Server_Port + ":"
+
+        ' SLS IP #2 will cause an error if values are empty
+        If SLS_Server_IP_2 = "" Then SLS_Server_IP_2 = SLS_Server_IP
+        If SLS_Server_Port_2 = "" Then SLS_Server_Port_2 = SLS_Server_Port
+        If SLS_Stats_2 = "" Then SLS_Stats_2 = SLS_Stats
+
+        ' SLS IP #2 (v1.0.1)
+        If MultiCameraSwitch = "true" And SLS_2_Enabled = "true" Then
+            If SLS_Server_IP <> SLS_Server_IP_2 Then SLS_2_Active = 1
+            If SLS_Server_Port <> SLS_Server_Port_2 Then SLS_2_Active = 1
+        End If
+
+        If SLS_2_Active = 1 And SLS_1_Enabled = "true" Then Stream_Title_1 = "Server" Else Stream_Title_1 = "Stream" ' SLS IP #2 (v1.0.1)
+        If SLS_2_Active = 1 And SLS_2_Enabled = "true" Then Stream_Title_2 = "Server" Else Stream_Title_2 = "Stream" ' SLS IP #2 (v1.0.1)
+
+        If Timer_Fail_Stream1 Then SetCaption (Stream1), Stream_Title_1 + " #1" + Server_Display1 + " ": Control(Stream1).ForeColor = RED_FAIL Else SetCaption (Stream1), Stream_Title_1 + " #1" + Server_Display1: Control(Stream1).ForeColor = GREEN_STREAM_OK
+        If Timer_Fail_Stream2 Then SetCaption (Stream2), Stream_Title_2 + " #2" + Server_Display2 + " ": Control(Stream2).ForeColor = RED_FAIL Else SetCaption (Stream2), Stream_Title_2 + " #2" + Server_Display2: Control(Stream2).ForeColor = GREEN_STREAM_OK
+
+        ' SLS IP #2 (v1.0.1)
+        If SLS_2_Active = 1 Then
+            SLS_Header_2 = ""
+            SLS_Header_2 = SLS_Header_2 + "GET /" + SLS_Stats_2 + " HTTP/1.1" + SLS_EOL
+            SLS_Header_2 = SLS_Header_2 + "Cache-Control: no-cache" + SLS_EOL
+            SLS_Header_2 = SLS_Header_2 + "Pragma: no-cache" + SLS_EOL
+            SLS_Header_2 = SLS_Header_2 + "User-Agent: Wget/1.19.1 (linux-gnu)" + SLS_EOL
+            SLS_Header_2 = SLS_Header_2 + "Accept: */*" + SLS_EOL
+            SLS_Header_2 = SLS_Header_2 + "Accept-Encoding: identity" + SLS_EOL
+            SLS_Header_2 = SLS_Header_2 + "Host: " + SLS_Server_IP_2 + ":" + SLS_Server_Port_2 + SLS_EOL
+            SLS_Header_2 = SLS_Header_2 + "Connection: Keep-Alive" + SLS_EOL
+            SLS_Header_2 = SLS_Header_2 + SLS_EOL
+
+            SLS_Port_Client_2 = "TCP/IP:" + SLS_Server_Port_2 + ":"
+        End If
+        ' -
 
         ' NGINX RTMP Server
         RTMP_Header = ""
@@ -1110,6 +1217,7 @@ Sub __UI_OnLoad
         ' Set variables for low bitrate detection
         CooldownStartup = 10
         If ConnectionsLog_Check = "true" Then ConnectionsLog = 1 Else ConnectionsLog = 0
+        If PingLog <> "true" Then PingLog = "false": If ConnectionsLog = 0 Then PingLog = "false"
         CooldownLogTotal = 8
         MediaSourceTimeLB = 800
         LBR_Delay_Total = Val(Scene_LBR_Delay_Total)
@@ -1127,14 +1235,22 @@ Sub __UI_OnLoad
         ' Set theme if selected
         If InStr(Command$, "-light") = 0 Then
             LoopySRTMonitorTheme = LCase$(LoopySRTMonitorTheme)
-            If LoopySRTMonitorTheme = "obs" Or LoopySRTMonitorTheme = "acri1" Or LoopySRTMonitorTheme = "acri2" Or LoopySRTMonitorTheme = "rachni" Then
+            If LoopySRTMonitorTheme = "obs" Or LoopySRTMonitorTheme = "yami" Or LoopySRTMonitorTheme = "acri1" Or LoopySRTMonitorTheme = "acri2" Or LoopySRTMonitorTheme = "rachni" Or LoopySRTMonitorTheme = "grey" Or LoopySRTMonitorTheme = "gray" Then
                 Select Case LoopySRTMonitorTheme
                     Case "obs"
                         Theme_C1 = _RGB32(58, 57, 58)
                         Theme_C2 = _RGB32(31, 30, 31)
+                    Case "yami"
+                        Theme_C1 = _RGB32(43, 46, 56)
+                        Theme_C2 = _RGB32(31, 33, 42)
+                    Case "grey"
+                        Theme_C1 = _RGB32(47, 47, 47)
+                        Theme_C2 = _RGB32(33, 33, 33)
+                    Case "gray"
+                        Theme_C1 = _RGB32(47, 47, 47)
+                        Theme_C2 = _RGB32(33, 33, 33)
                     Case "acri1"
                         Theme_C1 = _RGB32(24, 24, 25)
-                        Theme_C2 = _RGB32(19, 26, 48)
                         Theme_C2 = _RGB32(24, 24, 25)
                     Case "acri2"
                         Theme_C1 = _RGB32(24, 24, 25)
@@ -1208,7 +1324,15 @@ Sub __UI_OnLoad
             If Desktop_Width_Position = -1 And Desktop_Height_Position = -1 Then _ScreenMove _Middle Else _ScreenMove Desktop_Width_Position, Desktop_Height_Position
         End If
     End If
-    If OS = "WINDOWS" And _FileExists(HTTP_File) Then _Delay 1.5
+    ' Delay program if using HTTP to allow time for HTTP to connect to OBS WebSocket
+    If FastStart <> "true" Then
+        If OS = "WINDOWS" And _FileExists(HTTP_File) Then
+            _Delay 1.5
+            For http_Delay = 0 To 250000000
+            Next
+        End If
+    End If
+
     If returnPreviousScene = "true" Then __returnPreviousScene = 1 Else __returnPreviousScene = 0
     If FileStatusOutput = "true" Then __FileStatusOutput = 1 Else __FileStatusOutput = 0
     If returnPreviousSceneRemember = "true" Then __returnPreviousSceneRemember = 1 Else __returnPreviousSceneRemember = 0
@@ -2063,7 +2187,7 @@ Sub __UI_OnLoad
         Close #224
         If _FileExists(fileCheckVersion) Then Kill fileCheckVersion
         updateResult$ = file224$
-        If file224$ <> Ver Then verCheck$ = "New version is available (v" + _Trim$(Left$(updateResult$, 10)) + ")..."
+        If file224$ <> Ver Then verCheck$ = "New version is available (v" + _Trim$(Left$(updateResult$, 10)) + ")": _NotifyPopup "Loopy SRT Monitor", "New version is available (v" + _Trim$(Left$(updateResult$, 10)) + ")", "info"
         If file224$ = "" Or file224$ = "404: Not Found" Then verCheck$ = "Unable to check for new version..."
         If file224$ = Ver Then verCheck$ = "This is the latest version (v" + _Trim$(Left$(Ver, 10)) + ")..."
     End If
@@ -2598,9 +2722,9 @@ Sub __UI_BeforeUpdateDisplay
         mouseX = _MouseX
         mouseY = _MouseY
         Debug_Timer = Timer(.001)
-        TIMEms Debug_Timer, 0
+        TIMEms Debug_Timer, 0, 0
         SetCaption (Debug_TimerLB), tout + " sec   "
-        TIMEms td_display, 1
+        TIMEms td_display, 1, 0
         SetCaption (td_displayLB), tout + " sec   "
         SetCaption (mouseXLB), LTrim$(Str$(mouseX + 1)) + "   "
         SetCaption (mouseYLB), LTrim$(Str$(mouseY + 1)) + "   "
@@ -2877,7 +3001,7 @@ Sub __UI_Click (id As Long)
             Close #224
             If _FileExists(fileCheckVersion) Then Kill fileCheckVersion
             updateResult$ = file224$
-            If file224$ <> Ver Then verCheck$ = "New version is available (v" + _Trim$(Left$(updateResult$, 10)) + ")..."
+            If file224$ <> Ver Then verCheck$ = "New version is available (v" + _Trim$(Left$(updateResult$, 10)) + ")": _NotifyPopup "Loopy SRT Monitor", "New version is available (v" + _Trim$(Left$(updateResult$, 10)) + ")", "info"
             If file224$ = "" Or file224$ = "404: Not Found" Then verCheck$ = "Unable to check for new version..."
             If file224$ = Ver Then verCheck$ = "This is the latest version (v" + _Trim$(Left$(Ver, 10)) + ")..."
             If verCheck <> "" Then updateDisplayCounter = 0
@@ -2898,15 +3022,15 @@ Sub __UI_Click (id As Long)
         Case HelpMenuAbout
             If VerBeta = "" Then
                 If VerPortable = "false" Then
-                    Answer = MessageBox("Loopy SRT Stats Monitor v" + Ver + " (" + VerDate + ") \nby loopy750\n\nOBS WebSocket version:" + checkWebSocketVersion$ + "\n\nGitHub: https://www.github.com/loopy750", "About", MsgBox_OkOnly + MsgBox_Information)
+                    Answer = MessageBox("Loopy SRT Stats Monitor v" + Ver + " (" + VerDate + ") \nby loopy750\n\nOBS WebSocket version: " + checkWebSocketVersion$ + "\n\nHomepage: https://www.github.com/loopy750", "About", MsgBox_OkOnly + MsgBox_Information)
                 Else
-                    Answer = MessageBox("Loopy SRT Stats Monitor v" + Ver + " (" + VerDate + ") \nPortable version\nby loopy750\n\nOBS WebSocket version:" + checkWebSocketVersion$ + "\n\nGitHub: https://www.github.com/loopy750", "About", MsgBox_OkOnly + MsgBox_Information)
+                    Answer = MessageBox("Loopy SRT Stats Monitor v" + Ver + " (" + VerDate + ") \nPortable version\nby loopy750\n\nOBS WebSocket version: " + checkWebSocketVersion$ + "\n\nHomepage: https://www.github.com/loopy750", "About", MsgBox_OkOnly + MsgBox_Information)
                 End If
             Else
                 If VerPortable = "false" Then
-                    Answer = MessageBox("Loopy SRT Stats Monitor v" + VerBeta + "beta (" + VerDate + ") \nby loopy750\n\nOBS WebSocket version: " + checkWebSocketVersion$ + "\n\nGitHub: https://www.github.com/loopy750", "About", MsgBox_OkOnly + MsgBox_Information)
+                    Answer = MessageBox("Loopy SRT Stats Monitor v" + VerBeta + "beta (" + VerDate + ") \nby loopy750\n\nOBS WebSocket version: " + checkWebSocketVersion$ + "\n\nHomepage: https://www.github.com/loopy750", "About", MsgBox_OkOnly + MsgBox_Information)
                 Else
-                    Answer = MessageBox("Loopy SRT Stats Monitor v" + VerBeta + "beta (" + VerDate + ") \nPortable version\nby loopy750\n\nOBS WebSocket version: " + checkWebSocketVersion$ + "\n\nGitHub: https://www.github.com/loopy750", "About", MsgBox_OkOnly + MsgBox_Information)
+                    Answer = MessageBox("Loopy SRT Stats Monitor v" + VerBeta + "beta (" + VerDate + ") \nPortable version\nby loopy750\n\nOBS WebSocket version: " + checkWebSocketVersion$ + "\n\nHomepage: https://www.github.com/loopy750", "About", MsgBox_OkOnly + MsgBox_Information)
                 End If
             End If
 
@@ -3730,10 +3854,10 @@ Sub __UI_FormResized
 End Sub
 
 ' The following code has been manually added after InForm
-Sub TIMEms (tout1#, plus)
+Sub TIMEms (tout1#, plus, tsecondout)
 
     Timer(t1) Stop
-    tout = ""
+    If tsecondout = 0 Then tout = "" Else tout_2 = ""
     tout2# = tout1#
     toutint# = Fix(tout2#)
     If tout1# >= 0 Then
@@ -3743,11 +3867,25 @@ Sub TIMEms (tout1#, plus)
         toutdec# = (tout2# - toutint#) - 1
         If toutint# = 0 Then tout = tout + "-"
     End If
-    tout = tout + LTrim$(Str$(toutint#))
-    If tout1# >= 0 Then tout = tout + "." + Mid$(LTrim$(Str$(toutdec#)), 3, 3) Else tout = tout + "." + Mid$(LTrim$(Str$(toutdec#)), 4, 3)
-    If Len(Str$(toutdec#)) = 5 Then tout = tout + "0"
-    If Len(Str$(toutdec#)) = 4 Then tout = tout + "00"
-    If Len(Str$(toutdec#)) = 2 Then tout = tout + "000" ' Output to tout
+
+    If tsecondout = 0 Then
+
+        tout = tout + LTrim$(Str$(toutint#))
+        If tout1# >= 0 Then tout = tout + "." + Mid$(LTrim$(Str$(toutdec#)), 3, 3) Else tout = tout + "." + Mid$(LTrim$(Str$(toutdec#)), 4, 3)
+        If Len(Str$(toutdec#)) = 5 Then tout = tout + "0"
+        If Len(Str$(toutdec#)) = 4 Then tout = tout + "00"
+        If Len(Str$(toutdec#)) = 2 Then tout = tout + "000" ' Output to tout
+
+    Else
+
+        tout_2 = tout_2 + LTrim$(Str$(toutint#))
+        If tout1# >= 0 Then tout_2 = tout_2 + "." + Mid$(LTrim$(Str$(toutdec#)), 3, 3) Else tout_2 = tout_2 + "." + Mid$(LTrim$(Str$(toutdec#)), 4, 3)
+        If Len(Str$(toutdec#)) = 5 Then tout_2 = tout_2 + "0"
+        If Len(Str$(toutdec#)) = 4 Then tout_2 = tout_2 + "00"
+        If Len(Str$(toutdec#)) = 2 Then tout_2 = tout_2 + "000" ' Output to tout_2
+
+    End If
+
     Timer(t1) On
 
 End Sub
@@ -3821,7 +3959,7 @@ End Sub
 Function calc_srt$ (convertTime#, includeSec)
 
     Timer(t1) Stop
-    If convertTime# > 3596400 Then convertTime# = 3596400
+    If convertTime# > 3596400000 Then convertTime# = 3596400000
     t_hr = convertTime# \ 3600
     t_min = (convertTime# - (3600 * t_hr)) \ 60
     t_sec = (convertTime# - (3600 * t_hr)) - (t_min * 60)
@@ -3889,19 +4027,20 @@ Sub ErrorDisplay (ErrorTestVal)
         End If
 
         BSOD& = __imageMEM&("face_sad_x.png")
-        _PutImage (25, 46)-(82, 158), BSOD&
+        _PutImage (24, 46)-(81, 158), BSOD&
         _FreeImage BSOD&
         Color _RGB(254, 254, 254), _RGB(1, 100, 200)
-        _PrintString (20, 12 * 18), "> Test #" + _Trim$(Str$(ErrorTestVal)) + " of 10 failed"
+        _PrintString (16, 12 * 18), "> Test #" + _Trim$(Str$(ErrorTestVal)) + " of 10 failed"
         If InStr(Error_msg, Chr$(10)) >= 1 Then
-            _PrintString (20, 14 * 18), Left$(Error_msg, InStr(Error_msg, Chr$(10)) - 1)
-            _PrintString (20, 15 * 18), Mid$(Error_msg, InStr(Error_msg, Chr$(10)) + 1)
-            _PrintString (20, 16 * 18), Mid$(Error_3rd_line, 1)
-            Sound 440, 1
+            _PrintString (16, 14 * 18), Left$(Error_msg, InStr(Error_msg, Chr$(10)) - 1)
+            _PrintString (16, 15 * 18), Mid$(Error_msg, InStr(Error_msg, Chr$(10)) + 1)
+            _PrintString (16, 16 * 18), Mid$(Error_3rd_line, 1)
+            Sound 440, 1.5
         Else
-            _PrintString (20, 14 * 18), Error_msg
+            _PrintString (16, 14 * 18), Error_msg
         End If
-        _PrintString (20, 20 * 18), "Program will exit shortly or press any key to exit now..."
+        _PrintString (16, 20 * 18), "Program will exit shortly or press any key to exit now..."
+        _PrintString (645, 21 * 18), "Loopy SRT Monitor v" + Ver + ""
         _Display
         _Delay 0.5
         Error_3rd_line = ""
@@ -4029,6 +4168,56 @@ Sub sls_client_connect
 
 End Sub
 
+Sub sls_client_connect_2
+    ' SLS IP #2 (v1.0.1)
+
+    ' Reset SLS data
+    SLS_GET_a = "": SLS_GET_a2 = "": SLS_GET_i = 0: SLS_GET_i2 = 0: SLS_GET_i3 = 0: SLS_GET_l = 0: SLS_GET_d_2 = "": sls_stats_2.xml = "": SLS_Bitrate1 = 0: SLS_Bitrate2 = 0
+    SLS_streams_found = 0: SLS_Uptime1 = 0: SLS_Uptime2 = 0: SLS_streams_seek = 0
+
+    SLS_Ping1_2 = Timer(.001)
+    sls_client_2 = _OpenClient(SLS_Port_Client_2 + SLS_Server_IP_2)
+
+    If sls_client_2 = 0 Then RefreshDisplayRequest = 1: Error_msg$ = "- Unable to connect, check if " + c34 + SLS_Server_IP_2 + ":" + SLS_Server_Port_2 + c34 + " is correct." + Chr$(10) + "- Program is unable to read the SRT /" + SLS_Stats + " URL from its http server. (Error: #4a)": _Delay 3: Exit Sub
+
+    On Error GoTo App_Fail
+    App_Refresh = 1
+
+    Put #sls_client_2, , SLS_Header_2
+
+    SLS_Ping2_2 = Timer(.001)
+    SLS_PingOut_2 = (SLS_Ping2_2 - SLS_Ping1_2)
+
+    ' Connect to SRT Live Server and grab json data
+    SLS_Timer_GET = Timer
+    Do
+        _Delay 0.01
+        Get #sls_client_2, , SLS_GET_a2
+        SLS_GET_a = SLS_GET_a + SLS_GET_a2
+        SLS_GET_i = InStr(SLS_GET_a, "Content-Length:")
+        If SLS_GET_i Then
+            SLS_GET_i2 = InStr(SLS_GET_i, SLS_GET_a, SLS_EOL)
+            If SLS_GET_i2 Then
+                SLS_GET_l = Val(Mid$(SLS_GET_a, SLS_GET_i + 15, SLS_GET_i2 - SLS_GET_i - 14))
+                SLS_GET_i3 = InStr(SLS_GET_i2, SLS_GET_a, SLS_EOL + SLS_EOL)
+                If SLS_GET_i3 Then
+                    SLS_GET_i3 = SLS_GET_i3 + 4 'move i3 to start of data
+                    If (Len(SLS_GET_a) - SLS_GET_i3 + 1) = SLS_GET_l Then
+                        Close sls_client ' CLOSE CLIENT
+                        SLS_GET_d_2 = Mid$(SLS_GET_a, SLS_GET_i3, SLS_GET_l)
+                        Exit Do
+                    End If ' available data = l
+                End If ' i3
+            End If ' i2
+        End If ' i
+    Loop Until Timer > SLS_Timer_GET + 3 ' 3 second timeout
+    Close sls_client_2
+
+    ' Store json data in sls_stats_2.xml
+    sls_stats_2.xml = SLS_GET_d_2
+
+End Sub
+
 Sub rtmp_client_connect
 
     ' Reset RTMP data
@@ -4038,7 +4227,7 @@ Sub rtmp_client_connect
     RTMP_Ping1 = Timer(.001)
     rtmp_client = _OpenClient(RTMP_Port_Client + RTMP_Server_IP)
 
-    If rtmp_client = 0 Then RefreshDisplayRequest = 1: Error_msg$ = "- Unable to connect, check if " + c34 + RTMP_Server_IP + ":" + RTMP_Server_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to read the NGINX /" + RTMP_Stats + " URL from its http server. (Error: #4)": _Delay 3: Exit Sub
+    If rtmp_client = 0 Then RefreshDisplayRequest = 1: Error_msg$ = "- Unable to connect, check if " + c34 + RTMP_Server_IP + ":" + RTMP_Server_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to read the NGINX /" + RTMP_Stats + " URL from its http server. (Error: #4b)": _Delay 3: Exit Sub
 
     On Error GoTo App_Fail
     App_Refresh = 1
@@ -4108,7 +4297,9 @@ Sub Multi0 (serverType$)
                         End If
                     End If
                 Case "1"
+                    On Error GoTo App_Fail
                     _Dest _Console
+                    On Error GoTo 0
                     If FullScreen Then
                         If HTTP_Enabled = "true" Then
                             Select Case HTTP_Access
@@ -4238,10 +4429,17 @@ Sub Multi0 (serverType$)
 
             If NodejsFileSystem = "0" Or NodejsFileSystem = "1" Then If NoKill = 1 Then NoKill = 0 Else If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
         Case "SLS"
-            sls_client_connect
+            If SLS_1_Enabled = "true" Then sls_client_connect
+            If SLS_2_Active = 1 Then sls_client_connect_2 ' SLS IP #2 (v1.0.1)
+
+
 
             On Error GoTo 0
             App_Refresh = 0
+
+
+            If Dummy_Server <> "" Then DummyServer Dummy_Server
+
 
             ' Discover if one or two streams are running
             Do
@@ -4265,6 +4463,53 @@ Sub Multi0 (serverType$)
                         SLS_Uptime1 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, "uptime") + 8, 6))
                     End If
             End Select
+
+
+
+            ' ---------- BELABOX detection ----------
+
+            BELABOX_1_Found = 0: BELABOX_2_Found = 0
+
+            ' Discover if one or two streams are running
+            Do
+                SLS_streams_seek = InStr(SLS_streams_seek + 1, sls_stats.xml, c34 + "connected" + c34 + ": true")
+                If SLS_streams_seek Then
+                    SLS_streams_found = SLS_streams_found + 1
+                End If
+            Loop Until SLS_streams_seek = 0
+
+            Select Case SLS_streams_found
+                Case 1
+                    ' If one stream is running and SLS_Publisher1 is the stream, find it here
+                    If Mid$(sls_stats.xml, InStr(sls_stats.xml, "publishers") + 15, Len(SLS_Publisher1)) = SLS_Publisher1 Then
+                        If InStr(sls_stats.xml, SLS_Publisher1) Then SLS_Bitrate1 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, c34 + "bitrate" + c34 + ":") + Len(c34 + "bitrate" + c34 + ":")), 6))
+
+                        If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
+                            BELABOX_1_Found = 1: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime ' Uptime not reported in JSON data
+                        ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
+                            BELABOX_1_Found = 1: BELABOX_1_Offline = 1: BELABOX_1_Uptime = 0
+                        End If
+
+                    End If
+                Case 2
+                    ' If two streams are running and SLS_Publisher1 is the second stream, find it here
+                    If Mid$(sls_stats.xml, InStr(sls_stats.xml, SLS_Publisher1), Len(SLS_Publisher1)) = SLS_Publisher1 Then
+                        SLS_Bitrate1 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, "bitrate") + 9, 6))
+
+                        If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
+                            BELABOX_1_Found = 1: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime ' Uptime not reported in JSON data
+                        ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
+                            BELABOX_1_Found = 1: BELABOX_1_Offline = 1: BELABOX_1_Uptime = 0
+                        End If
+
+                    End If
+            End Select
+
+            If BELABOX_1_Found = 0 Then BELABOX_1_Uptime = 0
+            If BELABOX_2_Found = 0 Then BELABOX_2_Uptime = 0
+
+
+
             ' Uptime
             MediaSource1Time = SLS_Uptime1
             MediaSource1TimeMS = SLS_Uptime1 * 1000
@@ -4476,7 +4721,9 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                         End If
                     End If
                 Case "1"
+                    On Error GoTo App_Fail
                     _Dest _Console
+                    On Error GoTo 0
                     If FullScreen Then
                         If HTTP_Enabled = "true" Then
                             Select Case HTTP_Access
@@ -4640,43 +4887,298 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
             On Error GoTo 0
             App_Refresh = 0
         Case "SLS"
-            sls_client_connect
+            If SLS_1_Enabled = "true" Then sls_client_connect
+            If SLS_2_Active = 1 Then sls_client_connect_2 ' SLS IP #2 (v1.0.1)
 
             On Error GoTo 0
             App_Refresh = 0
 
-            ' Discover if one or two streams are running
-            Do
-                SLS_streams_seek = InStr(SLS_streams_seek + 1, sls_stats.xml, "uptime")
-                If SLS_streams_seek Then
-                    SLS_streams_found = SLS_streams_found + 1
-                End If
-            Loop Until SLS_streams_seek = 0
 
-            Select Case SLS_streams_found
-                Case 1
-                    ' If one stream is running and SLS_Publisher1 is the stream, find it here
-                    If Mid$(sls_stats.xml, InStr(sls_stats.xml, "publishers") + 14, Len(SLS_Publisher1)) = SLS_Publisher1 Then
-                        If InStr(sls_stats.xml, SLS_Publisher1) Then SLS_Bitrate1 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, SLS_Publisher1) + Len(SLS_Publisher1)) + 13, 6))
-                        If InStr(sls_stats.xml, "uptime") Then SLS_Uptime1 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, "uptime") + Len("uptime")) + 2, 6))
+            If Dummy_Server <> "" Then DummyServer Dummy_Server
+
+
+            ' Discover if one or two streams are running
+            If SLS_2_Active <> 1 Then
+
+
+
+
+                Do
+                    SLS_streams_seek = InStr(SLS_streams_seek + 1, sls_stats.xml, "uptime")
+                    If SLS_streams_seek Then
+                        SLS_streams_found = SLS_streams_found + 1
                     End If
-                    ' If one stream is running and SLS_Publisher2 is the stream, find it here
-                    If Mid$(sls_stats.xml, InStr(sls_stats.xml, "publishers") + 14, Len(SLS_Publisher2)) = SLS_Publisher2 Then
-                        If InStr(sls_stats.xml, SLS_Publisher2) Then SLS_Bitrate2 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, SLS_Publisher2) + Len(SLS_Publisher2)) + 13, 6))
-                        If InStr(sls_stats.xml, "uptime") Then SLS_Uptime2 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, "uptime") + Len("uptime")) + 2, 6))
+                Loop Until SLS_streams_seek = 0
+
+                Select Case SLS_streams_found
+                    Case 1
+                        ' If one stream is running and SLS_Publisher1 is the stream, find it here
+                        If Mid$(sls_stats.xml, InStr(sls_stats.xml, "publishers") + 14, Len(SLS_Publisher1)) = SLS_Publisher1 Then
+                            If InStr(sls_stats.xml, SLS_Publisher1) Then SLS_Bitrate1 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, SLS_Publisher1) + Len(SLS_Publisher1)) + 13, 6))
+                            If InStr(sls_stats.xml, "uptime") Then SLS_Uptime1 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, "uptime") + Len("uptime")) + 2, 6))
+                        End If
+                        ' If one stream is running and SLS_Publisher2 is the stream, find it here
+                        If Mid$(sls_stats.xml, InStr(sls_stats.xml, "publishers") + 14, Len(SLS_Publisher2)) = SLS_Publisher2 Then
+                            If InStr(sls_stats.xml, SLS_Publisher2) Then SLS_Bitrate2 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, SLS_Publisher2) + Len(SLS_Publisher2)) + 13, 6))
+                            If InStr(sls_stats.xml, "uptime") Then SLS_Uptime2 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, "uptime") + Len("uptime")) + 2, 6))
+                        End If
+                    Case 2
+                        ' If two streams are running and SLS_Publisher1 is either the first or second stream, find it here
+                        If Mid$(sls_stats.xml, InStr(sls_stats.xml, SLS_Publisher1), Len(SLS_Publisher1)) = SLS_Publisher1 Then
+                            SLS_Bitrate1 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, "bitrate") + 9, 6))
+                            SLS_Uptime1 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, "uptime") + 8, 6))
+                        End If
+                        ' If two streams are running and SLS_Publisher2 is either the first or second stream, find it here
+                        If Mid$(sls_stats.xml, InStr(sls_stats.xml, SLS_Publisher2), Len(SLS_Publisher2)) = SLS_Publisher2 Then
+                            SLS_Bitrate2 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, "bitrate") + 9, 6))
+                            SLS_Uptime2 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, "uptime") + 8, 6))
+                        End If
+                End Select
+
+
+            Else
+
+
+                ' SLS IP #2 (v1.0.1)
+                Do
+                    SLS_streams_seek = InStr(SLS_streams_seek + 1, sls_stats.xml, "uptime")
+                    If SLS_streams_seek Then
+                        SLS_streams_found = SLS_streams_found + 1
                     End If
-                Case 2
-                    ' If two streams are running and SLS_Publisher1 is either the first or second stream, find it here
-                    If Mid$(sls_stats.xml, InStr(sls_stats.xml, SLS_Publisher1), Len(SLS_Publisher1)) = SLS_Publisher1 Then
-                        SLS_Bitrate1 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, "bitrate") + 9, 6))
-                        SLS_Uptime1 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, "uptime") + 8, 6))
+                Loop Until SLS_streams_seek = 0
+
+
+                Do
+                    SLS_streams_seek = InStr(SLS_streams_seek + 1, sls_stats_2.xml, "uptime")
+                    If SLS_streams_seek Then
+                        SLS_streams_found = SLS_streams_found + 1
                     End If
-                    ' If two streams are running and SLS_Publisher2 is either the first or second stream, find it here
-                    If Mid$(sls_stats.xml, InStr(sls_stats.xml, SLS_Publisher2), Len(SLS_Publisher2)) = SLS_Publisher2 Then
-                        SLS_Bitrate2 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, "bitrate") + 9, 6))
-                        SLS_Uptime2 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, "uptime") + 8, 6))
+                Loop Until SLS_streams_seek = 0
+                If SLS_streams_found > 2 Then SLS_streams_found = 2
+
+
+                Select Case SLS_streams_found
+                    Case 1
+                        ' If one stream is running and SLS_Publisher1 is the stream, find it here
+                        If Mid$(sls_stats.xml, InStr(sls_stats.xml, "publishers") + 14, Len(SLS_Publisher1)) = SLS_Publisher1 Then
+                            If InStr(sls_stats.xml, SLS_Publisher1) Then SLS_Bitrate1 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, SLS_Publisher1) + Len(SLS_Publisher1)) + 13, 6))
+                            If InStr(sls_stats.xml, "uptime") Then SLS_Uptime1 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, "uptime") + Len("uptime")) + 2, 6))
+                        End If
+                        ' If one stream is running and SLS_Publisher2 is the stream, find it here
+                        If Mid$(sls_stats_2.xml, InStr(sls_stats_2.xml, "publishers") + 14, Len(SLS_Publisher2)) = SLS_Publisher2 Then
+                            If InStr(sls_stats_2.xml, SLS_Publisher2) Then SLS_Bitrate2 = Val(Mid$(sls_stats_2.xml, (InStr(sls_stats_2.xml, SLS_Publisher2) + Len(SLS_Publisher2)) + 13, 6))
+                            If InStr(sls_stats_2.xml, "uptime") Then SLS_Uptime2 = Val(Mid$(sls_stats_2.xml, (InStr(sls_stats_2.xml, "uptime") + Len("uptime")) + 2, 6))
+                        End If
+                    Case 2
+                        ' If two streams are running and SLS_Publisher1 is either the first or second stream, find it here
+                        If Mid$(sls_stats.xml, InStr(sls_stats.xml, SLS_Publisher1), Len(SLS_Publisher1)) = SLS_Publisher1 Then
+                            SLS_Bitrate1 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, "bitrate") + 9, 6))
+                            SLS_Uptime1 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, "uptime") + 8, 6))
+                        End If
+                        ' If two streams are running and SLS_Publisher2 is either the first or second stream, find it here
+                        If Mid$(sls_stats_2.xml, InStr(sls_stats_2.xml, SLS_Publisher2), Len(SLS_Publisher2)) = SLS_Publisher2 Then
+                            SLS_Bitrate2 = Val(Mid$(sls_stats_2.xml, InStr(InStr(sls_stats_2.xml, SLS_Publisher2), sls_stats_2.xml, "bitrate") + 9, 6))
+                            SLS_Uptime2 = Val(Mid$(sls_stats_2.xml, InStr(InStr(sls_stats_2.xml, SLS_Publisher2), sls_stats_2.xml, "uptime") + 8, 6))
+                        End If
+                End Select
+
+
+            End If
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            ' ---------- BELABOX detection ----------
+
+            BELABOX_1_Found = 0: BELABOX_2_Found = 0
+
+
+
+            ' Discover if one or two streams are running
+            If SLS_2_Active <> 1 Then
+
+
+
+
+                Do
+                    SLS_streams_seek = InStr(SLS_streams_seek + 1, sls_stats.xml, c34 + "connected" + c34 + ": true")
+                    If SLS_streams_seek Then
+                        SLS_streams_found = SLS_streams_found + 1
                     End If
-            End Select
+                Loop Until SLS_streams_seek = 0
+                Do
+                    SLS_streams_seek = InStr(SLS_streams_seek + 1, sls_stats.xml, c34 + "connected" + c34 + ": false")
+                    If SLS_streams_seek Then
+                        SLS_streams_found = SLS_streams_found + 1
+                    End If
+                Loop Until SLS_streams_seek = 0
+                If SLS_streams_found > 2 Then SLS_streams_found = 2
+
+
+                Select Case SLS_streams_found
+                    Case 1
+                        ' If one stream is running and SLS_Publisher1 is the stream, find it here
+                        If Mid$(sls_stats.xml, InStr(sls_stats.xml, "publishers") + 15, Len(SLS_Publisher1)) = SLS_Publisher1 Then
+                            If InStr(sls_stats.xml, SLS_Publisher1) Then SLS_Bitrate1 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, c34 + "bitrate" + c34 + ":") + Len(c34 + "bitrate" + c34 + ":")), 6))
+
+                            If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
+                                BELABOX_1_Found = 1: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime ' Uptime not reported in JSON data
+                            ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
+                                BELABOX_1_Found = 1: BELABOX_1_Offline = 1: BELABOX_1_Uptime = 0
+                            End If
+
+                        End If
+                        ' If one stream is running and SLS_Publisher2 is the stream, find it here
+                        If Mid$(sls_stats.xml, InStr(sls_stats.xml, "publishers") + 15, Len(SLS_Publisher2)) = SLS_Publisher2 Then
+                            If InStr(sls_stats.xml, SLS_Publisher2) Then SLS_Bitrate2 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, c34 + "bitrate" + c34 + ":") + Len(c34 + "bitrate" + c34 + ":")), 6))
+
+                            If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
+                                BELABOX_2_Found = 1: BELABOX_2_Uptime = BELABOX_2_Uptime + 1: SLS_Uptime2 = BELABOX_2_Uptime ' Uptime not reported in JSON data
+                            ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
+                                BELABOX_2_Found = 1: BELABOX_2_Offline = 1: BELABOX_2_Uptime = 0
+                            End If
+
+                        End If
+                    Case 2
+                        ' If two streams are running and SLS_Publisher1 is either the first or second stream, find it here
+                        If Mid$(sls_stats.xml, InStr(sls_stats.xml, SLS_Publisher1), Len(SLS_Publisher1)) = SLS_Publisher1 Then
+                            SLS_Bitrate1 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, "bitrate") + 9, 6))
+
+                            If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
+                                BELABOX_1_Found = 1: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime ' Uptime not reported in JSON data
+                            ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
+                                BELABOX_1_Found = 1: BELABOX_1_Offline = 1: BELABOX_1_Uptime = 0
+                            End If
+
+                        End If
+                        ' If two streams are running and SLS_Publisher2 is either the first or second stream, find it here
+                        If Mid$(sls_stats.xml, InStr(sls_stats.xml, SLS_Publisher2), Len(SLS_Publisher2)) = SLS_Publisher2 Then
+                            SLS_Bitrate2 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, "bitrate") + 9, 6))
+
+                            If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
+                                BELABOX_2_Found = 1: BELABOX_2_Uptime = BELABOX_2_Uptime + 1: SLS_Uptime2 = BELABOX_2_Uptime ' Uptime not reported in JSON data
+                            ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
+                                BELABOX_2_Found = 1: BELABOX_2_Offline = 1: BELABOX_2_Uptime = 0
+                            End If
+
+                        End If
+                End Select
+
+
+            Else
+
+
+                ' SLS IP #2 (v1.0.1)
+                Do
+                    SLS_streams_seek = InStr(SLS_streams_seek + 1, sls_stats.xml, c34 + "connected" + c34 + ": true")
+                    If SLS_streams_seek Then
+                        SLS_streams_found = SLS_streams_found + 1
+                    End If
+                Loop Until SLS_streams_seek = 0
+                Do
+                    SLS_streams_seek = InStr(SLS_streams_seek + 1, sls_stats.xml, c34 + "connected" + c34 + ": false")
+                    If SLS_streams_seek Then
+                        SLS_streams_found = SLS_streams_found + 1
+                    End If
+                Loop Until SLS_streams_seek = 0
+
+
+                Do
+                    SLS_streams_seek = InStr(SLS_streams_seek + 1, sls_stats_2.xml, c34 + "connected" + c34 + ": true")
+                    If SLS_streams_seek Then
+                        SLS_streams_found = SLS_streams_found + 1
+                    End If
+                Loop Until SLS_streams_seek = 0
+                Do
+                    SLS_streams_seek = InStr(SLS_streams_seek + 1, sls_stats_2.xml, c34 + "connected" + c34 + ": false")
+                    If SLS_streams_seek Then
+                        SLS_streams_found = SLS_streams_found + 1
+                    End If
+                Loop Until SLS_streams_seek = 0
+                If SLS_streams_found > 2 Then SLS_streams_found = 2
+
+
+                Select Case SLS_streams_found
+                    Case 1
+                        ' If one stream is running and SLS_Publisher1 is the stream, find it here
+                        If Mid$(sls_stats.xml, InStr(sls_stats.xml, "publishers") + 15, Len(SLS_Publisher1)) = SLS_Publisher1 Then
+                            If InStr(sls_stats.xml, SLS_Publisher1) Then SLS_Bitrate1 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, c34 + "bitrate" + c34 + ":") + Len(c34 + "bitrate" + c34 + ":")), 6))
+
+                            If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
+                                BELABOX_1_Found = 1: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime: BELABOX_1_Offline = 0 ' Uptime not reported in JSON data
+                            ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
+                                BELABOX_1_Found = 1: BELABOX_1_Offline = 1: BELABOX_1_Uptime = 0
+                            End If
+
+                        End If
+                        ' If one stream is running and SLS_Publisher2 is the stream, find it here
+                        If Mid$(sls_stats_2.xml, InStr(sls_stats_2.xml, "publishers") + 15, Len(SLS_Publisher2)) = SLS_Publisher2 Then
+                            If InStr(sls_stats_2.xml, SLS_Publisher2) Then SLS_Bitrate2 = Val(Mid$(sls_stats_2.xml, (InStr(sls_stats_2.xml, c34 + "bitrate" + c34 + ":") + Len(c34 + "bitrate" + c34 + ":")), 6))
+
+                            If _Trim$(Mid$(sls_stats_2.xml, InStr(InStr(sls_stats_2.xml, SLS_Publisher2), sls_stats_2.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
+                                BELABOX_2_Found = 1: BELABOX_2_Uptime = BELABOX_2_Uptime + 1: SLS_Uptime2 = BELABOX_2_Uptime ' Uptime not reported in JSON data
+                            ElseIf Left$(_Trim$(Mid$(sls_stats_2.xml, InStr(InStr(sls_stats_2.xml, SLS_Publisher2), sls_stats_2.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
+                                BELABOX_2_Found = 1: BELABOX_2_Offline = 1: BELABOX_2_Uptime = 0
+                            End If
+
+                        End If
+                    Case 2
+                        ' If two streams are running and SLS_Publisher1 is either the first or second stream, find it here
+                        If Mid$(sls_stats.xml, InStr(sls_stats.xml, SLS_Publisher1), Len(SLS_Publisher1)) = SLS_Publisher1 Then
+                            SLS_Bitrate1 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, "bitrate") + 9, 6))
+
+                            If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
+                                BELABOX_1_Found = 1: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime ' Uptime not reported in JSON data
+                            ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "false" Then
+                                BELABOX_1_Found = 1: BELABOX_1_Offline = 1: BELABOX_1_Uptime = 0
+                            End If
+
+                        End If
+                        ' If two streams are running and SLS_Publisher2 is either the first or second stream, find it here
+                        If Mid$(sls_stats_2.xml, InStr(sls_stats_2.xml, SLS_Publisher2), Len(SLS_Publisher2)) = SLS_Publisher2 Then
+                            SLS_Bitrate2 = Val(Mid$(sls_stats_2.xml, InStr(InStr(sls_stats_2.xml, SLS_Publisher2), sls_stats_2.xml, "bitrate") + 9, 6))
+
+                            If _Trim$(Mid$(sls_stats_2.xml, InStr(InStr(sls_stats_2.xml, SLS_Publisher2), sls_stats_2.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
+                                BELABOX_2_Found = 1: BELABOX_2_Uptime = BELABOX_2_Uptime + 1: SLS_Uptime2 = BELABOX_2_Uptime ' Uptime not reported in JSON data
+                            ElseIf Left$(_Trim$(Mid$(sls_stats_2.xml, InStr(InStr(sls_stats_2.xml, SLS_Publisher2), sls_stats_2.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
+                                BELABOX_2_Found = 1: BELABOX_2_Offline = 1: BELABOX_2_Uptime = 0
+                            End If
+
+                        End If
+                End Select
+
+
+            End If
+
+            If BELABOX_1_Found = 0 Then BELABOX_1_Uptime = 0
+            If BELABOX_2_Found = 0 Then BELABOX_2_Uptime = 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             ' Uptime
             If serverSelection%% = 0 Or serverSelection%% = 1 Then
@@ -5113,188 +5615,8 @@ Sub Multi1_CMD_LBR_3
 
 End Sub
 
-Sub Multi1_CMD_LBR_4z (serverType As String)
-    ' Only called when serverSelection%% = 2 otherwise LBR malfuntions with mixed servers
-
-    If Timer_Fail_Stream1 = 0 And Timer_Fail_Stream2 = 0 Then
-
-        ' LBR_Delay streams 1+2
-
-        Select Case serverType$
-            Case "SRT"
-                Select Case MediaSource1TimeMSOffset
-                    Case 960 To 1040, 0
-                        If Server_1 = "SRT" Then LBR_Delay_Minus = 1
-                End Select
-                Select Case MediaSource2TimeMSOffset
-                    Case 960 To 1040, 0
-                        If Server_2 = "SRT" Then LBR_Delay_Minus = 1
-                End Select
-            Case "SLS"
-                ' Bitrate can be used here. Case 960 - 1040 is invalid.
-                Select Case SLS_Bitrate1
-                    Case Is > SLS_BitrateLow1, 0
-                        If Server_1 = "SLS" Then LBR_Delay_Minus = 1
-                End Select
-                ' Bitrate can be used here. Case 960 - 1040 is invalid.
-                Select Case SLS_Bitrate2
-                    Case Is > SLS_BitrateLow2, 0
-                        If Server_2 = "SLS" Then LBR_Delay_Minus = 1
-                End Select
-            Case "NGINX"
-                ' Bitrate can be used here. Case 960 - 1040 is invalid.
-                Select Case RTMP_Bitrate1
-                    Case Is > RTMP_BitrateLow1, 0
-                        If Server_1 = "NGINX" Then LBR_Delay_Minus = 1
-                End Select
-                ' Bitrate can be used here. Case 960 - 1040 is invalid.
-                Select Case RTMP_Bitrate2
-                    Case Is > RTMP_BitrateLow2, 0
-                        If Server_2 = "NGINX" Then LBR_Delay_Minus = 1
-                End Select
-        End Select
-
-
-        If LBR_Delay_Plus = 1 Then
-            LBR_Delay = LBR_Delay + 1: If LBR_Delay > LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total
-        ElseIf LBR_Delay_Minus = 1 Then
-            LBR_Delay = LBR_Delay - 1: If LBR_Delay <= 0 Then LBR_Delay = 0
-        End If
-
-
-    Else
-
-        ' LBR_Delay stream 1 or 2
-
-        Select Case serverType$
-            Case "SRT"
-                If Timer_Fail_Stream1 = 0 Then
-                    Select Case MediaSource1TimeMSOffset
-                        Case 960 To 1040, 0
-                            If Server_1 = "SRT" Then LBR_Delay_Minus = 1
-                    End Select
-                End If
-
-                If Timer_Fail_Stream2 = 0 Then
-                    Select Case MediaSource2TimeMSOffset
-                        Case 960 To 1040, 0
-                            If Server_2 = "SRT" Then LBR_Delay_Minus = 1
-                    End Select
-                End If
-            Case "SLS"
-                ' Bitrate can be used here. Case 960 - 1040 is invalid.
-                If Timer_Fail_Stream1 = 0 Then
-                    Select Case SLS_Bitrate1
-                        Case Is > SLS_BitrateLow1, 0
-                            If Server_1 = "SLS" Then LBR_Delay_Minus = 1
-                    End Select
-                End If
-                ' Bitrate can be used here. Case 960 - 1040 is invalid.
-                If Timer_Fail_Stream2 = 0 Then
-                    Select Case SLS_Bitrate2
-                        Case Is > SLS_BitrateLow2, 0
-                            If Server_2 = "SLS" Then LBR_Delay_Minus = 1
-                    End Select
-                End If
-            Case "NGINX"
-                ' Bitrate can be used here. Case 960 - 1040 is invalid.
-                If Timer_Fail_Stream1 = 0 Then
-                    Select Case RTMP_Bitrate1
-                        Case Is > RTMP_BitrateLow1, 0
-                            If Server_1 = "NGINX" Then LBR_Delay_Minus = 1
-                    End Select
-                End If
-                ' Bitrate can be used here. Case 960 - 1040 is invalid.
-                If Timer_Fail_Stream2 = 0 Then
-                    Select Case RTMP_Bitrate2
-                        Case Is > RTMP_BitrateLow2, 0
-                            If Server_2 = "NGINX" Then LBR_Delay_Minus = 1
-                    End Select
-                End If
-        End Select
-
-        If LBR_Delay_Plus = 1 Then LBR_Delay = LBR_Delay + 1: If LBR_Delay > LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total
-        If LBR_Delay_Minus = 1 Then LBR_Delay = LBR_Delay - 1: If LBR_Delay <= 0 Then LBR_Delay = 0
-
-    End If
-
-
-
-    LBR_Delay_Minus = 0
-    LBR_Delay_Plus = 0
-
-
-    If serverSelection%% = 0 Or serverSelection%% = 2 Then
-
-        If CooldownActive = 2 And CooldownLog = 0 Then
-            CooldownActive = 0
-
-            ' Switch to Low Bandwidth Scene #2 end
-            On Error GoTo App_Fail
-            If SceneLBActive Then ' LBR fix Scene #2 end
-                If _FileExists(outputLB2 + "png") Then Name outputLB2 + "png" As outputLB_Temp2 + "png"
-                If _FileExists(outputLB2 + "gif") Then Name outputLB2 + "gif" As outputLB_Temp2 + "gif"
-
-                ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
-                If streamsUp <> "0" And __returnPreviousScene = 1 And __returnPreviousSceneRemember = 0 Then
-                    If Right$(Scene_Current, 4) = " LBR" Or Right$(previousScene, 4) = " LBR" Then
-                        ' titleScene1 cannot be changed so previousScene is used to change to LBR scene
-
-                        If streamsUp = "2" Then
-                            If previousScene <> titleScene2 Or Scene_Current <> titleScene2 Then
-                                SRR = 1
-                            End If
-                        End If
-
-                        If streamsUp = "12" Then
-                            If previousScene <> titleScene12 Or Scene_Current <> titleScene12 Then
-                                SRR = 1
-                            End If
-                        End If
-
-                    End If
-                End If
-
-                If SRR = 1 Then ' previousScene is current scene name so " LBR" needs to be removed from the end
-                    If Right$(previousScene, 4) = " LBR" Then Shell _Hide _DontWait shell_cmd_1 + Mid$(previousScene, 1, Len(previousScene) - 4) + shell_cmd_2
-                    ' titleScene change should not be permanent when ReturnPreviousSceneRemember=false, so use titleScene Temp to revert
-                    titleScene1 = titleScene1Temp: titleScene2 = titleScene2Temp: titleScene12 = titleScene12Temp
-                    SRR = 0
-                Else
-                    ' Change scene for multi camera
-                    ' These two lines were the only code prior to LBR fix
-                    If Scene_Current = titleScene2 Then Shell _Hide _DontWait shell_cmd_1 + titleScene2 + shell_cmd_2
-                    If Scene_Current = titleScene12 Then Shell _Hide _DontWait shell_cmd_1 + titleScene12 + shell_cmd_2
-                End If
-
-            End If
-            On Error GoTo 0
-
-            If tmpFileRestore = 1 Then
-                tmpFileRestore = 0
-            Else
-                If __FileStatusOutput = 1 Then statusOutputToFile "[FULL BANDWIDTH]:[CAMERA #2] (" + _Trim$(Str$(CooldownDuration)) + " sec)"
-                If ConnectionsLog Then statusConnectionsLogToFile "[INFO] Bandwidth restored for stream #2, " + _Trim$(Str$(ConnectionsLog1Count)) + " times (" + _Trim$(Str$(CooldownDuration)) + " sec)"
-            End If
-            ' Reset low bitrate duration seconds count
-            CooldownDuration = 0
-        End If
-
-    End If
-
-End Sub
-
 Sub Multi1_CMD_LBR_4
     ' Can only be called once per second else LBR malfuntions with mixed servers
-
-    SetCaption DebugTemp1LB, "LBR_Delay_Minus before"
-    SetCaption DebugTemp1LB2, Str$(LBR_Delay_Minus)
-    SetCaption DebugTemp2LB, "LBR_Delay_Plus before"
-    SetCaption DebugTemp2LB2, Str$(LBR_Delay_Plus)
-    'SetCaption DebugTemp3LB, "MediaSource1TimeLog"
-    'SetCaption DebugTemp3LB2, Str$(MediaSource1TimeLog)
-    'SetCaption DebugTemp4LB, "RTMP_Uptime1"
-    'SetCaption DebugTemp4LB2, Str$(RTMP_Uptime1)
 
     If Timer_Fail_Stream1 = 0 And Timer_Fail_Stream2 = 0 Then
 
@@ -5337,62 +5659,51 @@ Sub Multi1_CMD_LBR_4
 
         ' LBR_Delay stream 1 or 2
 
-        Select Case serverType$
-            Case "SRT"
-                If Timer_Fail_Stream1 = 0 Then
-                    Select Case MediaSource1TimeMSOffset
-                        Case 960 To 1040, 0
-                            If Server_1 = "SRT" Then LBR_Delay_Minus = 1
-                    End Select
-                End If
-
-                If Timer_Fail_Stream2 = 0 Then
-                    Select Case MediaSource2TimeMSOffset
-                        Case 960 To 1040, 0
-                            If Server_2 = "SRT" Then LBR_Delay_Minus = 1
-                    End Select
-                End If
-            Case "SLS"
-                ' Bitrate can be used here. Case 960 - 1040 is invalid.
-                If Timer_Fail_Stream1 = 0 Then
-                    Select Case SLS_Bitrate1
-                        Case Is > SLS_BitrateLow1, 0
-                            If Server_1 = "SLS" Then LBR_Delay_Minus = 1
-                    End Select
-                End If
-                ' Bitrate can be used here. Case 960 - 1040 is invalid.
-                If Timer_Fail_Stream2 = 0 Then
-                    Select Case SLS_Bitrate2
-                        Case Is > SLS_BitrateLow2, 0
-                            If Server_2 = "SLS" Then LBR_Delay_Minus = 1
-                    End Select
-                End If
-            Case "NGINX"
-                ' Bitrate can be used here. Case 960 - 1040 is invalid.
-                If Timer_Fail_Stream1 = 0 Then
-                    Select Case RTMP_Bitrate1
-                        Case Is > RTMP_BitrateLow1, 0
-                            If Server_1 = "NGINX" Then LBR_Delay_Minus = 1
-                    End Select
-                End If
-                ' Bitrate can be used here. Case 960 - 1040 is invalid.
-                If Timer_Fail_Stream2 = 0 Then
-                    Select Case RTMP_Bitrate2
-                        Case Is > RTMP_BitrateLow2, 0
-                            If Server_2 = "NGINX" Then LBR_Delay_Minus = 1
-                    End Select
-                End If
-        End Select
+        If Timer_Fail_Stream1 = 0 Then
+            Select Case MediaSource1TimeMSOffset
+                Case 960 To 1040, 0
+                    If Server_1 = "SRT" Then LBR_Delay_Minus = 1
+            End Select
+        End If
+        If Timer_Fail_Stream2 = 0 Then
+            Select Case MediaSource2TimeMSOffset
+                Case 960 To 1040, 0
+                    If Server_2 = "SRT" Then LBR_Delay_Minus = 1
+            End Select
+        End If
+        ' Bitrate can be used here. Case 960 - 1040 is invalid.
+        If Timer_Fail_Stream1 = 0 Then
+            Select Case SLS_Bitrate1
+                Case Is > SLS_BitrateLow1, 0
+                    If Server_1 = "SLS" Then LBR_Delay_Minus = 1
+            End Select
+        End If
+        ' Bitrate can be used here. Case 960 - 1040 is invalid.
+        If Timer_Fail_Stream2 = 0 Then
+            Select Case SLS_Bitrate2
+                Case Is > SLS_BitrateLow2, 0
+                    If Server_2 = "SLS" Then LBR_Delay_Minus = 1
+            End Select
+        End If
+        ' Bitrate can be used here. Case 960 - 1040 is invalid.
+        If Timer_Fail_Stream1 = 0 Then
+            Select Case RTMP_Bitrate1
+                Case Is > RTMP_BitrateLow1, 0
+                    If Server_1 = "NGINX" Then LBR_Delay_Minus = 1
+            End Select
+        End If
+        ' Bitrate can be used here. Case 960 - 1040 is invalid.
+        If Timer_Fail_Stream2 = 0 Then
+            Select Case RTMP_Bitrate2
+                Case Is > RTMP_BitrateLow2, 0
+                    If Server_2 = "NGINX" Then LBR_Delay_Minus = 1
+            End Select
+        End If
 
         If LBR_Delay_Plus = 1 Then LBR_Delay = LBR_Delay + 1: If LBR_Delay > LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total
         If LBR_Delay_Minus = 1 Then LBR_Delay = LBR_Delay - 1: If LBR_Delay <= 0 Then LBR_Delay = 0
 
     End If
-
-    SetCaption DebugTemp3LB, "LBR_Delay_Minus after"
-    SetCaption DebugTemp3LB2, Str$(LBR_Delay_Minus)
-    SetCaption DebugTemp4LB, "LBR_Delay_Plus after"
-    SetCaption DebugTemp4LB2, Str$(LBR_Delay_Plus)
 
 
     LBR_Delay_Minus = 0
@@ -5459,19 +5770,71 @@ Sub Multi1_CMD_LBR_4
 
 End Sub
 
+Sub DummyServer (DummyServerSelection$)
+
+    ' Dummy server for testing
+    Server_Dummy_Time = Server_Dummy_Time + 1: If Server_Dummy_Time >= 30 Then Server_Dummy_Time = 0
+    If Server_Dummy_Time <= 15 Then
+        ' Server online
+        Select Case UCase$(DummyServerSelection$)
+            Case "BELABOX1", "BELABOX2"
+                sls_stats_dummy.xml = "{" + c10
+                sls_stats_dummy.xml = sls_stats_dummy.xml + "  " + c34 + "publishers" + c34 + ": {" + c34 + "publish/live/stream1" + c34 + ": {" + c34 + "connected" + c34 + ": true, " + c34 + "latency" + c34 + ": 2000, " + c34 + "network" + c34 + ": 5365, " + c34 + "bitrate" + c34 + ": 5355, " + c34 + "rtt" + c34 + ": 42, " + c34 + "dropped_pkts" + c34 + ": 0}}," + c10
+                sls_stats_dummy.xml = sls_stats_dummy.xml + "  " + c34 + "consumers" + c34 + ": [" + c10
+                sls_stats_dummy.xml = sls_stats_dummy.xml + "    {" + c34 + "latency" + c34 + ": 200, " + c34 + "network" + c34 + ": 5397, " + c34 + "bitrate" + c34 + ": 5397, " + c34 + "rtt" + c34 + ": 37, " + c34 + "dropped_pkts" + c34 + ": 0}" + c10
+                sls_stats_dummy.xml = sls_stats_dummy.xml + "  ]" + c10 + "}"
+            Case "SLS1", "SLS2"
+                sls_stats_dummy.xml = "{" + c34 + "publishers" + c34 + ":{" + c34 + "publish/live/stream1" + c34 + ":{" + c34 + "bitrate" + c34 + ":914," + c34 + "bytesRcvDrop" + c34 + ":1708160," + c34 + "bytesRcvLoss" + c34 + ":0," + c34 + "mbpsBandwidth" + c34 + ":10.0," + c34 + "mbpsRecvRate" + c34 + ":0.0," + c34 + "msRcvBuf" + c34 + ":1083129856," + c34 + "pktRcvDrop" + c34 + ":0," + c34 + "pktRcvLoss" + c34 + ":0," + c34 + "rtt" + c34 + ":0.0," + c34 + "uptime" + c34 + ":15}}," + c34 + "status" + c34 + ":" + c34 + "ok" + c34 + "}"
+        End Select
+        Select Case UCase$(DummyServerSelection$)
+            Case "BELABOX1"
+                sls_stats.xml = "": sls_stats.xml = sls_stats_dummy.xml
+            Case "BELABOX2"
+                sls_stats_2.xml = "": sls_stats_2.xml = sls_stats_dummy.xml
+            Case "SLS1"
+                sls_stats.xml = "": sls_stats.xml = sls_stats_dummy.xml
+            Case "SLS2"
+                sls_stats_2.xml = "": sls_stats_2.xml = sls_stats_dummy.xml
+        End Select
+    Else
+        ' Server offline
+        Select Case UCase$(DummyServerSelection$)
+            Case "BELABOX1", "BELABOX2"
+                sls_stats_dummy.xml = "{" + c10
+                sls_stats_dummy.xml = sls_stats_dummy.xml + "  " + c34 + "publishers" + c34 + ": {" + c34 + "publish/live/stream1" + c34 + ": {" + c34 + "connected" + c34 + ": false, " + c34 + "latency" + c34 + ": 0, " + c34 + "network" + c34 + ": 0, " + c34 + "bitrate" + c34 + ": 0, " + c34 + "rtt" + c34 + ": 0, " + c34 + "dropped_pkts" + c34 + ": 0}}," + c10
+                sls_stats_dummy.xml = sls_stats_dummy.xml + "  " + c34 + "consumers" + c34 + ": [" + c10
+                sls_stats_dummy.xml = sls_stats_dummy.xml + "  ]" + c10
+                sls_stats_dummy.xml = sls_stats_dummy.xml + "}"
+            Case "SLS1", "SLS2"
+                sls_stats_dummy.xml = "{" + c34 + "publishers" + c34 + ":{}," + c34 + "status" + c34 + ":" + c34 + "ok" + c34 + "}"
+        End Select
+        Select Case UCase$(DummyServerSelection$)
+            Case "BELABOX1"
+                sls_stats.xml = "": sls_stats.xml = sls_stats_dummy.xml
+            Case "BELABOX2"
+                sls_stats_2.xml = "": sls_stats_2.xml = sls_stats_dummy.xml
+            Case "SLS1"
+                sls_stats.xml = "": sls_stats.xml = sls_stats_dummy.xml
+            Case "SLS2"
+                sls_stats_2.xml = "": sls_stats_2.xml = sls_stats_dummy.xml
+        End Select
+    End If
+
+End Sub
+
 Sub Timer01
     ' Timer01: ------------------------------------------------------------------------------------------------------------------------------
     td_update = Timer(.001) - timer1
     timer1 = Timer(.001)
 
-    'SetCaption DebugTemp1LB, "MediaSource1TimeMS - MediaSource1TimeLog"
-    'SetCaption DebugTemp1LB2, Str$(MediaSource1TimeMS - MediaSource1TimeLog)
-    'SetCaption DebugTemp2LB, "MediaSource1TimeMS"
-    'SetCaption DebugTemp2LB2, Str$(MediaSource1TimeMS)
-    'SetCaption DebugTemp3LB, "MediaSource1TimeLog"
-    'SetCaption DebugTemp3LB2, Str$(MediaSource1TimeLog)
-    'SetCaption DebugTemp4LB, "RTMP_Uptime1"
-    'SetCaption DebugTemp4LB2, Str$(RTMP_Uptime1)
+    'SetCaption DebugTemp1LB, "" ' Temp
+    'SetCaption DebugTemp1LB2, ' Temp
+    'SetCaption DebugTemp2LB, "" ' Temp
+    'SetCaption DebugTemp2LB2, ' Temp
+    'SetCaption DebugTemp3LB, "" ' Temp
+    'SetCaption DebugTemp3LB2, ' Temp
+    'SetCaption DebugTemp4LB, "" ' Temp
+    'SetCaption DebugTemp4LB2, ' Temp
 
     CooldownLog = CooldownLog - 1
     If CooldownLog < 0 Then CooldownLog = 0
@@ -5482,7 +5845,7 @@ Sub Timer01
 
     ' Count how many seconds stream has been running at low bitrate
     If CooldownLog Then CooldownDuration = CooldownDuration + 1
-    If CooldownDuration > 32400 Then CooldownDuration = 32400
+    If CooldownDuration > Timer_Limit Then CooldownDuration = Timer_Limit
 
     ' Get Media Source times (1 stream) ------------------------------------------------------------------------------------------------------------------------------
     If __MultiCameraSwitch = 0 Then
@@ -5544,6 +5907,23 @@ Sub Timer01
             tIPPing2 = Timer(.001)
             tIPPingOut = (tIPPing2 - tIPPing1)
             On Error GoTo 0
+
+            ' Check if obs-websocket-http is still connected and attempt to force close & reopen if it's not
+            If OS = "WINDOWS" And _FileExists(HTTP_File) Then
+                If HTTP_Enabled = "true" Then
+                    Shell _Hide CMD_EXE_HTTP + c34 + "http://" + HTTP_Bind_Address + ":" + HTTP_Bind_Port + "/call/GetVersion" + c34 + " -o " + c34 + filePrevious_ms + c34
+                    Open filePrevious_ms For Binary As #128
+                    JSON = Space$(LOF(128))
+                    Get #128, , JSON
+                    Close #128
+                    If GetKey("obsWebSocketVersion", JSON) = "" Then
+                        Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
+                        _Delay 1
+                        Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
+                    End If
+                End If
+            End If
+
         End If
     End If
 
@@ -5554,7 +5934,7 @@ Sub Timer01
     If MediaSource1Time <> 0 Or MediaSource2Time <> 0 And RIST_MediaSource1Time_Count <= 4 And RIST_MediaSource2Time_Count <= 4 Then Timer_Fail = 0 ' SRT ' RIST mode
 
     If MediaSource1Time = 0 And MediaSource2Time = 0 And srt_warmup = 1 Then Timer_Fail = Timer_Fail + 1 ' SRT
-    If Timer_Fail > 32400 Then Timer_Fail = 32400
+    If Timer_Fail > Timer_Limit Then Timer_Fail = Timer_Limit
 
     ' Fail icon
     If Timer_Fail >= Stream_Fail_Delay Then
@@ -5621,20 +6001,31 @@ Sub Timer01
     End If
 
     ' Display IP ping or SRT Live Server ping
-    If SLS_Active = 0 Then TIMEms tIPPingOut, 0 Else TIMEms SLS_PingOut, 0
-    If Val(tout) >= .3 Then Control(tIPPingOutLB).ForeColor = RED_WARNING Else Control(tIPPingOutLB).ForeColor = GREEN_OK
+    tout = "": tout_2 = ""
+    If SLS_Active = 0 Then TIMEms tIPPingOut, 0, 0
+    If SLS_Active = 1 And SLS_2_Active = 0 Then TIMEms SLS_PingOut, 0, 0
+    If SLS_Active = 1 And SLS_2_Active = 1 Then TIMEms SLS_PingOut, 0, 0: TIMEms SLS_PingOut_2, 0, 1 ' SLS IP #2 (v1.0.1)
+
+    If Val(tout) >= .3 Or Val(tout_2) >= .3 Then Control(tIPPingOutLB).ForeColor = RED_WARNING Else Control(tIPPingOutLB).ForeColor = GREEN_OK
+    CooldownLogWarn = CooldownLogWarn - 1: If CooldownLogWarn < 0 Then CooldownLogWarn = 0
     Select Case SLS_Active
         Case 0
-            If ConnectionsLog And Val(tout) >= .25 And CooldownLog = 0 Then statusConnectionsLogToFile "[WARN] IP ping exceeding 250ms": CooldownLog = CooldownLogTotal
+            If CooldownLogWarn <= 0 Then If ConnectionsLog And Val(tout) >= .3 And CooldownLog = 0 Then statusConnectionsLogToFile "[WARN] IP ping exceeding 300ms": CooldownLog = CooldownLogTotal: CooldownLogWarn = 60
         Case 1
-            If ConnectionsLog And Val(tout) >= .35 And CooldownLog = 0 Then statusConnectionsLogToFile "[WARN] SLS ping exceeding 350ms": CooldownLog = CooldownLogTotal
+            If CooldownLogWarn <= 0 Then If ConnectionsLog And Val(tout) >= .4 And CooldownLog = 0 Then statusConnectionsLogToFile "[WARN] SLS ping exceeding 400ms": CooldownLog = CooldownLogTotal: CooldownLogWarn = 60
+            If CooldownLogWarn <= 0 Then If ConnectionsLog And Val(tout_2) >= .4 And CooldownLog = 0 Then statusConnectionsLogToFile "[WARN] SLS #2 ping exceeding 400ms": CooldownLog = CooldownLogTotal:: CooldownLogWarn = 60
     End Select
-    SetCaption (tIPPingOutLB), LTrim$(Str$(Val(tout) * 1000)) + " ms"
 
-    TIMEms tPingOut, 0
+    If SLS_2_Active <> 1 Then
+        SetCaption (tIPPingOutLB), LTrim$(Str$(Val(tout) * 1000)) + " ms"
+    Else
+        SetCaption (tIPPingOutLB), LTrim$(Str$(Val(tout) * 1000)) + " / " + LTrim$(Str$(Val(tout_2) * 1000)) + " ms" ' SLS IP #2 (v1.0.1)
+    End If
+
+    TIMEms tPingOut, 0, 0
     If Val(tout) >= .35 Then Control(tPingOutLB).ForeColor = RED_WARNING Else Control(tPingOutLB).ForeColor = GREEN_OK
-    If ConnectionsLog And Val(tout) >= .5 And CooldownLog = 0 Then statusConnectionsLogToFile "[WARN] WebSocket ping exceeding 500ms": CooldownLog = CooldownLogTotal
-    If Val(tout) >= .5 And CooldownLog = 0 Then SetCaption StatusLB, "WebSocket ping too high, try another " + c34 + "NodejsFileSystem" + c34 + " if this persists...": updateDisplay = 1 ' Display error if WebSocket ping is too high
+    If CooldownLogWarn <= 0 Then If ConnectionsLog And Val(tout) >= .5 And CooldownLog = 0 Then statusConnectionsLogToFile "[WARN] WebSocket ping exceeding 500ms": CooldownLog = CooldownLogTotal: CooldownLogWarn = 60
+    If Val(tout) >= .5 And CooldownLog = 0 Then SetCaption StatusLB, "WebSocket/Server ping very high...": updateDisplay = 1 ' Display error if WebSocket ping is too high
     SetCaption (tPingOutLB), LTrim$(Str$(Val(tout) * 1000)) + " ms"
 
 
@@ -5734,14 +6125,14 @@ Sub Timer01
 
     If srt_warmup = 0 Then
         Control(td_updateLB).ForeColor = GREEN_OK
-        SetCaption (td_updateLB), "1.000 sec " ' Fake time displayed on startup just for 1 second
+        SetCaption (td_updateLB), "1.000 sec " ' Dummy time displayed on startup just for 1 second
     End If
 
     If srt_warmup = 1 Then
         If td_update <= 0.001 Then td_update = 0.001
         If td_update >= 9.999 Then td_update = 9.999
         If td_update <= 0.989 Or td_update >= 1.011 Then Control(td_updateLB).ForeColor = RED_WARNING Else Control(td_updateLB).ForeColor = GREEN_OK
-        TIMEms td_update, 0
+        TIMEms td_update, 0, 0
         SetCaption (td_updateLB), tout + " sec "
     End If
 
@@ -5774,8 +6165,14 @@ Sub Timer01
     If RTMP_2_Enabled = "true" Then Server_Display2 = "  //  [NGINX]"
     If SLS_1_Enabled = "false" And RTMP_1_Enabled = "false" Then Server_Display1 = "  //  [SRT]"
     If SLS_2_Enabled = "false" And RTMP_2_Enabled = "false" Then Server_Display2 = "  //  [SRT]"
-    If Timer_Fail_Stream1 Then SetCaption (Stream1), "Stream #1" + Server_Display1 + " ": Control(Stream1).ForeColor = RED_FAIL Else SetCaption (Stream1), "Stream #1" + Server_Display1: Control(Stream1).ForeColor = GREEN_STREAM_OK
-    If Timer_Fail_Stream2 Then SetCaption (Stream2), "Stream #2" + Server_Display2 + " ": Control(Stream2).ForeColor = RED_FAIL Else SetCaption (Stream2), "Stream #2" + Server_Display2: Control(Stream2).ForeColor = GREEN_STREAM_OK
+    If BELABOX_1_Found = 1 Or BELABOX_1_Offline = 1 Then Server_Display1 = "  //  [BELABOX]"
+    If BELABOX_2_Found = 1 Or BELABOX_2_Offline = 1 Then Server_Display2 = "  //  [BELABOX]"
+
+    If SLS_2_Active = 1 And SLS_1_Enabled = "true" Then Stream_Title_1 = "Server" Else Stream_Title_1 = "Stream" ' SLS IP #2 (v1.0.1)
+    If SLS_2_Active = 1 And SLS_2_Enabled = "true" Then Stream_Title_2 = "Server" Else Stream_Title_2 = "Stream" ' SLS IP #2 (v1.0.1)
+    If Timer_Fail_Stream1 Then SetCaption (Stream1), Stream_Title_1 + " #1" + Server_Display1 + " ": Control(Stream1).ForeColor = RED_FAIL Else SetCaption (Stream1), Stream_Title_1 + " #1" + Server_Display1: Control(Stream1).ForeColor = GREEN_STREAM_OK
+    If Timer_Fail_Stream2 Then SetCaption (Stream2), Stream_Title_2 + " #2" + Server_Display2 + " ": Control(Stream2).ForeColor = RED_FAIL Else SetCaption (Stream2), Stream_Title_2 + " #2" + Server_Display2: Control(Stream2).ForeColor = GREEN_STREAM_OK
+
 
     If __MultiCameraSwitch = 1 Then
         SetCaption (MultiCameraSwitchStatusLB), "Enabled"
@@ -5784,14 +6181,14 @@ Sub Timer01
         ' temp1_stream1 variables
         If srt_warmup = 1 Then Timer_Fail_Stream1 = Timer_Fail_Stream1 + 1
         If MediaSource1Time <> 0 And RIST_MediaSource1Time_Count <= 4 Then Timer_Fail_Stream1 = 0: Timer_Fail = 0 ' SRT ' RIST mode
-        If Timer_Fail_Stream1 > 32400 Then Timer_Fail_Stream1 = 32400
-        If Timer_Fail_Output1 > 32400 Then Timer_Fail_Output1 = 32400
+        If Timer_Fail_Stream1 > Timer_Limit Then Timer_Fail_Stream1 = Timer_Limit
+        If Timer_Fail_Output1 > Timer_Limit Then Timer_Fail_Output1 = Timer_Limit
 
         ' temp1_stream2 variables
         If srt_warmup = 1 Then Timer_Fail_Stream2 = Timer_Fail_Stream2 + 1
         If MediaSource2Time <> 0 And RIST_MediaSource2Time_Count <= 4 Then Timer_Fail_Stream2 = 0: Timer_Fail = 0 ' SRT ' RIST mode
-        If Timer_Fail_Stream2 > 32400 Then Timer_Fail_Stream2 = 32400
-        If Timer_Fail_Output2 > 32400 Then Timer_Fail_Output2 = 32400
+        If Timer_Fail_Stream2 > Timer_Limit Then Timer_Fail_Stream2 = Timer_Limit
+        If Timer_Fail_Output2 > Timer_Limit Then Timer_Fail_Output2 = Timer_Limit
 
         If Timer_Fail_Stream1 >= Stream_Fail_Delay Then Control(Timer_Fail_Stream1LB).ForeColor = RED_FAIL Else If Timer_Fail_Stream1 >= 1 Then Control(Timer_Fail_Stream1LB).ForeColor = RED_WARNING Else Control(Timer_Fail_Stream1LB).ForeColor = GREEN_OK
         If __FileStatusOutput = 1 Or ConnectionsLog = 1 Then If Timer_Fail_Stream1 >= 1 Then Timer_Fail_Output1 = Timer_Fail_Stream1
@@ -5802,9 +6199,10 @@ Sub Timer01
         SetCaption (Timer_Fail_Stream2LB), calc_srt$(Timer_Fail_Stream2, 1) + calc_srt_sec$
 
         If MediaSource1Time <= 2 Then Control(Uptime_Stream_1LB).ForeColor = RED_FAIL Else If MediaSource1Time >= 3 And MediaSource1Time < 10 Then Control(Uptime_Stream_1LB).ForeColor = RED_WARNING Else Control(Uptime_Stream_1LB).ForeColor = GREEN_OK
-        SetCaption (Uptime_Stream_1LB), calc_srt$(MediaSource1Time, 1) + calc_srt_sec$ ' SRT
+
+        If BELABOX_1_Found = 1 And MediaSource1Time >= 1 And MediaSource1Time <= 10 Then SetCaption (Uptime_Stream_1LB), calc_srt$(MediaSource1Time, 1) + calc_srt_sec$ + "*" Else SetCaption (Uptime_Stream_1LB), calc_srt$(MediaSource1Time, 1) + calc_srt_sec$ ' SRT ' SLS IP #2 (v1.0.1)
         If MediaSource2Time <= 2 Then Control(Uptime_Stream_2LB).ForeColor = RED_FAIL Else If MediaSource2Time >= 3 And MediaSource2Time < 10 Then Control(Uptime_Stream_2LB).ForeColor = RED_WARNING Else Control(Uptime_Stream_2LB).ForeColor = GREEN_OK
-        SetCaption (Uptime_Stream_2LB), calc_srt$(MediaSource2Time, 1) + calc_srt_sec$ ' SRT
+        If BELABOX_2_Found = 1 And MediaSource1Time >= 1 And MediaSource1Time <= 10 Then SetCaption (Uptime_Stream_2LB), calc_srt$(MediaSource2Time, 1) + calc_srt_sec$ + "*" Else SetCaption (Uptime_Stream_2LB), calc_srt$(MediaSource2Time, 1) + calc_srt_sec$ ' SRT ' SLS IP #2 (v1.0.1)
 
         Control(StreamLightLB).Hidden = True
         If MediaSource1Time <= 1 Then
@@ -5839,11 +6237,13 @@ Sub Timer01
         ' Stream #1 only
         If srt_warmup = 1 Then Timer_Fail_Stream1 = Timer_Fail_Stream1 + 1
         If MediaSource1Time <> 0 And RIST_MediaSource1Time_Count <= 4 Then Timer_Fail_Stream1 = 0: Timer_Fail = 0 ' SRT ' RIST mode
-        If Timer_Fail_Stream1 > 32400 Then Timer_Fail_Stream1 = 32400
-        If Timer_Fail_Output1 > 32400 Then Timer_Fail_Output1 = 32400
+        If Timer_Fail_Stream1 > Timer_Limit Then Timer_Fail_Stream1 = Timer_Limit
+        If Timer_Fail_Output1 > Timer_Limit Then Timer_Fail_Output1 = Timer_Limit
 
         If MediaSource1Time <= 3 Then Control(Stream_UptimeLB).ForeColor = RED_FAIL Else If MediaSource1Time > 3 And MediaSource1Time < 10 Then Control(Stream_UptimeLB).ForeColor = RED_WARNING Else Control(Stream_UptimeLB).ForeColor = GREEN_OK
+        ' Stream #1 uptime
         SetCaption (Stream_UptimeLB), calc_srt$(MediaSource1Time, 1) + calc_srt_sec$ ' SRT
+        If BELABOX_1_Found = 1 And MediaSource1Time >= 1 And MediaSource1Time <= 10 Then SetCaption (Stream_UptimeLB), calc_srt$(MediaSource1Time, 1) + calc_srt_sec$ + "*" ' SRT ' SLS IP #2 (v1.0.1)
         If Timer_Fail_Stream1 >= Stream_Fail_Delay Then Control(Stream_Fail_TimerLB).ForeColor = RED_FAIL Else If Timer_Fail_Stream1 >= 1 Then Control(Stream_Fail_TimerLB).ForeColor = RED_WARNING Else Control(Stream_Fail_TimerLB).ForeColor = GREEN_OK
         If __FileStatusOutput = 1 Or ConnectionsLog = 1 Then If Timer_Fail_Stream1 >= 1 Then Timer_Fail_Output1 = Timer_Fail_Stream1
         SetCaption (Stream_Fail_TimerLB), calc_srt$(Timer_Fail_Stream1, 1) + calc_srt_sec$
@@ -5967,7 +6367,7 @@ Sub Timer01
         SetCaption mouseXLB2, "mouseX"
         SetCaption mouseYLB2, "mouseY"
         SetCaption __ERRORLINELB2, "_ERRORLINE"
-        TIMEms Debug_Timer, 0
+        TIMEms Debug_Timer, 0, 0
         SetCaption (Debug_Timer_SnapshotLB), tout + " sec "
         ' MS rate
         SetCaption ms_playLB, _Trim$(Str$((MediaSourceTimeMSOffsetDisplay))) + " ms "
@@ -6036,7 +6436,9 @@ Sub Timer01
                     End If
                 End If
             Case "1"
+                On Error GoTo App_Fail
                 _Dest _Console
+                On Error GoTo 0
                 If FullScreen Then
                     If HTTP_Enabled = "true" Then
                         Select Case HTTP_Access
@@ -6143,7 +6545,9 @@ Sub Timer01
 
                     End If
                 Case "1"
+                    On Error GoTo App_Fail
                     _Dest _Console
+                    On Error GoTo 0
                     If FullScreen Then
                         If HTTP_Enabled = "true" Then
                             Select Case HTTP_Access
@@ -6244,8 +6648,10 @@ Sub Timer01
 
     If __FileStatusOutput = 1 Then
         If __MultiCameraSwitch = 0 Then
+            If _Trim$(bitrateOutput1Display) = "" Then bitrateOutput1Display = "n/a"
             bitrateOutput = "Bitrate: (#1: " + _Trim$(bitrateOutput1Display) + ")"
         Else
+            If _Trim$(bitrateOutput1Display) = "" Then bitrateOutput1Display = "n/a": If _Trim$(bitrateOutput2Display) = "" Then bitrateOutput2Display = "n/a"
             bitrateOutput = "Bitrate: (#1: " + _Trim$(bitrateOutput1Display) + ") (#2: " + _Trim$(bitrateOutput2Display) + ")"
         End If
         statusBitrateToFile bitrateOutput
@@ -6468,6 +6874,13 @@ Sub Timer01
     End If
 
     If ErrorTestRunOnce = 1 Then ErrorTestRunOnce = 0
+
+    If PingLog = "true" Then
+        If Int(Timer / 60) <> PingLogTimer Then
+            PingLogTimer = Int(Timer / 60)
+            If ConnectionsLog Then statusConnectionsLogToFile "[DEBU] PING!"
+        End If
+    End If
 
     td_display = Timer(.001) - timer1
 End Sub
