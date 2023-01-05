@@ -68,18 +68,18 @@ If you also require **Loopy SRT Monitor** to function with **OBS WebSocket 4.9.1
 
 ## Option #2
 
-* Following installation, download and install [obs-websocket 4.9.1-compat](https://github.com/obsproject/obs-websocket/releases). Available in the **OBS** -> **Tools** menu should now be two independent settings, one for __4.x compat__, and one for __5.x__. Server Port numbers cannot be the same.
+* Following installation, download and install [obs-websocket 4.9.1-compat](https://github.com/obsproject/obs-websocket/releases). Available in the **OBS** -> **Tools** menu should now be two independent settings, one for _4.x compat_, and one for _5.x_. Server Port numbers cannot be the same.
 
 * To continue using **obs-websocket-js**, within the `Documents\Loopy SRT Monitor` folder, run `install.cmd` with option `1`. If not already downloaded, this will download the latest `obs-websocket-js` compatible with **OBS WebSocket 5.x**.
 
 * **Loopy SRT Monitor** configuration file `config.ini` must then be edited with the `WebSocketConnection` setting changed to `obs-websocket-js`.
 
-* To use `obs-websocket-http` however, follow the instructions in the installation and/or __readme.txt__ file and confirm `config.ini` contains `WebSocketConnection=obs-websocket-http`.
+* To use `obs-websocket-http` however, follow the instructions in the installation and/or _readme.txt_ file and confirm `config.ini` contains `WebSocketConnection=obs-websocket-http`.
 
 INSTALLATION
 ============
 
-[Quick Start Guide (Resolve "Test #6 of 10 failed")](https://github.com/loopy750/SRT-Stats-Monitor/blob/main/modifications/resources/quick_start_guide.md)
+[Quick Start Guide (Resolve "Test #6 of 10 failed")](../main/modifications/resources/quick_start_guide.md)
 -----------------
 
 OBS Studio
@@ -92,7 +92,7 @@ After installing OBS Websocket, create a password in OBS (Tools -> Websockets Se
 
 Node.js
 -------
-Following installation of Node.js, run __install.cmd__ within '__Documents\Loopy SRT Monitor__' to install "obs-websocket-js" and complete the installation.
+Following installation of Node.js, run _install.cmd_ within '_Documents\Loopy SRT Monitor_' to install "obs-websocket-js" and complete the installation.
 
 VLC 64-bit
 ----------
@@ -144,6 +144,9 @@ OS firewall and router settings may prevent connecting to your home PC from an e
 Investigate how to use your router's "Port Forwarding" setting for allowing connections to the selected port. For security reasons, this should only be enabled while in use. If port forwarding does not work for your connection, your ISP might have CG-NAT enabled for your service and/or certain ports blocked. Confirm whether or not this is the case, and if so, contact your ISP and ask that it be disabled.
 
 If you have been assigned a dynamic IP address from your ISP, [No-IP](https://www.noip.com/) is a great solution.
+
+[F.A.Q.](../main/modifications/resources/faq.md)
+-----------------
 
 ---
 
