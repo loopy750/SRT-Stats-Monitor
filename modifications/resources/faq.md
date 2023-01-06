@@ -15,5 +15,8 @@
 ### Q. **This software looks good, but doesn't do everything I want it to do, is there an alternative?**
 ##### A. There could be, I have little experience with other monitoring software. You can search online for 'NOALBS' to see if that suits your needs.
 
+### Q. Would this program run on a cloud virtual machine with 1 vCPU allocated and OBS running?
+##### A. Some basic testing was performed with AWS cloud virtualisation and 1 vCPU, and it was not enough to reliably run **Loopy SRT Monitor** while streaming with OBS.
+
 ### Q. **Are there any future plans to support more than two simultaneous streams?**
 ##### A. No.
