@@ -47,35 +47,6 @@ Known OBS SRT issues
 * [SRT streams have trouble connecting/reconnecting while Recording is running](https://github.com/obsproject/obs-studio/issues/4596)
 * [obs-websocket-http doesn't reconnect on connection loss](https://github.com/IRLToolkit/obs-websocket-http/issues/11)
 
-OBS WebSocket 5.x vs OBS WebSocket 4.x
-======================================
-
-**Loopy SRT Monitor** communicates with OBS via **OBS WebSocket**.
-
-**OBS WebSocket 5.x** is a first-party plugin available with **OBS 28 and newer**. Unfortunately some applications might not be compatible with **OBS WebSocket 5.x**.
-
-**Loopy SRT Monitor**, however, is compatible with both **OBS WebSocket 5.x** and **OBS WebSocket 4.9.1**, and will automatically detect and run whichever has been configured.
-
-If you still require compatibility with **OBS WebSocket 4.9.1**, simply download and install [obs-websocket 4.9.1-compat](https://github.com/obsproject/obs-websocket/releases).
-
-If you also require **Loopy SRT Monitor** to function with **OBS WebSocket 4.9.1** and/or **obs-websocket-js**, this allows you one of the following options:
-
-## Option #1
-
-* Following installation, Download and install [obs-websocket 4.9.1-compat](https://github.com/obsproject/obs-websocket/releases), and then, within the `Documents\Loopy SRT Monitor` folder, run `install.cmd` with option `2`. This will download `obs-websocket-js 4.0.3`, the last version to be compatible with **OBS WebSocket 4.x**.
-
-* **Loopy SRT Monitor** configuration file `config.ini` must then be edited with the `WebSocketConnection` setting changed to `obs-websocket-js`, as `obs-websocket-http` is not compatible with **OBS WebSocket 4.x**. Note that the default port used by **OBS WebSocket 4.x** is **4444**, and **4455** for **OBS WebSocket 5.x**.
-
-## Option #2
-
-* Following installation, download and install [obs-websocket 4.9.1-compat](https://github.com/obsproject/obs-websocket/releases). Available in the **OBS** -> **Tools** menu should now be two independent settings, one for _4.x compat_, and one for _5.x_. Server Port numbers cannot be the same.
-
-* To continue using **obs-websocket-js**, within the `Documents\Loopy SRT Monitor` folder, run `install.cmd` with option `1`. If not already downloaded, this will download the latest `obs-websocket-js` compatible with **OBS WebSocket 5.x**.
-
-* **Loopy SRT Monitor** configuration file `config.ini` must then be edited with the `WebSocketConnection` setting changed to `obs-websocket-js`.
-
-* To use `obs-websocket-http` however, follow the instructions in the installation and/or _readme.txt_ file and confirm `config.ini` contains `WebSocketConnection=obs-websocket-http`.
-
 INSTALLATION
 ============
 
@@ -88,10 +59,10 @@ This guide assumes you have OBS installed and have spent time streaming and an u
 
 OBS Websocket
 -------------
-After installing OBS Websocket, create a password in OBS (Tools -> Websockets Server Settings).
+After installing OBS Websocket, create a password in OBS (Tools -> Websocket Server Settings).
 
-Node.js
--------
+Node.js <sup>_(not required if using obs-websocket-http)_</sup>
+---------------------------------------------------------------
 Following installation of Node.js, run _install.cmd_ within '_Documents\Loopy SRT Monitor_' to install "obs-websocket-js" and complete the installation.
 
 VLC 64-bit
@@ -144,6 +115,35 @@ OS firewall and router settings may prevent connecting to your home PC from an e
 Investigate how to use your router's "Port Forwarding" setting for allowing connections to the selected port. For security reasons, this should only be enabled while in use. If port forwarding does not work for your connection, your ISP might have CG-NAT enabled for your service and/or certain ports blocked. Confirm whether or not this is the case, and if so, contact your ISP and ask that it be disabled.
 
 If you have been assigned a dynamic IP address from your ISP, [No-IP](https://www.noip.com/) is a great solution.
+
+OBS WebSocket 5.x vs OBS WebSocket 4.x
+======================================
+
+**Loopy SRT Monitor** communicates with OBS via **OBS WebSocket**.
+
+**OBS WebSocket 5.x** is a first-party plugin available with **OBS 28 and newer**. Unfortunately some applications might not be compatible with **OBS WebSocket 5.x**.
+
+**Loopy SRT Monitor**, however, is compatible with both **OBS WebSocket 5.x** and **OBS WebSocket 4.9.1**, and will automatically detect and run whichever has been configured.
+
+If you still require compatibility with **OBS WebSocket 4.9.1**, simply download and install [obs-websocket 4.9.1-compat](https://github.com/obsproject/obs-websocket/releases).
+
+If you also require **Loopy SRT Monitor** to function with **OBS WebSocket 4.9.1** and/or **obs-websocket-js**, this allows you one of the following options:
+
+## Option #1
+
+* Following installation, Download and install [obs-websocket 4.9.1-compat](https://github.com/obsproject/obs-websocket/releases), and then, within the `Documents\Loopy SRT Monitor` folder, run `install.cmd` with option `2`. This will download `obs-websocket-js 4.0.3`, the last version to be compatible with **OBS WebSocket 4.x**.
+
+* **Loopy SRT Monitor** configuration file `config.ini` must then be edited with the `WebSocketConnection` setting changed to `obs-websocket-js`, as `obs-websocket-http` is not compatible with **OBS WebSocket 4.x**. Note that the default port used by **OBS WebSocket 4.x** is **4444**, and **4455** for **OBS WebSocket 5.x**.
+
+## Option #2
+
+* Following installation, download and install [obs-websocket 4.9.1-compat](https://github.com/obsproject/obs-websocket/releases). Available in the **OBS** -> **Tools** menu should now be two independent settings, one for _4.x compat_, and one for _5.x_. Server Port numbers cannot be the same.
+
+* To continue using **obs-websocket-js**, within the `Documents\Loopy SRT Monitor` folder, run `install.cmd` with option `1`. If not already downloaded, this will download the latest `obs-websocket-js` compatible with **OBS WebSocket 5.x**.
+
+* **Loopy SRT Monitor** configuration file `config.ini` must then be edited with the `WebSocketConnection` setting changed to `obs-websocket-js`.
+
+* To use `obs-websocket-http` however, follow the instructions in the installation and/or _readme.txt_ file and confirm `config.ini` contains `WebSocketConnection=obs-websocket-http`.
 
 [F.A.Q.](../main/modifications/resources/faq.md)
 -----------------
