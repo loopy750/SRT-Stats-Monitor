@@ -1,4 +1,4 @@
-# Loopy SRT Stats Monitor v1.0.1 (04-Jan-2023)
+# Loopy SRT Stats Monitor v1.0.1 (09-Jan-2023)
 
 NOTE: If updating from a previous version !!!
 
@@ -10,11 +10,12 @@ SLSServerPort2=8181
 SLSServerStats2=stats
 ```
 
-- Added support for two separate SLS servers
+- Added support for two separate SLS/BELABOX servers
 - Added support for BELABOX cloud relay server
 - Added "Yami" OBS theme
 - Added "Grey" OBS theme
 - Automatically restart "obs-websocket-http" on lost connection [Windows]
 - Minor fixes with LBR Delay setting
+- Minor fixes with NGINX
 
 [Download](https://github.com/loopy750/SRT-Stats-Monitor/raw/beta/loopy_srt_monitor_v1.0.1_beta_setup.exe)
