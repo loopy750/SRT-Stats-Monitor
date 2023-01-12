@@ -108,7 +108,7 @@ Common Shared VerDate As String
 Common Shared VerPortable As String
 Common Shared bout As String
 Common Shared tout As String
-Common Shared tout_2 As String ' TIMEms optional second variable (v1.0.1)
+Common Shared tout_2 As String ' TIMEms optional second variable (v1.1.0)
 Common Shared Refresh_Request As Integer
 Common Shared RefreshDisplayRequest As Integer
 Common Shared ProgressCounter As Integer
@@ -199,6 +199,29 @@ Common Shared Leading_Zero As String
 Common Shared Server_Display1 As String
 Common Shared Server_Display2 As String
 
+' HTTP OpenClient
+Common Shared HTTP_Header As String
+Common Shared HTTP_Data As String
+Common Shared http_client As Single
+Common Shared HTTP_Port_Client As String
+Common Shared HTTP_Communication As String
+Common Shared HTTP_Server_KeepAlive As String
+Common Shared http_connect_timer As Integer
+' HTTP OpenClient Get
+Common Shared HTTP_Timer_GET As Single
+Common Shared HTTP_GET_a As String
+Common Shared HTTP_GET_a2 As String
+Common Shared HTTP_GET_i As Single
+Common Shared HTTP_GET_i2 As Single
+Common Shared HTTP_GET_i3 As Single
+Common Shared HTTP_GET_l As Single
+Common Shared HTTP_GET_d As String
+Common Shared HTTP_GET_d_2 As String
+Common Shared GetCurrentProgramScene.tmp As String ' Current scene
+Common Shared GetMediaInputStatus.tmp As String ' Scene 1
+Common Shared GetMediaInputStatus2.tmp As String ' Scene 1+2
+Common Shared GetVersion.tmp As String
+
 ' RIST mode
 Common Shared RIST_Fail_Mode_1 As String
 Common Shared RIST_Fail_Mode_2 As String
@@ -211,11 +234,11 @@ Common Shared RIST_MediaSource2Time_Count As Double
 Common Shared SLS_1_Enabled As String ' SLS1Enabled=true
 Common Shared SLS_2_Enabled As String ' SLS2Enabled=true
 Common Shared SLS_Server_IP As String ' ServerIP=127.0.0.1
-Common Shared SLS_Server_IP_2 As String ' ServerIP=127.0.0.1 ' SLS IP #2 (v1.0.1)
+Common Shared SLS_Server_IP_2 As String ' ServerIP=127.0.0.1 ' SLS IP #2 (v1.1.0)
 Common Shared SLS_Server_Port As String ' ServerPort=8181
-Common Shared SLS_Server_Port_2 As String ' ServerPort=8191 ' SLS IP #2 (v1.0.1)
+Common Shared SLS_Server_Port_2 As String ' ServerPort=8181 ' SLS IP #2 (v1.1.0)
 Common Shared SLS_Stats As String ' ServerStats=stats
-Common Shared SLS_Stats_2 As String ' ServerStats=stats ' SLS IP #2 (v1.0.1)
+Common Shared SLS_Stats_2 As String ' ServerStats=stats ' SLS IP #2 (v1.1.0)
 Common Shared SLS_Publisher1 As String ' ServerPublisher1=live/stream/stream1
 Common Shared SLS_Publisher2 As String ' ServerPublisher1=live/stream/stream2
 Common Shared SLS_BitrateLow1 As Single ' BitrateLow1=800
@@ -223,16 +246,16 @@ Common Shared SLS_BitrateLow2 As Single ' BitrateLow2=800
 Common Shared SLS_BitrateFail1 As Single ' BitratFail1=400
 Common Shared SLS_BitrateFail2 As Single ' BitrateFail2=400
 Common Shared SLS_Ping1 As Double
-Common Shared SLS_Ping1_2 As Double ' SLS IP #2 (v1.0.1)
+Common Shared SLS_Ping1_2 As Double ' SLS IP #2 (v1.1.0)
 Common Shared SLS_Ping2 As Double
-Common Shared SLS_Ping2_2 As Double ' SLS IP #2 (v1.0.1)
+Common Shared SLS_Ping2_2 As Double ' SLS IP #2 (v1.1.0)
 Common Shared SLS_PingOut As Double
-Common Shared SLS_PingOut_2 As Double ' SLS IP #2 (v1.0.1)
+Common Shared SLS_PingOut_2 As Double ' SLS IP #2 (v1.1.0)
 Common Shared SLS_Port_Client As String
-Common Shared SLS_Port_Client_2 As String ' SLS IP #2 (v1.0.1)
+Common Shared SLS_Port_Client_2 As String ' SLS IP #2 (v1.1.0)
 Common Shared SLS_EOL As String
 Common Shared SLS_Header As String
-Common Shared SLS_Header_2 As String ' SLS IP #2 (v1.0.1)
+Common Shared SLS_Header_2 As String ' SLS IP #2 (v1.1.0)
 Common Shared SLS_Timer_GET As Single
 Common Shared SLS_GET_a As String
 Common Shared SLS_GET_a2 As String
@@ -241,21 +264,21 @@ Common Shared SLS_GET_i2 As Single
 Common Shared SLS_GET_i3 As Single
 Common Shared SLS_GET_l As Single
 Common Shared SLS_GET_d As String
-Common Shared SLS_GET_d_2 As String ' SLS IP #2 (v1.0.1)
+Common Shared SLS_GET_d_2 As String ' SLS IP #2 (v1.1.0)
 Common Shared SLS_Bitrate1 As Single
 Common Shared SLS_Bitrate2 As Single
 Common Shared sls_client As Single
-Common Shared sls_client_2 As Single ' SLS IP #2 (v1.0.1)
+Common Shared sls_client_2 As Single ' SLS IP #2 (v1.1.0)
 Common Shared sls_stats.xml As String
-Common Shared sls_stats_2.xml As String ' SLS IP #2 (v1.0.1)
+Common Shared sls_stats_2.xml As String ' SLS IP #2 (v1.1.0)
 Common Shared SLS_streams_seek As Integer
 Common Shared SLS_streams_found As Integer
 Common Shared SLS_Uptime1 As Integer
 Common Shared SLS_Uptime2 As Integer
 Common Shared SLS_Active As _Byte
-Common Shared SLS_2_Active As _Byte ' SLS IP #2 (v1.0.1)
-Common Shared Stream_Title_1 As String ' SLS IP #2 (v1.0.1)
-Common Shared Stream_Title_2 As String ' SLS IP #2 (v1.0.1)
+Common Shared SLS_2_Active As _Byte ' SLS IP #2 (v1.1.0)
+Common Shared Stream_Title_1 As String ' SLS IP #2 (v1.1.0)
+Common Shared Stream_Title_2 As String ' SLS IP #2 (v1.1.0)
 Common Shared SLS_Kbps_Precision As String
 Common Shared BELABOX_1_Found As Integer ' BELABOX
 Common Shared BELABOX_2_Found As Integer ' BELABOX
@@ -265,6 +288,14 @@ Common Shared BELABOX_1_Offline As Integer ' BELABOX
 Common Shared BELABOX_2_Offline As Integer ' BELABOX
 Common Shared Server_Dummy_Time As Long
 Common Shared sls_stats_dummy.xml As String
+Common Shared sls_connect_timer_1 As Integer
+Common Shared sls_connect_timer_2 As Integer
+Common Shared OpenClient_Interval_1 As Integer
+Common Shared OpenClient_Interval_2 As Integer
+Common Shared KeepAlive_BELABOX_Default As Integer
+Common Shared KeepAlive_SLS_Default As Integer
+Common Shared SLS_Server_KeepAlive1 As Integer
+Common Shared SLS_Server_KeepAlive2 As Integer
 
 ' NGINX RTMP Server
 Dim Shared i_XML
@@ -312,6 +343,10 @@ Common Shared RTMP_Width1 As Integer
 Common Shared RTMP_Height1 As Integer
 Common Shared RTMP_Width2 As Integer
 Common Shared RTMP_Height2 As Integer
+Common Shared rtmp_connect_timer As Integer
+Common Shared RTMP_Server_KeepAlive As Integer
+Common Shared OpenClient_Interval_RTMP As Integer
+Common Shared KeepAlive_RTMP_Server_Default As Integer
 
 
 Common Shared RTMP_Bytes_In As Double
@@ -351,6 +386,8 @@ Common Shared CMD_EXE_HTTP_GET_MEDIA2 As String
 
 Common Shared Server_1 As String
 Common Shared Server_2 As String
+Common Shared Server_Ping_Display_1 As String
+Common Shared Server_Ping_Display_2 As String
 
 Common Shared Scene_OK As String
 Common Shared Scene_LBR As String
@@ -553,8 +590,8 @@ $If WIN Then
     Dim Shared y& ' Windows only
 $End If
 
-$If VERSION < 3.4.1 Then
-        $ERROR Requires at least QB64 v3.4.1
+$If VERSION < 3.5.0 Then
+        $ERROR Requires at least QB64 v3.5.0
 $End If
 
 ' Set variables on load: ---------------------------------------------------------------
@@ -585,27 +622,33 @@ Else
     GREEN_STREAM_OK = _RGB32(32, 164, 24)
 End If
 
+' Program default settings
 q = _Exit
 c10 = Chr$(10)
 c34 = Chr$(34)
+SLS_EOL = Chr$(13) + Chr$(10)
+RTMP_EOL = Chr$(13) + Chr$(10)
 BG = _RGB(32, 32, 32)
 Exe_OK = 1
 websocketVersion = 5
 checkWebSocketVersion = "unknown"
 websocketOK = 0
 srt_warmup_LB = 10
-' SRT Live Server
-SLS_Stats = "stats"
-SLS_Server_Port = "8181" ' Temp setting - config.ini should override
-SLS_Server_IP = "127.0.0.1" ' Temp setting - config.ini should override
-SLS_Port_Client = "TCP/IP:" + SLS_Server_Port + ":"
-SLS_Publisher1 = "publish/live/stream1" ' Temp setting - config.ini should override
-SLS_Publisher2 = "publish/live/stream2" ' Temp setting - config.ini should override
-SLS_EOL = Chr$(13) + Chr$(10)
-RTMP_EOL = Chr$(13) + Chr$(10)
 BELABOX_1_Uptime = 0 ' BELABOX
 BELABOX_2_Uptime = 0 ' BELABOX
 Timer_Limit = 35996400
+
+' Config default settings
+SLS_Stats = "stats"
+SLS_Server_Port = "8181" ' Temp setting - config.ini should override
+SLS_Server_IP = "127.0.0.1": SLS_Port_Client = "TCP/IP:" + SLS_Server_Port + ":" ' Temp setting - config.ini should override
+SLS_Publisher1 = "publish/live/stream1" ' Temp setting - config.ini should override
+SLS_Publisher2 = "publish/live/stream2" ' Temp setting - config.ini should override
+OpenClient_Interval_1 = 5
+OpenClient_Interval_2 = 5
+KeepAlive_BELABOX_Default = 30
+KeepAlive_SLS_Default = 5
+KeepAlive_RTMP_Server_Default = 30
 ' ---------------------------------------------------------------
 
 ' Error handling when enabled takes place here
@@ -626,8 +669,8 @@ Sub __UI_BeforeInit
     $VersionInfo:ProductName=Loopy SRT Monitor
     $VersionInfo:Comments=Monitor SRT Streams
     $VersionInfo:FileDescription=Loopy SRT Monitor
-    $VersionInfo:FILEVERSION#=1,0,1,0
-    $VersionInfo:ProductVersion=1,0,1,0
+    $VersionInfo:FILEVERSION#=1,1,0,0
+    $VersionInfo:ProductVersion=1,1,0,0
     $VersionInfo:LegalCopyright=loopy750
     $VersionInfo:OriginalFilename=loopy_srt_monitor.exe
     $Checking:On
@@ -637,7 +680,7 @@ Sub __UI_BeforeInit
         _Title "Loopy SRT Monitor - loopy750"
     End If
     Ver = "1.0.0"
-    VerBeta = "1.0.1"
+    VerBeta = "1.1.0"
     VerDate = "01/23"
     VerPortable = "false"
 End Sub
@@ -841,17 +884,19 @@ Sub __UI_OnLoad
                     If file4_var$ = "titlescene12" Then titleScene12 = file4_val$
                     If file4_var$ = "returnpreviousscene" Then returnPreviousScene = file4_val$
                     If file4_var$ = "returnprevioussceneremember" Then returnPreviousSceneRemember = file4_val$
+                    If file4_var$ = "httpcommunication" Then HTTP_Communication = file4_val$ ' HTTP (v1.1.0)
                     ' obs-websocket-http
                     If file4_var$ = "httpbindaddress" Then HTTP_Bind_Address = file4_val$
                     If file4_var$ = "httpbindport" Then HTTP_Bind_Port = file4_val$
                     If file4_var$ = "httpauthkey" Then HTTP_Auth_Key = Left$(file4_val$, 256)
                     If file4_var$ = "httpaccess" Then HTTP_Access = file4_val$
-                    ' NGIGX RTMP server
+                    ' NGINX RTMP server
                     If file4_var$ = "rtmp1enabled" Then RTMP_1_Enabled = file4_val$
                     If file4_var$ = "rtmp2enabled" Then RTMP_2_Enabled = file4_val$
                     If file4_var$ = "rtmpserverip" Then RTMP_Server_IP = file4_val$
                     If file4_var$ = "rtmpserverport" Then RTMP_Server_Port = file4_val$
                     If file4_var$ = "rtmpserverstats" Then RTMP_Stats = file4_val$
+                    If file4_var$ = "rtmpserverkeepalive" Then RTMP_Server_KeepAlive = Val(file4_val$)
                     If file4_var$ = "rtmpserverpublisher1" Then RTMP_Publisher1 = file4_val$
                     If file4_var$ = "rtmpserverpublisher2" Then RTMP_Publisher2 = file4_val$
                     If file4_var$ = "rtmpbitratelow1" Then RTMP_BitrateLow1 = Val(file4_val$)
@@ -863,15 +908,17 @@ Sub __UI_OnLoad
                     If file4_var$ = "sls2enabled" Then SLS_2_Enabled = file4_val$
                     If file4_var$ = "slsserverip" Then SLS_Server_IP = file4_val$ ' Backwards compatible
                     If file4_var$ = "slsserverip1" Then SLS_Server_IP = file4_val$
-                    If file4_var$ = "slsserverip2" Then SLS_Server_IP_2 = file4_val$ ' SLS IP #2 (v1.0.1)
+                    If file4_var$ = "slsserverip2" Then SLS_Server_IP_2 = file4_val$ ' SLS IP #2 (v1.1.0)
                     If file4_var$ = "slsserverport" Then SLS_Server_Port = file4_val$ ' Backwards compatible
                     If file4_var$ = "slsserverport1" Then SLS_Server_Port = file4_val$
-                    If file4_var$ = "slsserverport2" Then SLS_Server_Port_2 = file4_val$ ' SLS IP #2 (v1.0.1)
+                    If file4_var$ = "slsserverport2" Then SLS_Server_Port_2 = file4_val$ ' SLS IP #2 (v1.1.0)
                     If file4_var$ = "slsserverstats" Then SLS_Stats = file4_val$ ' Backwards compatible
                     If file4_var$ = "slsserverstats1" Then SLS_Stats = file4_val$
-                    If file4_var$ = "slsserverstats2" Then SLS_Stats_2 = file4_val$ ' SLS IP #2 (v1.0.1)
+                    If file4_var$ = "slsserverstats2" Then SLS_Stats_2 = file4_val$ ' SLS IP #2 (v1.1.0)
                     If file4_var$ = "slsserverpublisher1" Then SLS_Publisher1 = file4_val$
                     If file4_var$ = "slsserverpublisher2" Then SLS_Publisher2 = file4_val$
+                    If file4_var$ = "slsserverkeepalive1" Then SLS_Server_KeepAlive1 = Val(file4_val$)
+                    If file4_var$ = "slsserverkeepalive2" Then SLS_Server_KeepAlive2 = Val(file4_val$)
                     If file4_var$ = "slsbitratelow1" Then SLS_BitrateLow1 = Val(file4_val$)
                     If file4_var$ = "slsbitratelow2" Then SLS_BitrateLow2 = Val(file4_val$)
                     If file4_var$ = "slsbitratefail1" Then SLS_BitrateFail1 = Val(file4_val$)
@@ -899,7 +946,9 @@ Sub __UI_OnLoad
         If OBS_Connection = "http" Or OBS_Connection = "obs-websocket-http" Then HTTP_Enabled = "true"
         If OBS_Connection = "js" Or OBS_Connection = "obs-websocket-js" Then HTTP_Enabled = "false"
 
-        If HTTP_Enabled = "true" Then SetCaption ServerPingLB, "HTTP Ping" Else HTTP_Enabled = "false" ' HTTP
+        If HTTP_Enabled = "false" Then HTTP_Communication = "curl" 'curl must be used for obs-websocket-js
+
+        If HTTP_Enabled = "true" Then SetCaption ServerPingLB, "HTTP ping" Else HTTP_Enabled = "false" ' HTTP
         If HTTP_Enabled = "true" And NodejsFileSystem = "2" Then NodejsFileSystem = "1" ' HTTP
         ' Automatically open obs-websocket-http if it's located in the folder
         If HTTP_Enabled = "true" Then
@@ -957,7 +1006,7 @@ Sub __UI_OnLoad
             Case Scene_LBR_Enabled: SettingsMissing = 1
             Case Scene_LBR_Delay_Total: SettingsMissing = 1
             Case Scene2_LBR_Disabled: SettingsMissing = 1
-            Case NodejsFileSystem: SettingsMissing = 1
+                'Case NodejsFileSystem: SettingsMissing = 1 ' Console depreciated
             Case RIST_Fail_Mode_1: SettingsMissing = 1 ' RIST mode
             Case RIST_Fail_Mode_2: SettingsMissing = 1 ' RIST mode - Source 2
             Case LoopySRTMonitorTheme: SettingsMissing = 1
@@ -989,20 +1038,18 @@ Sub __UI_OnLoad
         End If
 
         ' ---------------------------------------------------------------
-        'v1.0.0
-        '---
-        'SceneLBRDelay=0
-        'jsEncoding=json
-        'RISTFailMode1=false
-        'RISTFailMode2=false
-        'ColorTheme=Default
-        'AllowResize=false
-        '
-        'v1.0.1
+        'v1.1.0
         '------
         'SLSServerIP2=127.0.0.1
-        'SLSServerPort2=8191
+        'SLSServerPort2=8181
         'SLSServerStats2=stats
+        'RTMPServerKeepAlive=Default
+        'SLSServerKeepAlive1=Default
+        'SLSServerKeepAlive2=Default
+        'HTTPCommunication=native
+        '
+        'DEPRECIATED
+        'NodejsFileSystem=0
         '
         'UNDOCUMENTED
         '------------
@@ -1015,6 +1062,7 @@ Sub __UI_OnLoad
         'LeadingZero=false
         'PingLog=false
         'FastStart=false
+        'DummyServer=
         ' ---------------------------------------------------------------
 
         If Scene_Bypass = "" Then Scene_Bypass = "none"
@@ -1029,19 +1077,38 @@ Sub __UI_OnLoad
 
         If NodejsFileSystem <> "1" And NodejsFileSystem <> "2" Then NodejsFileSystem = "0"
 
-        If NodejsFileSystem = "1" Then
-            ' Console will appear regardless
-            $Console
-            _Console On
-            _ConsoleTitle "Loopy SRT Monitor [Console]"
-        Else
-            _Console Off
-        End If
+        ' Console depreciated
+        NodejsFileSystem = "0"
+
+        'If NodejsFileSystem = "1" Then
+        '    ' Console will appear regardless
+        '    $Console
+        '    _Console On
+        '    _ConsoleTitle "Loopy SRT Monitor [Console]"
+        'Else
+        '    _Console Off
+        'End If
 
         If js_Encoding <> "msgpack" And js_Encoding <> "json" Then js_Encoding = "json" ' obs-websocket-js connection encoding
         If Nodejs_Access <> "legacy" Then Nodejs_Access = "fast"
         If Leading_Zero = "true" Then leadingZero = 1
         If SLS_Kbps_Precision = "true" Then SLS_Kbps_Precision = "nerd"
+        HTTP_Communication = Left$(LCase$(HTTP_Communication), 128)
+        If HTTP_Communication <> "native" Then HTTP_Communication = "curl"
+
+        If SLS_Server_KeepAlive1 <> 0 Then
+            If SLS_Server_KeepAlive1 < 1 Then SLS_Server_KeepAlive1 = 1
+            If SLS_Server_KeepAlive1 > 60 Then SLS_Server_KeepAlive1 = 60
+        End If
+        If SLS_Server_KeepAlive2 <> 0 Then
+            If SLS_Server_KeepAlive2 < 1 Then SLS_Server_KeepAlive2 = 1
+            If SLS_Server_KeepAlive2 > 60 Then SLS_Server_KeepAlive2 = 60
+        End If
+
+        If RTMP_Server_KeepAlive <> 0 Then
+            If RTMP_Server_KeepAlive < 1 Then RTMP_Server_KeepAlive = 1
+            If RTMP_Server_KeepAlive > 60 Then RTMP_Server_KeepAlive = 60
+        End If
 
         ' SRT Live Server
         SLS_Header = ""
@@ -1062,19 +1129,19 @@ Sub __UI_OnLoad
         If SLS_Server_Port_2 = "" Then SLS_Server_Port_2 = SLS_Server_Port
         If SLS_Stats_2 = "" Then SLS_Stats_2 = SLS_Stats
 
-        ' SLS IP #2 (v1.0.1)
+        ' SLS IP #2 (v1.1.0)
         If MultiCameraSwitch = "true" And SLS_2_Enabled = "true" Then
             If SLS_Server_IP <> SLS_Server_IP_2 Then SLS_2_Active = 1
             If SLS_Server_Port <> SLS_Server_Port_2 Then SLS_2_Active = 1
         End If
 
-        If SLS_2_Active = 1 And SLS_1_Enabled = "true" Then Stream_Title_1 = "Server" Else Stream_Title_1 = "Stream" ' SLS IP #2 (v1.0.1)
-        If SLS_2_Active = 1 And SLS_2_Enabled = "true" Then Stream_Title_2 = "Server" Else Stream_Title_2 = "Stream" ' SLS IP #2 (v1.0.1)
+        If SLS_2_Active = 1 And SLS_1_Enabled = "true" Then Stream_Title_1 = "Server" Else Stream_Title_1 = "Stream" ' SLS IP #2 (v1.1.0)
+        If SLS_2_Active = 1 And SLS_2_Enabled = "true" Then Stream_Title_2 = "Server" Else Stream_Title_2 = "Stream" ' SLS IP #2 (v1.1.0)
 
         If Timer_Fail_Stream1 Then SetCaption (Stream1), Stream_Title_1 + " #1" + Server_Display1 + " ": Control(Stream1).ForeColor = RED_FAIL Else SetCaption (Stream1), Stream_Title_1 + " #1" + Server_Display1: Control(Stream1).ForeColor = GREEN_STREAM_OK
         If Timer_Fail_Stream2 Then SetCaption (Stream2), Stream_Title_2 + " #2" + Server_Display2 + " ": Control(Stream2).ForeColor = RED_FAIL Else SetCaption (Stream2), Stream_Title_2 + " #2" + Server_Display2: Control(Stream2).ForeColor = GREEN_STREAM_OK
 
-        ' SLS IP #2 (v1.0.1)
+        ' SLS IP #2 (v1.1.0)
         If SLS_2_Active = 1 Then
             SLS_Header_2 = ""
             SLS_Header_2 = SLS_Header_2 + "GET /" + SLS_Stats_2 + " HTTP/1.1" + SLS_EOL
@@ -1298,7 +1365,7 @@ Sub __UI_OnLoad
         CMD_EXE_HTTP_GET_MEDIA1 = CMD_EXE_HTTP + "-d " + c34 + "{\" + c34 + "inputName\" + c34 + ": \" + c34 + MediaSource1 + "\" + c34 + "}" + c34 + " " + c34 + "http://" + HTTP_Bind_Address + ":" + HTTP_Bind_Port + "/call/GetMediaInputStatus" + c34 + " -o " + c34 + filePrevious_ms + c34
         CMD_EXE_HTTP_GET_SCENE = CMD_EXE_HTTP + c34 + "http://" + HTTP_Bind_Address + ":" + HTTP_Bind_Port + "/call/GetCurrentProgramScene" + c34 + " -o " + c34 + filePrevious + c34
         CMD_EXE_HTTP_GET_MEDIA2 = CMD_EXE_HTTP + "-d " + c34 + "{\" + c34 + "inputName\" + c34 + ": \" + c34 + MediaSource1 + "\" + c34 + "}" + c34 + " " + c34 + "http://" + HTTP_Bind_Address + ":" + HTTP_Bind_Port + "/call/GetMediaInputStatus" + c34 + " > " + c34 + filePrevious_ms + c34 + " && curl -s -XPOST -H " + c34 + "Authorization: " + OBS_PW + c34 + " -H " + c34 + "Content-type: application/json" + c34 + " -d " + c34 + "{\" + c34 + "inputName\" + c34 + ": \" + c34 + MediaSource2 + "\" + c34 + "}" + c34 + " " + c34 + "http://" + HTTP_Bind_Address + ":" + HTTP_Bind_Port + "/call/GetMediaInputStatus" + c34 + " >> " + c34 + filePrevious_ms + c34
-        If OS = "WINDOWS" Then
+        If OS = "WINDOWS" And HTTP_Communication = "curl" Then
             Open http_media2_File For Output As #192
             Print #192, "@" + CMD_EXE_HTTP_FAST + "-d " + c34 + "{\" + c34 + "inputName\" + c34 + ": \" + c34 + MediaSource1 + "\" + c34 + "}" + c34 + " " + c34 + "http://" + HTTP_Bind_Address + ":" + HTTP_Bind_Port + "/call/GetMediaInputStatus" + c34 + " > " + c34 + filePrevious_ms + c34 + " && curl -s -XPOST -H " + c34 + "Authorization: " + OBS_PW + c34 + " -H " + c34 + "Content-type: application/json" + c34 + " -d " + c34 + "{\" + c34 + "inputName\" + c34 + ": \" + c34 + MediaSource2 + "\" + c34 + "}" + c34 + " " + c34 + "http://" + HTTP_Bind_Address + ":" + HTTP_Bind_Port + "/call/GetMediaInputStatus" + c34 + " >> " + c34 + filePrevious_ms + c34
             Close #192
@@ -2225,7 +2292,7 @@ Sub __UI_OnLoad
             Get #128, , JSON
             Close #128
             If GetKey("obsWebSocketVersion", JSON) = "" Then
-                Error_msg = "- OBS " + c34 + "WebSockets Server" + c34 + " connection failed. Correctly configure " + c34 + "HTTPBindAddress, HTTPBindPort" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check OBS Studio is open,  " + c34 + "WebSockets Server" + c34 + " is enabled in OBS Studio, and " + c34 + "obs-websocket-http" + c34 + " is installed.": Error_3rd_line = "- Check " + c34 + "WebSocketConnection" + c34 + " in " + c34 + "config.ini" + c34 + " is set to the required connection method. " + c34 + "obs-websocket-http" + c34 + " requires OBS WebSocket 5.x."
+                Error_msg = "- OBS " + c34 + "WebSocket Server" + c34 + " connection failed. Correctly configure " + c34 + "HTTPBindAddress, HTTPBindPort" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check OBS Studio is open,  " + c34 + "WebSocket Server" + c34 + " is enabled in OBS Studio, and " + c34 + "obs-websocket-http" + c34 + " is installed.": Error_3rd_line = "- Check " + c34 + "WebSocketConnection" + c34 + " in " + c34 + "config.ini" + c34 + " is set to the required connection method. " + c34 + "obs-websocket-http" + c34 + " requires OBS WebSocket 5.x."
                 ErrorDisplay (6)
             Else
                 checkWebSocketVersion$ = GetKey("obsWebSocketVersion", JSON)
@@ -2293,7 +2360,7 @@ Sub __UI_OnLoad
                         If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
                         On Error GoTo 0
                         websocketOK = 0
-                        Error_msg = "- OBS " + c34 + "WebSockets Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check OBS Studio is open, " + c34 + "WebSockets Server" + c34 + " is enabled in OBS Studio, and " + c34 + "Node.js" + c34 + " is installed.": Error_3rd_line = "- Check " + c34 + "WebSocketConnection" + c34 + " in " + c34 + "config.ini" + c34 + " is set to the required connection method."
+                        Error_msg = "- OBS " + c34 + "WebSocket Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check OBS Studio is open, " + c34 + "WebSocket Server" + c34 + " is enabled in OBS Studio, and " + c34 + "Node.js" + c34 + " is installed.": Error_3rd_line = "- Check " + c34 + "WebSocketConnection" + c34 + " in " + c34 + "config.ini" + c34 + " is set to the required connection method."
                         ErrorDisplay (6)
                     Else
                         websocketOK = 1
@@ -2304,7 +2371,7 @@ Sub __UI_OnLoad
                         Close #90
                         If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
                         websocketOK = 0
-                        Error_msg = "- OBS " + c34 + "WebSockets Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check OBS Studio is open, " + c34 + "WebSockets Server" + c34 + " is enabled in OBS Studio, and " + c34 + "Node.js" + c34 + " is installed.": Error_3rd_line = "- Check " + c34 + "WebSocketConnection" + c34 + " in " + c34 + "config.ini" + c34 + " is set to the required connection method."
+                        Error_msg = "- OBS " + c34 + "WebSocket Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check OBS Studio is open, " + c34 + "WebSocket Server" + c34 + " is enabled in OBS Studio, and " + c34 + "Node.js" + c34 + " is installed.": Error_3rd_line = "- Check " + c34 + "WebSocketConnection" + c34 + " in " + c34 + "config.ini" + c34 + " is set to the required connection method."
                         ErrorDisplay (6)
                     Else
                         websocketOK = 1
@@ -2356,7 +2423,7 @@ Sub __UI_OnLoad
                 Get #128, , JSON
                 Close #128
                 If GetKey("mediaCursor", JSON) = "" Then
-                    Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ". Correctly configure " + c34 + "MediaSource1" + c34 + " in " + c34 + "config.ini and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSockets version is 4.9.0 or newer."
+                    Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ". Correctly configure " + c34 + "MediaSource1" + c34 + " in " + c34 + "config.ini and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSocket version is 4.9.0 or newer."
                     ErrorDisplay (7)
                 End If
             Else
@@ -2367,7 +2434,7 @@ Sub __UI_OnLoad
                     If EOF(90) Or LOF(90) = 0 Then
                         Close #90
                         If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
-                        Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ". Correctly configure " + c34 + "MediaSource1" + c34 + " in " + c34 + "config.ini and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSockets version is 4.9.0 or newer."
+                        Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ". Correctly configure " + c34 + "MediaSource1" + c34 + " in " + c34 + "config.ini and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSocket version is 4.9.0 or newer."
                         ErrorDisplay (7)
                     End If
 
@@ -2390,7 +2457,7 @@ Sub __UI_OnLoad
                 Get #128, , JSON
                 Close #128
                 If GetKey("mediaCursor", JSON) = "" Then
-                    Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ". Correctly configure " + c34 + "MediaSource1" + c34 + " in " + c34 + "config.ini and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSockets version is 4.9.0 or newer."
+                    Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ". Correctly configure " + c34 + "MediaSource1" + c34 + " in " + c34 + "config.ini and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSocket version is 4.9.0 or newer."
                     ErrorDisplay (8)
                 End If
                 Shell _Hide CMD_EXE_HTTP + "-d " + c34 + "{\" + c34 + "inputName\" + c34 + ": \" + c34 + MediaSource2 + "\" + c34 + "}" + c34 + " " + c34 + "http://" + HTTP_Bind_Address + ":" + HTTP_Bind_Port + "/call/GetMediaInputStatus" + c34 + " > " + c34 + filePrevious_ms + c34
@@ -2399,7 +2466,7 @@ Sub __UI_OnLoad
                 Get #128, , JSON
                 Close #128
                 If GetKey("mediaCursor", JSON) = "" Then
-                    Error_msg = "- Unable to read " + c34 + "MediaSource2" + c34 + ". Correctly configure " + c34 + "MediaSource2" + c34 + " in " + c34 + "config.ini and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSockets version is 4.9.0 or newer."
+                    Error_msg = "- Unable to read " + c34 + "MediaSource2" + c34 + ". Correctly configure " + c34 + "MediaSource2" + c34 + " in " + c34 + "config.ini and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSocket version is 4.9.0 or newer."
                     ErrorDisplay (8)
                 End If
             Else
@@ -2416,7 +2483,7 @@ Sub __UI_OnLoad
                     If EOF(90) Or LOF(90) = 0 Then
                         Close #90
                         If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
-                        Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ". Correctly configure " + c34 + "MediaSource1" + c34 + " in " + c34 + "config.ini and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSockets version is 4.9.0 or newer."
+                        Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ". Correctly configure " + c34 + "MediaSource1" + c34 + " in " + c34 + "config.ini and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSocket version is 4.9.0 or newer."
                         ErrorDisplay (8)
                     End If
 
@@ -2424,7 +2491,7 @@ Sub __UI_OnLoad
                     If EOF(90) Or LOF(90) = 0 Then
                         Close #90
                         If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
-                        Error_msg = "- Unable to read " + c34 + "MediaSource2" + c34 + ". Correctly configure " + c34 + "MediaSource2" + c34 + " in " + c34 + "config.ini and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSockets version is 4.9.0 or newer."
+                        Error_msg = "- Unable to read " + c34 + "MediaSource2" + c34 + ". Correctly configure " + c34 + "MediaSource2" + c34 + " in " + c34 + "config.ini and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSocket version is 4.9.0 or newer."
                         ErrorDisplay (8)
                     End If
                     Close #90
@@ -2581,17 +2648,29 @@ Sub __UI_OnLoad
 
     If Scene_OK = "" Or Scene_Fail = "" Or Scene_Intro = "" Or OBS_URL = "" Then RefreshDisplayRequest = 1: Error_msg = "- Variable/s for scenes empty, check if " + c34 + config_main + c34 + " exists. (Error: #3)": _Delay 3
 
+    If _FileExists(filePrevious_ms) And HTTP_Communication = "native" Then Kill filePrevious_ms
+
     If ConnectionsLog Then statusConnectionsLogToFile ""
     If ConnectionsLog Then statusConnectionsLogToFile "[INFO] Program launched"
 
     If __MultiCameraSwitch = 0 Then
         Scene_Current = Scene_OK
-        Shell _Hide _DontWait shell_cmd_1 + Scene_OK + shell_cmd_2
+        Select Case HTTP_Communication
+            Case "native"
+                http_client_connect "Set", Scene_OK
+            Case "curl"
+                Shell _Hide _DontWait shell_cmd_1 + Scene_OK + shell_cmd_2
+        End Select
     End If
 
     If __MultiCameraSwitch = 1 Then
         Scene_Current = titleScene12
-        Shell _Hide _DontWait shell_cmd_1 + titleScene12 + shell_cmd_2
+        Select Case HTTP_Communication
+            Case "native"
+                http_client_connect "Set", titleScene12
+            Case "curl"
+                Shell _Hide _DontWait shell_cmd_1 + titleScene12 + shell_cmd_2
+        End Select
     End If
 
     _Delay 0.05
@@ -4119,24 +4198,206 @@ Sub GetAllKeyXML (keyname_XML As String, XML As String, ParseKeyXML() As String)
     Loop Until InStr(XML, Chr$(60) + keyname_XML + Chr$(62)) = 0
 End Sub
 
+Sub http_client_connect (HTTP_Mode$, HTTP_Scene$)
+
+    On Error GoTo App_Fail
+    App_Refresh = 1
+
+    ' Open client every x seconds (v1.1.0)
+    http_connect_timer = http_connect_timer + 1
+    If http_connect_timer >= 30 Or LCase$(HTTP_Mode$) = "get" Or LCase$(HTTP_Mode$) = "getmedia" Or LCase$(HTTP_Mode$) = "getversion" Then http_connect_timer = 1: Close http_client
+
+    If http_connect_timer = 1 Then
+        HTTP_Port_Client = "TCP/IP:" + HTTP_Bind_Port + ":"
+        http_client = _OpenClient(HTTP_Port_Client + HTTP_Bind_Address)
+        If http_client = 0 Then RefreshDisplayRequest = 1: Error_msg$ = "- Unable to connect, check if " + c34 + HTTP_Bind_Address + ":" + HTTP_Bind_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to connect to " + c34 + "obs-websocket-http" + c34 + ". (Error: #15)": _Delay 3: Exit Sub
+    End If
+
+    Select Case LCase$(HTTP_Mode$)
+        Case "set"
+            ' Mode "Set", to change scene
+            HTTP_Data = "{" + c34 + "sceneName" + c34 + ":" + c34 + HTTP_Scene$ + c34 + "}"
+
+            HTTP_Header = ""
+            HTTP_Header = HTTP_Header + "POST /emit/SetCurrentProgramScene HTTP/1.1" + SLS_EOL
+            HTTP_Header = HTTP_Header + "Host: " + HTTP_Bind_Address + ":" + HTTP_Bind_Port + SLS_EOL
+            HTTP_Header = HTTP_Header + "User-Agent: curl/7.83.1" + SLS_EOL
+            HTTP_Header = HTTP_Header + "Accept: */*" + SLS_EOL
+            HTTP_Header = HTTP_Header + "Authorization: " + HTTP_Auth_Key + SLS_EOL
+            HTTP_Header = HTTP_Header + "Content-type: application/json" + SLS_EOL
+            HTTP_Header = HTTP_Header + "Content-Length: " + _Trim$(Str$(Len(HTTP_Data))) + SLS_EOL + SLS_EOL
+            HTTP_Header = HTTP_Header + HTTP_Data
+
+            Put #http_client, , HTTP_Header
+            'Close http_client
+            Exit Sub
+        Case "get"
+            ' Mode "Get", to get scene
+            HTTP_Timer_GET = 0: HTTP_GET_a = "": HTTP_GET_a2 = "": HTTP_GET_i = 0: HTTP_GET_i2 = 0: HTTP_GET_i3 = 0: HTTP_GET_l = 0: HTTP_GET_d = "": HTTP_GET_d_2 = "": GetCurrentProgramScene.tmp = ""
+
+            HTTP_Header = ""
+            HTTP_Header = HTTP_Header + "POST /call/GetCurrentProgramScene HTTP/1.1" + SLS_EOL
+            HTTP_Header = HTTP_Header + "Host: " + HTTP_Bind_Address + ":" + HTTP_Bind_Port + SLS_EOL
+            HTTP_Header = HTTP_Header + "User-Agent: curl/7.83.1" + SLS_EOL
+            HTTP_Header = HTTP_Header + "Accept: */*" + SLS_EOL
+            HTTP_Header = HTTP_Header + "Authorization: " + HTTP_Auth_Key + SLS_EOL
+            HTTP_Header = HTTP_Header + "Content-type: application/json" + SLS_EOL + SLS_EOL
+
+            Put #http_client, , HTTP_Header
+
+            ' Grab data
+            HTTP_Timer_GET = Timer
+            Do
+                _Delay 0.01
+                Get #http_client, , HTTP_GET_a2
+                HTTP_GET_a = HTTP_GET_a + HTTP_GET_a2
+                HTTP_GET_i = InStr(HTTP_GET_a, "Content-Length:")
+                If HTTP_GET_i Then
+                    HTTP_GET_i2 = InStr(HTTP_GET_i, HTTP_GET_a, SLS_EOL)
+                    If HTTP_GET_i2 Then
+                        HTTP_GET_l = Val(Mid$(HTTP_GET_a, HTTP_GET_i + 15, HTTP_GET_i2 - HTTP_GET_i - 14))
+                        HTTP_GET_i3 = InStr(HTTP_GET_i2, HTTP_GET_a, SLS_EOL + SLS_EOL)
+                        If HTTP_GET_i3 Then
+                            HTTP_GET_i3 = HTTP_GET_i3 + 4 'move i3 to start of data
+                            If (Len(HTTP_GET_a) - HTTP_GET_i3 + 1) = HTTP_GET_l Then
+                                'Close http_client ' CLOSE CLIENT
+                                HTTP_GET_d = Mid$(HTTP_GET_a, HTTP_GET_i3, HTTP_GET_l)
+                                Exit Do
+                            End If ' available data = l
+                        End If ' i3
+                    End If ' i2
+                End If ' i
+            Loop Until Timer > HTTP_Timer_GET + 2 ' 2 second timeout
+            'Close http_client
+
+            ' Store json data in GetCurrentProgramScene.tmp
+            GetCurrentProgramScene.tmp = HTTP_GET_d
+            Exit Sub
+        Case "getmedia"
+            ' Mode "GetMedia", to get scene
+            HTTP_Timer_GET = 0: HTTP_GET_a = "": HTTP_GET_a2 = "": HTTP_GET_i = 0: HTTP_GET_i2 = 0: HTTP_GET_i3 = 0: HTTP_GET_l = 0: HTTP_GET_d = "": HTTP_GET_d_2 = "": GetCurrentProgramScene.tmp = ""
+
+            HTTP_Data = "{" + c34 + "inputName" + c34 + ":" + c34 + HTTP_Scene$ + c34 + "}"
+
+            HTTP_Header = ""
+            HTTP_Header = HTTP_Header + "POST /call/GetMediaInputStatus HTTP/1.1" + SLS_EOL
+            HTTP_Header = HTTP_Header + "Host: " + HTTP_Bind_Address + ":" + HTTP_Bind_Port + SLS_EOL
+            HTTP_Header = HTTP_Header + "User-Agent: curl/7.83.1" + SLS_EOL
+            HTTP_Header = HTTP_Header + "Accept: */*" + SLS_EOL
+            HTTP_Header = HTTP_Header + "Authorization: " + HTTP_Auth_Key + SLS_EOL
+            HTTP_Header = HTTP_Header + "Content-type: application/json" + SLS_EOL
+            HTTP_Header = HTTP_Header + "Content-Length: " + _Trim$(Str$(Len(HTTP_Data))) + SLS_EOL + SLS_EOL
+            HTTP_Header = HTTP_Header + HTTP_Data
+
+            Put #http_client, , HTTP_Header
+
+            ' Grab data
+            HTTP_Timer_GET = Timer
+            Do
+                _Delay 0.01
+                Get #http_client, , HTTP_GET_a2
+                HTTP_GET_a = HTTP_GET_a + HTTP_GET_a2
+                HTTP_GET_i = InStr(HTTP_GET_a, "Content-Length:")
+                If HTTP_GET_i Then
+                    HTTP_GET_i2 = InStr(HTTP_GET_i, HTTP_GET_a, SLS_EOL)
+                    If HTTP_GET_i2 Then
+                        HTTP_GET_l = Val(Mid$(HTTP_GET_a, HTTP_GET_i + 15, HTTP_GET_i2 - HTTP_GET_i - 14))
+                        HTTP_GET_i3 = InStr(HTTP_GET_i2, HTTP_GET_a, SLS_EOL + SLS_EOL)
+                        If HTTP_GET_i3 Then
+                            HTTP_GET_i3 = HTTP_GET_i3 + 4 'move i3 to start of data
+                            If (Len(HTTP_GET_a) - HTTP_GET_i3 + 1) = HTTP_GET_l Then
+                                'Close http_client ' CLOSE CLIENT
+                                HTTP_GET_d = Mid$(HTTP_GET_a, HTTP_GET_i3, HTTP_GET_l)
+                                Exit Do
+                            End If ' available data = l
+                        End If ' i3
+                    End If ' i2
+                End If ' i
+            Loop Until Timer > HTTP_Timer_GET + 2 ' 2 second timeout
+            'Close http_client
+
+            ' Store json data in GetMediaInputStatus.tmp
+            GetMediaInputStatus.tmp = HTTP_GET_d
+            Exit Sub
+        Case "getversion"
+            ' Mode "GetVersion", to get current version
+            HTTP_Timer_GET = 0: HTTP_GET_a = "": HTTP_GET_a2 = "": HTTP_GET_i = 0: HTTP_GET_i2 = 0: HTTP_GET_i3 = 0: HTTP_GET_l = 0: HTTP_GET_d = "": HTTP_GET_d_2 = "": GetCurrentProgramScene.tmp = ""
+
+            HTTP_Header = ""
+            HTTP_Header = HTTP_Header + "POST /call/GetVersion HTTP/1.1" + SLS_EOL
+            HTTP_Header = HTTP_Header + "Host: " + HTTP_Bind_Address + ":" + HTTP_Bind_Port + SLS_EOL
+            HTTP_Header = HTTP_Header + "User-Agent: curl/7.83.1" + SLS_EOL
+            HTTP_Header = HTTP_Header + "Accept: */*" + SLS_EOL
+            HTTP_Header = HTTP_Header + "Authorization: " + HTTP_Auth_Key + SLS_EOL
+            HTTP_Header = HTTP_Header + "Content-type: application/json" + SLS_EOL + SLS_EOL
+
+            Put #http_client, , HTTP_Header
+
+            ' Grab data
+            HTTP_Timer_GET = Timer
+            Do
+                _Delay 0.01
+                Get #http_client, , HTTP_GET_a2
+                HTTP_GET_a = HTTP_GET_a + HTTP_GET_a2
+                HTTP_GET_i = InStr(HTTP_GET_a, "Content-Length:")
+                If HTTP_GET_i Then
+                    HTTP_GET_i2 = InStr(HTTP_GET_i, HTTP_GET_a, SLS_EOL)
+                    If HTTP_GET_i2 Then
+                        HTTP_GET_l = Val(Mid$(HTTP_GET_a, HTTP_GET_i + 15, HTTP_GET_i2 - HTTP_GET_i - 14))
+                        HTTP_GET_i3 = InStr(HTTP_GET_i2, HTTP_GET_a, SLS_EOL + SLS_EOL)
+                        If HTTP_GET_i3 Then
+                            HTTP_GET_i3 = HTTP_GET_i3 + 4 'move i3 to start of data
+                            If (Len(HTTP_GET_a) - HTTP_GET_i3 + 1) = HTTP_GET_l Then
+                                'Close http_client ' CLOSE CLIENT
+                                HTTP_GET_d = Mid$(HTTP_GET_a, HTTP_GET_i3, HTTP_GET_l)
+                                Exit Do
+                            End If ' available data = l
+                        End If ' i3
+                    End If ' i2
+                End If ' i
+            Loop Until Timer > HTTP_Timer_GET + 2 ' 2 second timeout
+            'Close http_client
+
+            ' Store json data in GetVersion.tmp
+            GetVersion.tmp = HTTP_GET_d
+            Exit Sub
+
+    End Select
+
+End Sub
+
 Sub sls_client_connect
 
     ' Reset SLS data
     SLS_GET_a = "": SLS_GET_a2 = "": SLS_GET_i = 0: SLS_GET_i2 = 0: SLS_GET_i3 = 0: SLS_GET_l = 0: SLS_GET_d = "": sls_stats.xml = "": SLS_Bitrate1 = 0: SLS_Bitrate2 = 0
     SLS_streams_found = 0: SLS_Uptime1 = 0: SLS_Uptime2 = 0: SLS_streams_seek = 0
 
-    SLS_Ping1 = Timer(.001)
-    sls_client = _OpenClient(SLS_Port_Client + SLS_Server_IP)
-
-    If sls_client = 0 Then RefreshDisplayRequest = 1: Error_msg$ = "- Unable to connect, check if " + c34 + SLS_Server_IP + ":" + SLS_Server_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to read the SRT /" + SLS_Stats + " URL from its http server. (Error: #4)": _Delay 3: Exit Sub
-
     On Error GoTo App_Fail
     App_Refresh = 1
 
-    Put #sls_client, , SLS_Header
+    ' Open client every x seconds to prevent program freezing every second with high pings (v1.1.0)
+    If SLS_Server_KeepAlive1 <> 0 Then
+        OpenClient_Interval_1 = SLS_Server_KeepAlive1
+    Else
+        If BELABOX_1_Found = 1 Then OpenClient_Interval_1 = KeepAlive_BELABOX_Default Else OpenClient_Interval_1 = KeepAlive_SLS_Default
+    End If
 
-    SLS_Ping2 = Timer(.001)
-    SLS_PingOut = (SLS_Ping2 - SLS_Ping1)
+    sls_connect_timer_1 = sls_connect_timer_1 + 1
+    If sls_connect_timer_1 >= OpenClient_Interval_1 Then sls_connect_timer_1 = 1: Close sls_client
+    If sls_connect_timer_1 = 1 Then
+
+        SLS_Ping1 = Timer(.001)
+
+        sls_client = _OpenClient(SLS_Port_Client + SLS_Server_IP)
+
+        If sls_client = 0 Then RefreshDisplayRequest = 1: Error_msg$ = "- Unable to connect, check if " + c34 + SLS_Server_IP + ":" + SLS_Server_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to read the SLS /" + Left$(SLS_Stats, 20) + " URL from its http server. (Error: #4)": _Delay 3: Exit Sub
+
+        SLS_Ping2 = Timer(.001)
+        SLS_PingOut = (SLS_Ping2 - SLS_Ping1)
+
+    End If
+
+    Put #sls_client, , SLS_Header
 
     ' Connect to SRT Live Server and grab json data
     SLS_Timer_GET = Timer
@@ -4153,7 +4414,7 @@ Sub sls_client_connect
                 If SLS_GET_i3 Then
                     SLS_GET_i3 = SLS_GET_i3 + 4 'move i3 to start of data
                     If (Len(SLS_GET_a) - SLS_GET_i3 + 1) = SLS_GET_l Then
-                        Close sls_client ' CLOSE CLIENT
+                        'Close sls_client ' CLOSE CLIENT
                         SLS_GET_d = Mid$(SLS_GET_a, SLS_GET_i3, SLS_GET_l)
                         Exit Do
                     End If ' available data = l
@@ -4161,32 +4422,45 @@ Sub sls_client_connect
             End If ' i2
         End If ' i
     Loop Until Timer > SLS_Timer_GET + 3 ' 3 second timeout
-    Close sls_client
+    'Close sls_client
 
     ' Store json data in sls_stats.xml
     sls_stats.xml = SLS_GET_d
 
 End Sub
 
-Sub sls_client_connect_2
-    ' SLS IP #2 (v1.0.1)
+Sub sls_client_connect_2 ' SLS IP #2 (v1.1.0)
 
     ' Reset SLS data
     SLS_GET_a = "": SLS_GET_a2 = "": SLS_GET_i = 0: SLS_GET_i2 = 0: SLS_GET_i3 = 0: SLS_GET_l = 0: SLS_GET_d_2 = "": sls_stats_2.xml = "": SLS_Bitrate1 = 0: SLS_Bitrate2 = 0
     SLS_streams_found = 0: SLS_Uptime1 = 0: SLS_Uptime2 = 0: SLS_streams_seek = 0
 
-    SLS_Ping1_2 = Timer(.001)
-    sls_client_2 = _OpenClient(SLS_Port_Client_2 + SLS_Server_IP_2)
-
-    If sls_client_2 = 0 Then RefreshDisplayRequest = 1: Error_msg$ = "- Unable to connect, check if " + c34 + SLS_Server_IP_2 + ":" + SLS_Server_Port_2 + c34 + " is correct." + Chr$(10) + "- Program is unable to read the SRT /" + SLS_Stats + " URL from its http server. (Error: #4a)": _Delay 3: Exit Sub
-
     On Error GoTo App_Fail
     App_Refresh = 1
 
-    Put #sls_client_2, , SLS_Header_2
+    ' Open client every x seconds to prevent program freezing every second with high pings (v1.1.0)
+    If SLS_Server_KeepAlive2 <> 0 Then
+        OpenClient_Interval_2 = SLS_Server_KeepAlive2
+    Else
+        If BELABOX_2_Found = 1 Then OpenClient_Interval_2 = KeepAlive_BELABOX_Default Else OpenClient_Interval_2 = KeepAlive_SLS_Default
+    End If
 
-    SLS_Ping2_2 = Timer(.001)
-    SLS_PingOut_2 = (SLS_Ping2_2 - SLS_Ping1_2)
+    sls_connect_timer_2 = sls_connect_timer_2 + 1
+    If sls_connect_timer_2 >= OpenClient_Interval_2 Then sls_connect_timer_2 = 1: Close sls_client_2
+    If sls_connect_timer_2 = 1 Then
+
+        SLS_Ping1_2 = Timer(.001)
+
+        sls_client_2 = _OpenClient(SLS_Port_Client_2 + SLS_Server_IP_2)
+
+        If sls_client_2 = 0 Then RefreshDisplayRequest = 1: Error_msg$ = "- Unable to connect, check if " + c34 + SLS_Server_IP_2 + ":" + SLS_Server_Port_2 + c34 + " is correct." + Chr$(10) + "- Program is unable to read the SLS /" + Left$(SLS_Stats_2, 20) + " URL from its http server. (Error: #13)": _Delay 3: Exit Sub
+
+        SLS_Ping2_2 = Timer(.001)
+        SLS_PingOut_2 = (SLS_Ping2_2 - SLS_Ping1_2)
+
+    End If
+
+    Put #sls_client_2, , SLS_Header_2
 
     ' Connect to SRT Live Server and grab json data
     SLS_Timer_GET = Timer
@@ -4203,7 +4477,7 @@ Sub sls_client_connect_2
                 If SLS_GET_i3 Then
                     SLS_GET_i3 = SLS_GET_i3 + 4 'move i3 to start of data
                     If (Len(SLS_GET_a) - SLS_GET_i3 + 1) = SLS_GET_l Then
-                        Close sls_client ' CLOSE CLIENT
+                        'Close sls_client_2 ' CLOSE CLIENT
                         SLS_GET_d_2 = Mid$(SLS_GET_a, SLS_GET_i3, SLS_GET_l)
                         Exit Do
                     End If ' available data = l
@@ -4211,7 +4485,7 @@ Sub sls_client_connect_2
             End If ' i2
         End If ' i
     Loop Until Timer > SLS_Timer_GET + 3 ' 3 second timeout
-    Close sls_client_2
+    'Close sls_client_2
 
     ' Store json data in sls_stats_2.xml
     sls_stats_2.xml = SLS_GET_d_2
@@ -4224,18 +4498,30 @@ Sub rtmp_client_connect
     RTMP_GET_a = "": RTMP_GET_a2 = "": RTMP_GET_i = 0: RTMP_GET_i2 = 0: RTMP_GET_i3 = 0: RTMP_GET_l = 0: RTMP_GET_d = "": rtmp_stats.xml = "": RTMP_Bitrate1 = 0: RTMP_Bitrate2 = 0
     RTMP_streams_found = 0: RTMP_Uptime1 = 0: RTMP_Uptime2 = 0: RTMP_streams_seek = 0
 
-    RTMP_Ping1 = Timer(.001)
-    rtmp_client = _OpenClient(RTMP_Port_Client + RTMP_Server_IP)
-
-    If rtmp_client = 0 Then RefreshDisplayRequest = 1: Error_msg$ = "- Unable to connect, check if " + c34 + RTMP_Server_IP + ":" + RTMP_Server_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to read the NGINX /" + RTMP_Stats + " URL from its http server. (Error: #4b)": _Delay 3: Exit Sub
-
     On Error GoTo App_Fail
     App_Refresh = 1
 
-    Put #rtmp_client, , RTMP_Header
+    ' Open client every x seconds (v1.1.0)
+    If RTMP_Server_KeepAlive <> 0 Then
+        OpenClient_Interval_RTMP = RTMP_Server_KeepAlive
+    Else
+        OpenClient_Interval_RTMP = KeepAlive_RTMP_Server_Default
+    End If
+    rtmp_connect_timer = rtmp_connect_timer + 1
+    If rtmp_connect_timer >= OpenClient_Interval_RTMP Then rtmp_connect_timer = 1: Close rtmp_client
+    If rtmp_connect_timer = 1 Then
 
-    RTMP_Ping2 = Timer(.001)
-    RTMP_PingOut = (RTMP_Ping2 - RTMP_Ping1)
+        RTMP_Ping1 = Timer(.001)
+        rtmp_client = _OpenClient(RTMP_Port_Client + RTMP_Server_IP)
+
+        If rtmp_client = 0 Then RefreshDisplayRequest = 1: Error_msg$ = "- Unable to connect, check if " + c34 + RTMP_Server_IP + ":" + RTMP_Server_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to read the NGINX /" + Left$(RTMP_Stats, 20) + " URL from its http server. (Error: #14)": _Delay 3: Exit Sub
+
+        RTMP_Ping2 = Timer(.001)
+        RTMP_PingOut = (RTMP_Ping2 - RTMP_Ping1)
+
+    End If
+
+    Put #rtmp_client, , RTMP_Header
 
     ' Connect to NGINX Server and grab json data
     RTMP_Timer_GET = Timer
@@ -4252,7 +4538,7 @@ Sub rtmp_client_connect
                 If RTMP_GET_i3 Then
                     RTMP_GET_i3 = RTMP_GET_i3 + 4 'move i3 to start of data
                     If (Len(RTMP_GET_a) - RTMP_GET_i3 + 1) = RTMP_GET_l Then
-                        Close rtmp_client ' CLOSE CLIENT
+                        'Close rtmp_client ' CLOSE CLIENT
                         RTMP_GET_d = Mid$(RTMP_GET_a, RTMP_GET_i3, RTMP_GET_l)
                         Exit Do
                     End If ' available data = l
@@ -4260,7 +4546,7 @@ Sub rtmp_client_connect
             End If ' i2
         End If ' i
     Loop Until Timer > RTMP_Timer_GET + 3 ' 3 second timeout
-    Close rtmp_client
+    'Close rtmp_client
 
     ' Store json data in rtmp_stats.xml
     rtmp_stats.xml = RTMP_GET_d
@@ -4284,7 +4570,12 @@ Sub Multi0 (serverType$)
                     If HTTP_Enabled = "true" Then
                         Select Case HTTP_Access
                             Case "fast"
-                                Shell _Hide CMD_EXE_HTTP_FAST_GET_MEDIA1
+                                Select Case HTTP_Communication
+                                    Case "native"
+                                        http_client_connect "GetMedia", MediaSource1
+                                    Case "curl"
+                                        Shell _Hide CMD_EXE_HTTP_FAST_GET_MEDIA1
+                                End Select
                             Case Else
                                 Shell _Hide CMD_EXE_HTTP_GET_MEDIA1
                         End Select
@@ -4304,7 +4595,12 @@ Sub Multi0 (serverType$)
                         If HTTP_Enabled = "true" Then
                             Select Case HTTP_Access
                                 Case "fast"
-                                    Shell _Hide CMD_EXE_HTTP_FAST_GET_MEDIA1
+                                    Select Case HTTP_Communication
+                                        Case "native"
+                                            http_client_connect "GetMedia", MediaSource1
+                                        Case "curl"
+                                            Shell _Hide CMD_EXE_HTTP_FAST_GET_MEDIA1
+                                    End Select
                                 Case Else
                                     Shell _Hide CMD_EXE_HTTP_GET_MEDIA1
                             End Select
@@ -4320,7 +4616,12 @@ Sub Multi0 (serverType$)
                         If HTTP_Enabled = "true" Then
                             Select Case HTTP_Access
                                 Case "fast"
-                                    Shell CMD_EXE_HTTP_FAST_GET_MEDIA1
+                                    Select Case HTTP_Communication
+                                        Case "native"
+                                            http_client_connect "GetMedia", MediaSource1
+                                        Case "curl"
+                                            Shell CMD_EXE_HTTP_FAST_GET_MEDIA1
+                                    End Select
                                 Case Else
                                     Shell CMD_EXE_HTTP_GET_MEDIA1
                             End Select
@@ -4361,77 +4662,123 @@ Sub Multi0 (serverType$)
             On Error GoTo App_Fail
             App_Refresh = 1
 
-            If _FileExists(filePrevious_ms) Then
 
-                If HTTP_Enabled <> "true" Then ' HTTP
 
-                    Open filePrevious_ms For Input As #92
+            Select Case HTTP_Communication
+                Case "native"
 
-                    tmpFileError = 0
-                    If EOF(92) Then
-                        If NodejsFileSystem = "2" Then ' There is an increased chance an empty tmp file might be read at any time when the external node.js window is used
-                            ' RefreshDisplayRequest not used here
-                            Error_msg = "- Unable to read tmp file. (Error: #11)"
-                            Error_msg_2$ = ""
-                            tmpFileError = 1 ' LBR will be falsely triggered because of an empty tmp file unless corrected
-                            tmpFileRestore = 1
-                            _Delay 0.05
-                            GoTo LOF92
-                        Else
-                            RefreshDisplayRequest = 1
-                            Error_msg = "- Unable to read " + c34 + "SceneOK" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + Chr$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + Chr$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSockets options are correctly set. (Error: #9)"
-                            _Delay 3
-                            GoTo LOF92
-                        End If
+                    'NoKill = 1
+
+                    RIST_MediaSource1Time = MediaSource1TimeMS ' RIST mode
+
+                    If HTTP_Enabled = "true" Then ' HTTP
+
+                        ' http_client_connect doesn't need to be called here
+                        JSON = Space$(Len(GetMediaInputStatus.tmp))
+                        JSON = GetMediaInputStatus.tmp
+                        GetAllKey "mediaCursor", JSON, JSON_Multi()
+                        For i_JSON = 1 To UBound(JSON_Multi)
+                            ' JSON_Multi(i_JSON)
+                        Next
+                        file92 = JSON_Multi(1)
+
                     End If
 
-                    If LOF(92) = 0 Then NoKill = 1: GoTo LOF92 ' Overkill with EOF checking, but just being safe
-                    If EOF(92) Then GoTo LOF92
-                    Line Input #92, file92
+                    MediaSource1TimeMS = Val(file92)
 
-                End If
-
-                RIST_MediaSource1Time = MediaSource1TimeMS ' RIST mode
-
-                If HTTP_Enabled = "true" Then ' HTTP
-                    Open filePrevious_ms For Binary As #128
-                    JSON = Space$(LOF(128))
-                    Get #128, , JSON
-                    Close #128
-                    ' No JSON_Multi(0) redmin required
-                    GetAllKey "mediaCursor", JSON, JSON_Multi()
-                    For i_JSON = 1 To UBound(JSON_Multi)
-                        ' JSON_Multi(i_JSON)
-                    Next
-                    file92 = JSON_Multi(1)
-                End If
-
-                MediaSource1TimeMS = Val(file92)
-
-                ' RIST mode
-                Select Case RIST_Fail_Mode_1
-                    Case "false"
-                        RIST_MediaSource1Time_Count = 0
-                    Case "true"
-                        If MediaSource1TimeMS <> 0 Then
-                            If RIST_MediaSource1Time = MediaSource1TimeMS Then
-                                RIST_MediaSource1Time_Count = RIST_MediaSource1Time_Count + 1 ' Scene_Fail will be triggered at 5 seconds, the same as SRT timeout
-                                If RIST_MediaSource1Time_Count > 99 Then RIST_MediaSource1Time_Count = 99 ' No need to have it count up forever
-                            Else
-                                RIST_MediaSource1Time_Count = 0
+                    ' RIST mode
+                    Select Case RIST_Fail_Mode_1
+                        Case "false"
+                            RIST_MediaSource1Time_Count = 0
+                        Case "true"
+                            If MediaSource1TimeMS <> 0 Then
+                                If RIST_MediaSource1Time = MediaSource1TimeMS Then
+                                    RIST_MediaSource1Time_Count = RIST_MediaSource1Time_Count + 1 ' Scene_Fail will be triggered at 5 seconds, the same as SRT timeout
+                                    If RIST_MediaSource1Time_Count > 99 Then RIST_MediaSource1Time_Count = 99 ' No need to have it count up forever
+                                Else
+                                    RIST_MediaSource1Time_Count = 0
+                                End If
                             End If
-                        End If
-                End Select
+                    End Select
 
-                LOF92:
-            End If
-            Close #92
+                Case "curl"
+
+                    If _FileExists(filePrevious_ms) Then
+
+                        If HTTP_Enabled <> "true" Then ' HTTP
+
+                            Open filePrevious_ms For Input As #92
+
+                            tmpFileError = 0
+                            If EOF(92) Then
+                                If NodejsFileSystem = "2" Then ' There is an increased chance an empty tmp file might be read at any time when the external node.js window is used
+                                    ' RefreshDisplayRequest not used here
+                                    Error_msg = "- Unable to read tmp file in Multi0. (Error: #11)"
+                                    Error_msg_2$ = ""
+                                    tmpFileError = 1 ' LBR will be falsely triggered because of an empty tmp file unless corrected
+                                    tmpFileRestore = 1
+                                    _Delay 0.05
+                                    GoTo LOF92
+                                Else
+                                    RefreshDisplayRequest = 1
+                                    Error_msg = "- Unable to read " + c34 + "SceneOK" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + Chr$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + Chr$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSocket options are correctly set. (Error: #9)"
+                                    _Delay 3
+                                    GoTo LOF92
+                                End If
+                            End If
+
+                            If LOF(92) = 0 Then NoKill = 1: GoTo LOF92 ' Overkill with EOF checking, but just being safe
+                            If EOF(92) Then GoTo LOF92
+                            Line Input #92, file92
+
+                        End If
+
+                        RIST_MediaSource1Time = MediaSource1TimeMS ' RIST mode
+
+                        If HTTP_Enabled = "true" Then ' HTTP
+
+                            Open filePrevious_ms For Binary As #128
+                            JSON = Space$(LOF(128))
+                            Get #128, , JSON
+                            Close #128
+                            ' No JSON_Multi(0) redmin required
+                            GetAllKey "mediaCursor", JSON, JSON_Multi()
+                            For i_JSON = 1 To UBound(JSON_Multi)
+                                ' JSON_Multi(i_JSON)
+                            Next
+                            file92 = JSON_Multi(1)
+
+                        End If
+
+                        MediaSource1TimeMS = Val(file92)
+
+                        ' RIST mode
+                        Select Case RIST_Fail_Mode_1
+                            Case "false"
+                                RIST_MediaSource1Time_Count = 0
+                            Case "true"
+                                If MediaSource1TimeMS <> 0 Then
+                                    If RIST_MediaSource1Time = MediaSource1TimeMS Then
+                                        RIST_MediaSource1Time_Count = RIST_MediaSource1Time_Count + 1 ' Scene_Fail will be triggered at 5 seconds, the same as SRT timeout
+                                        If RIST_MediaSource1Time_Count > 99 Then RIST_MediaSource1Time_Count = 99 ' No need to have it count up forever
+                                    Else
+                                        RIST_MediaSource1Time_Count = 0
+                                    End If
+                                End If
+                        End Select
+
+                        LOF92:
+                    End If
+                    Close #92
+
+            End Select
+
+
 
             If NodejsFileSystem = "0" Or NodejsFileSystem = "1" Then If NoKill = 1 Then NoKill = 0 Else If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
         Case "SLS"
             If SLS_1_Enabled = "true" Then sls_client_connect
-            If SLS_2_Active = 1 Then sls_client_connect_2 ' SLS IP #2 (v1.0.1)
-
+            If SLS_2_Active = 1 Then sls_client_connect_2 ' SLS IP #2 (v1.1.0)
 
 
             On Error GoTo 0
@@ -4477,6 +4824,13 @@ Sub Multi0 (serverType$)
                     SLS_streams_found = SLS_streams_found + 1
                 End If
             Loop Until SLS_streams_seek = 0
+            Do
+                SLS_streams_seek = InStr(SLS_streams_seek + 1, sls_stats.xml, c34 + "connected" + c34 + ": false")
+                If SLS_streams_seek Then
+                    SLS_streams_found = SLS_streams_found + 1
+                End If
+            Loop Until SLS_streams_seek = 0
+            If SLS_streams_found > 2 Then SLS_streams_found = 2
 
             Select Case SLS_streams_found
                 Case 1
@@ -4485,7 +4839,7 @@ Sub Multi0 (serverType$)
                         If InStr(sls_stats.xml, SLS_Publisher1) Then SLS_Bitrate1 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, c34 + "bitrate" + c34 + ":") + Len(c34 + "bitrate" + c34 + ":")), 6))
 
                         If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
-                            BELABOX_1_Found = 1: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime ' Uptime not reported in JSON data
+                            BELABOX_1_Found = 1: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime: BELABOX_1_Offline = 0 ' Uptime not reported in JSON data
                         ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
                             BELABOX_1_Found = 1: BELABOX_1_Offline = 1: BELABOX_1_Uptime = 0
                         End If
@@ -4497,7 +4851,7 @@ Sub Multi0 (serverType$)
                         SLS_Bitrate1 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, "bitrate") + 9, 6))
 
                         If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
-                            BELABOX_1_Found = 1: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime ' Uptime not reported in JSON data
+                            BELABOX_1_Found = 1: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime: BELABOX_1_Offline = 0 ' Uptime not reported in JSON data
                         ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
                             BELABOX_1_Found = 1: BELABOX_1_Offline = 1: BELABOX_1_Uptime = 0
                         End If
@@ -4549,30 +4903,62 @@ Sub Multi0 (serverType$)
             Next
 
             If i_XML > 2 Then
-                If RTMP_Publisher1 = XML_Multi(2) Then
+                If RTMP_1_Enabled = "true" Then ' Bug fix for RTMP1Enabled=false ?
+                    If RTMP_Publisher1 = XML_Multi(2) Then
 
-                    rtmp_stats.xml_XML = rtmp_stats.xml
-                    ReDim XML_Multi(64) As String
-                    GetAllKeyXML "time", rtmp_stats.xml_XML, XML_Multi()
-                    For i_XML = 1 To UBound(XML_Multi)
-                        ' xml_multi(i_XML)
-                    Next
-                    If i_XML > 2 Then RTMP_Uptime1 = Val(XML_Multi(2)) / 1000
+                        rtmp_stats.xml_XML = rtmp_stats.xml
+                        ReDim XML_Multi(64) As String
+                        GetAllKeyXML "time", rtmp_stats.xml_XML, XML_Multi()
+                        For i_XML = 1 To UBound(XML_Multi)
+                            ' xml_multi(i_XML)
+                        Next
+                        If i_XML > 2 Then RTMP_Uptime1 = Val(XML_Multi(2)) / 1000
 
-                    rtmp_stats.xml_XML = rtmp_stats.xml
-                    ReDim XML_Multi(64) As String
-                    GetAllKeyXML "bytes_in", rtmp_stats.xml_XML, XML_Multi()
-                    For i_XML = 1 To UBound(XML_Multi)
-                        ' xml_multi(i_XML)
-                    Next
-                    If i_XML > 2 Then RTMP_Bytes_In = Val(XML_Multi(2))
+                        rtmp_stats.xml_XML = rtmp_stats.xml
+                        ReDim XML_Multi(64) As String
+                        GetAllKeyXML "bytes_in", rtmp_stats.xml_XML, XML_Multi()
+                        For i_XML = 1 To UBound(XML_Multi)
+                            ' xml_multi(i_XML)
+                        Next
+                        If i_XML > 2 Then RTMP_Bytes_In = Val(XML_Multi(2))
 
-                    ' bw_in update interval is too slow, so get bytes_in minus the previous bytes_in = birate updated every second
-                    RTMP_Bytes_In_Temp1 = RTMP_Bytes_In
-                    If RTMP_Bytes_In_Temp1 >= 1 And RTMP_Bytes_In_Temp2 >= 1 Then
-                        RTMP_Bitrate1 = Int((RTMP_Bytes_In_Temp1 - RTMP_Bytes_In_Temp2) / 128)
+                        ' bw_in update interval is too slow, so get bytes_in minus the previous bytes_in = birate updated every second
+                        RTMP_Bytes_In_Temp1 = RTMP_Bytes_In
+                        If RTMP_Bytes_In_Temp1 >= 1 And RTMP_Bytes_In_Temp2 >= 1 Then
+                            RTMP_Bitrate1 = Int((RTMP_Bytes_In_Temp1 - RTMP_Bytes_In_Temp2) / 128)
+                        End If
+
                     End If
+                End If
+            End If
 
+
+            If i_XML > 3 Then
+                ' Check if stream name 2 = requested stream name 1
+                If RTMP_1_Enabled = "true" Then ' Bug fix for RTMP1Enabled=false ?
+                    If RTMP_Publisher1 = XML_Multi(3) Then
+                        rtmp_stats.xml_XML = rtmp_stats.xml
+                        ReDim XML_Multi(64) As String
+                        GetAllKeyXML "time", rtmp_stats.xml_XML, XML_Multi()
+                        For i_XML = 1 To UBound(XML_Multi)
+                            ' XML_Multi(i_XML)
+                        Next
+                        If i_XML > 3 Then RTMP_Uptime1 = Val(XML_Multi(3)) / 1000
+
+                        rtmp_stats.xml_XML = rtmp_stats.xml
+                        ReDim XML_Multi(64) As String
+                        GetAllKeyXML "bytes_in", rtmp_stats.xml_XML, XML_Multi()
+                        For i_XML = 1 To UBound(XML_Multi)
+                            ' XML_Multi(i_XML)
+                        Next
+                        If i_XML > 3 Then RTMP_Bytes_In = Val(XML_Multi(3))
+
+                        ' bw_in update interval is too slow, so get bytes_in minus the previous bytes_in = birate updated every second
+                        RTMP_Bytes_In_Temp1 = RTMP_Bytes_In
+                        If RTMP_Bytes_In_Temp1 >= 1 And RTMP_Bytes_In_Temp2 >= 1 Then
+                            RTMP_Bitrate1 = Int((RTMP_Bytes_In_Temp1 - RTMP_Bytes_In_Temp2) / 128)
+                        End If
+                    End If
                 End If
             End If
 
@@ -4650,7 +5036,12 @@ Sub Multi0 (serverType$)
         If SceneLBActive Then
             If Scene_Current = Scene_LBR Then
                 Scene_Current = Scene_OK
-                Shell _Hide _DontWait shell_cmd_1 + Scene_OK + shell_cmd_2
+                Select Case HTTP_Communication
+                    Case "native"
+                        http_client_connect "Set", Scene_OK
+                    Case "curl"
+                        Shell _Hide _DontWait shell_cmd_1 + Scene_OK + shell_cmd_2
+                End Select
             End If
         End If
 
@@ -4674,7 +5065,12 @@ Sub Multi0_CMD_LBR
     ' Switch to Low Bandwidth Scene
     If SceneLBActive Then
         Scene_Current = Scene_LBR
-        Shell _Hide _DontWait shell_cmd_1 + Scene_LBR + shell_cmd_2
+        Select Case HTTP_Communication
+            Case "native"
+                http_client_connect "Set", Scene_LBR
+            Case "curl"
+                Shell _Hide _DontWait shell_cmd_1 + Scene_LBR + shell_cmd_2
+        End Select
     End If
 
     If tmpFileError = 0 Then
@@ -4703,14 +5099,30 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                     If HTTP_Enabled = "true" Then
                         Select Case HTTP_Access
                             Case "fast"
-                                Select Case OS
-                                    Case "WINDOWS"
-                                        Shell _Hide http_media2_File
-                                    Case "LINUX"
-                                        Shell _Hide CMD_EXE_HTTP_GET_MEDIA2
+                                Select Case HTTP_Communication
+                                    Case "native"
+                                        http_client_connect "GetMedia", MediaSource1
+                                        GetMediaInputStatus2.tmp = "": GetMediaInputStatus2.tmp = GetMediaInputStatus.tmp
+                                        http_client_connect "GetMedia", MediaSource2
+                                        GetMediaInputStatus2.tmp = GetMediaInputStatus2.tmp + GetMediaInputStatus.tmp
+                                    Case "curl"
+                                        Select Case OS
+                                            Case "WINDOWS"
+                                                Shell _Hide http_media2_File
+                                            Case "LINUX"
+                                                Shell _Hide CMD_EXE_HTTP_GET_MEDIA2
+                                        End Select
                                 End Select
                             Case Else
-                                Shell _Hide CMD_EXE_HTTP_GET_MEDIA2
+                                Select Case HTTP_Communication
+                                    Case "native"
+                                        http_client_connect "GetMedia", MediaSource1
+                                        GetMediaInputStatus2.tmp = "": GetMediaInputStatus2.tmp = GetMediaInputStatus.tmp
+                                        http_client_connect "GetMedia", MediaSource2
+                                        GetMediaInputStatus2.tmp = GetMediaInputStatus2.tmp + GetMediaInputStatus.tmp
+                                    Case "curl"
+                                        Shell _Hide CMD_EXE_HTTP_GET_MEDIA2
+                                End Select
                         End Select
                     Else
                         If Nodejs_Access = "fast" Then
@@ -4728,9 +5140,25 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                         If HTTP_Enabled = "true" Then
                             Select Case HTTP_Access
                                 Case "fast"
-                                    Shell _Hide CMD_EXE_HTTP_GET_MEDIA2
+                                    Select Case HTTP_Communication
+                                        Case "native"
+                                            http_client_connect "GetMedia", MediaSource1
+                                            GetMediaInputStatus2.tmp = "": GetMediaInputStatus2.tmp = GetMediaInputStatus.tmp
+                                            http_client_connect "GetMedia", MediaSource2
+                                            GetMediaInputStatus2.tmp = GetMediaInputStatus2.tmp + GetMediaInputStatus.tmp
+                                        Case "curl"
+                                            Shell _Hide CMD_EXE_HTTP_GET_MEDIA2
+                                    End Select
                                 Case Else
-                                    Shell _Hide CMD_EXE_HTTP_GET_MEDIA2
+                                    Select Case HTTP_Communication
+                                        Case "native"
+                                            http_client_connect "GetMedia", MediaSource1
+                                            GetMediaInputStatus2.tmp = "": GetMediaInputStatus2.tmp = GetMediaInputStatus.tmp
+                                            http_client_connect "GetMedia", MediaSource2
+                                            GetMediaInputStatus2.tmp = GetMediaInputStatus2.tmp + GetMediaInputStatus.tmp
+                                        Case "curl"
+                                            Shell _Hide CMD_EXE_HTTP_GET_MEDIA2
+                                    End Select
                             End Select
                         Else
                             If Nodejs_Access = "fast" Then
@@ -4743,9 +5171,25 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                         If HTTP_Enabled = "true" Then
                             Select Case HTTP_Access
                                 Case "fast"
-                                    Shell CMD_EXE_HTTP_GET_MEDIA2
+                                    Select Case HTTP_Communication
+                                        Case "native"
+                                            http_client_connect "GetMedia", MediaSource1
+                                            GetMediaInputStatus2.tmp = "": GetMediaInputStatus2.tmp = GetMediaInputStatus.tmp
+                                            http_client_connect "GetMedia", MediaSource2
+                                            GetMediaInputStatus2.tmp = GetMediaInputStatus2.tmp + GetMediaInputStatus.tmp
+                                        Case "curl"
+                                            Shell CMD_EXE_HTTP_GET_MEDIA2
+                                    End Select
                                 Case Else
-                                    Shell CMD_EXE_HTTP_GET_MEDIA2
+                                    Select Case HTTP_Communication
+                                        Case "native"
+                                            http_client_connect "GetMedia", MediaSource1
+                                            GetMediaInputStatus2.tmp = "": GetMediaInputStatus2.tmp = GetMediaInputStatus.tmp
+                                            http_client_connect "GetMedia", MediaSource2
+                                            GetMediaInputStatus2.tmp = GetMediaInputStatus2.tmp + GetMediaInputStatus.tmp
+                                        Case "curl"
+                                            Shell CMD_EXE_HTTP_GET_MEDIA2
+                                    End Select
                             End Select
                         Else
                             If Nodejs_Access = "fast" Then
@@ -4782,113 +5226,187 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
 
             On Error GoTo App_Fail
             App_Refresh = 1
-            If _FileExists(filePrevious_ms) Then
 
-                If HTTP_Enabled <> "true" Then
 
-                    Open filePrevious_ms For Input As #92
-                    tmpFileError = 0
-                    If EOF(92) Then
-                        If NodejsFileSystem = "2" Then ' There is an increased chance an empty tmp file might be read at any time when the external node.js window is used
-                            ' RefreshDisplayRequest not used here
-                            Error_msg = "- Unable to read tmp file. (Error: #11)"
-                            Error_msg_2$ = ""
-                            tmpFileError = 1 ' LBR will be falsely triggered because of an empty tmp file unless corrected
-                            tmpFileRestore = 1
-                            _Delay 0.05
-                            GoTo LOF922
-                        Else
-                            RefreshDisplayRequest = 1
-                            Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + Chr$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + Chr$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSockets options are correctly set. (Error: #7)"
-                            _Delay 3
-                            GoTo LOF922
-                        End If
+
+            Select Case HTTP_Communication
+                Case "native"
+
+                    If serverSelection%% = 0 Or serverSelection%% = 1 Then RIST_MediaSource1Time = MediaSource1TimeMS ' RIST mode
+
+                    If HTTP_Enabled = "true" Then ' HTTP
+
+                        ' http_client_connect doesn't need to be called here
+                        JSON = Space$(Len(GetMediaInputStatus2.tmp))
+                        JSON = GetMediaInputStatus2.tmp
+                        GetAllKey "mediaCursor", JSON, JSON_Multi()
+                        For i_XML = 1 To UBound(JSON_Multi)
+                            ' JSON_Multi(i_XML)
+                        Next
+                        file92 = JSON_Multi(1)
+
                     End If
 
-                    If LOF(92) = 0 Then NoKill = 1: GoTo LOF922 ' Overkill with EOF checking, but just being safe
-                    Line Input #92, file92
+                    If serverSelection%% = 0 Or serverSelection%% = 1 Then MediaSource1TimeMS = Val(file92)
 
-                End If
-
-                If serverSelection%% = 0 Or serverSelection%% = 1 Then RIST_MediaSource1Time = MediaSource1TimeMS ' RIST mode
-
-                If HTTP_Enabled = "true" Then ' HTTP
-                    Open filePrevious_ms For Binary As #128
-                    JSON = Space$(LOF(128))
-                    Get #128, , JSON
-                    Close #128
-                    ' No JSON_Multi(0) redmin required
-                    GetAllKey "mediaCursor", JSON, JSON_Multi()
-                    For i_XML = 1 To UBound(JSON_Multi)
-                        ' JSON_Multi(i_XML)
-                    Next
-                    file92 = JSON_Multi(1)
-                End If
-
-                If serverSelection%% = 0 Or serverSelection%% = 1 Then MediaSource1TimeMS = Val(file92)
-
-                ' RIST mode
-                Select Case RIST_Fail_Mode_1
-                    Case "false"
-                        If serverSelection%% = 0 Or serverSelection%% = 1 Then RIST_MediaSource1Time_Count = 0
-                    Case "true"
-                        If serverSelection%% = 0 Or serverSelection%% = 1 Then If MediaSource1TimeMS <> 0 Then
-                                If RIST_MediaSource1Time = MediaSource1TimeMS Then
-                                    RIST_MediaSource1Time_Count = RIST_MediaSource1Time_Count + 1 ' Scene_Fail will be triggered at 5 seconds, the same as SRT timeout
-                                    If RIST_MediaSource1Time_Count > 99 Then RIST_MediaSource1Time_Count = 99 ' No need to have it count up forever
-                                Else
-                                    RIST_MediaSource1Time_Count = 0
+                    ' RIST mode
+                    Select Case RIST_Fail_Mode_1
+                        Case "false"
+                            If serverSelection%% = 0 Or serverSelection%% = 1 Then RIST_MediaSource1Time_Count = 0
+                        Case "true"
+                            If serverSelection%% = 0 Or serverSelection%% = 1 Then If MediaSource1TimeMS <> 0 Then
+                                    If RIST_MediaSource1Time = MediaSource1TimeMS Then
+                                        RIST_MediaSource1Time_Count = RIST_MediaSource1Time_Count + 1 ' Scene_Fail will be triggered at 5 seconds, the same as SRT timeout
+                                        If RIST_MediaSource1Time_Count > 99 Then RIST_MediaSource1Time_Count = 99 ' No need to have it count up forever
+                                    Else
+                                        RIST_MediaSource1Time_Count = 0
+                                    End If
                                 End If
                             End If
-                        End If
-                End Select
+                    End Select
 
-                If serverSelection%% = 0 Or serverSelection%% = 1 Then MediaSource1Time = MediaSource1TimeMS / 1000
+                    If serverSelection%% = 0 Or serverSelection%% = 1 Then MediaSource1Time = MediaSource1TimeMS / 1000
 
-                If HTTP_Enabled <> "true" Then
 
-                    If EOF(92) Then RefreshDisplayRequest = 1: Error_msg = "- Unable to read " + c34 + "MediaSource2" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + Chr$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + Chr$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSockets options are correctly set. (Error: #8)": _Delay 3: GoTo LOF922
-                    Line Input #92, file92
+                    If serverSelection%% = 0 Or serverSelection%% = 2 Then RIST_MediaSource2Time = MediaSource2TimeMS ' RIST mode - Source 2
 
-                End If
+                    If HTTP_Enabled = "true" Then ' HTTP
+                        If serverSelection%% = 0 Or serverSelection%% = 2 Then MediaSource2TimeMS = Val(JSON_Multi(2))
+                    Else
+                        If serverSelection%% = 0 Or serverSelection%% = 2 Then MediaSource2TimeMS = Val(file92)
+                    End If
 
-                If serverSelection%% = 0 Or serverSelection%% = 2 Then RIST_MediaSource2Time = MediaSource2TimeMS ' RIST mode - Source 2
-
-                If HTTP_Enabled = "true" Then ' HTTP
-                    If serverSelection%% = 0 Or serverSelection%% = 2 Then MediaSource2TimeMS = Val(JSON_Multi(2))
-                Else
-                    If serverSelection%% = 0 Or serverSelection%% = 2 Then MediaSource2TimeMS = Val(file92)
-                End If
-
-                ' RIST mode - Source 2
-                Select Case RIST_Fail_Mode_2
-                    Case "false"
-                        If serverSelection%% = 0 Or serverSelection%% = 2 Then RIST_MediaSource2Time_Count = 0
-                    Case "true"
-                        If serverSelection%% = 0 Or serverSelection%% = 2 Then
-                            If MediaSource2TimeMS <> 0 Then
-                                If RIST_MediaSource2Time = MediaSource2TimeMS Then
-                                    RIST_MediaSource2Time_Count = RIST_MediaSource2Time_Count + 1 ' Scene_Fail will be triggered at 5 seconds, the same as SRT timeout
-                                    If RIST_MediaSource2Time_Count > 99 Then RIST_MediaSource2Time_Count = 99 ' No need to have it count up forever
-                                Else
-                                    RIST_MediaSource2Time_Count = 0
+                    ' RIST mode - Source 2
+                    Select Case RIST_Fail_Mode_2
+                        Case "false"
+                            If serverSelection%% = 0 Or serverSelection%% = 2 Then RIST_MediaSource2Time_Count = 0
+                        Case "true"
+                            If serverSelection%% = 0 Or serverSelection%% = 2 Then
+                                If MediaSource2TimeMS <> 0 Then
+                                    If RIST_MediaSource2Time = MediaSource2TimeMS Then
+                                        RIST_MediaSource2Time_Count = RIST_MediaSource2Time_Count + 1 ' Scene_Fail will be triggered at 5 seconds, the same as SRT timeout
+                                        If RIST_MediaSource2Time_Count > 99 Then RIST_MediaSource2Time_Count = 99 ' No need to have it count up forever
+                                    Else
+                                        RIST_MediaSource2Time_Count = 0
+                                    End If
                                 End If
                             End If
+                    End Select
+
+                    If serverSelection%% = 0 Or serverSelection%% = 2 Then MediaSource2Time = MediaSource2TimeMS / 1000
+
+                Case "curl"
+
+                    If _FileExists(filePrevious_ms) Then
+
+                        If HTTP_Enabled <> "true" Then
+
+                            Open filePrevious_ms For Input As #92
+                            tmpFileError = 0
+                            If EOF(92) Then
+                                If NodejsFileSystem = "2" Then ' There is an increased chance an empty tmp file might be read at any time when the external node.js window is used
+                                    ' RefreshDisplayRequest not used here
+                                    Error_msg = "- Unable to read tmp file in Multi1. (Error: #12)"
+                                    Error_msg_2$ = ""
+                                    tmpFileError = 1 ' LBR will be falsely triggered because of an empty tmp file unless corrected
+                                    tmpFileRestore = 1
+                                    _Delay 0.05
+                                    GoTo LOF922
+                                Else
+                                    RefreshDisplayRequest = 1
+                                    Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + Chr$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + Chr$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSocket options are correctly set. (Error: #7)"
+                                    _Delay 3
+                                    GoTo LOF922
+                                End If
+                            End If
+
+                            If LOF(92) = 0 Then NoKill = 1: GoTo LOF922 ' Overkill with EOF checking, but just being safe
+                            Line Input #92, file92
+
                         End If
-                End Select
 
-                If serverSelection%% = 0 Or serverSelection%% = 2 Then MediaSource2Time = MediaSource2TimeMS / 1000
+                        If serverSelection%% = 0 Or serverSelection%% = 1 Then RIST_MediaSource1Time = MediaSource1TimeMS ' RIST mode
 
-                LOF922:
-            End If
-            Close #92
+                        If HTTP_Enabled = "true" Then ' HTTP
+                            Open filePrevious_ms For Binary As #128
+                            JSON = Space$(LOF(128))
+                            Get #128, , JSON
+                            Close #128
+                            ' No JSON_Multi(0) redmin required
+                            GetAllKey "mediaCursor", JSON, JSON_Multi()
+                            For i_XML = 1 To UBound(JSON_Multi)
+                                ' JSON_Multi(i_XML)
+                            Next
+                            file92 = JSON_Multi(1)
+                        End If
+
+                        If serverSelection%% = 0 Or serverSelection%% = 1 Then MediaSource1TimeMS = Val(file92)
+
+                        ' RIST mode
+                        Select Case RIST_Fail_Mode_1
+                            Case "false"
+                                If serverSelection%% = 0 Or serverSelection%% = 1 Then RIST_MediaSource1Time_Count = 0
+                            Case "true"
+                                If serverSelection%% = 0 Or serverSelection%% = 1 Then If MediaSource1TimeMS <> 0 Then
+                                        If RIST_MediaSource1Time = MediaSource1TimeMS Then
+                                            RIST_MediaSource1Time_Count = RIST_MediaSource1Time_Count + 1 ' Scene_Fail will be triggered at 5 seconds, the same as SRT timeout
+                                            If RIST_MediaSource1Time_Count > 99 Then RIST_MediaSource1Time_Count = 99 ' No need to have it count up forever
+                                        Else
+                                            RIST_MediaSource1Time_Count = 0
+                                        End If
+                                    End If
+                                End If
+                        End Select
+
+                        If serverSelection%% = 0 Or serverSelection%% = 1 Then MediaSource1Time = MediaSource1TimeMS / 1000
+
+                        If HTTP_Enabled <> "true" Then
+
+                            If EOF(92) Then RefreshDisplayRequest = 1: Error_msg = "- Unable to read " + c34 + "MediaSource2" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + Chr$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + Chr$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSocket options are correctly set. (Error: #8)": _Delay 3: GoTo LOF922
+                            Line Input #92, file92
+
+                        End If
+
+                        If serverSelection%% = 0 Or serverSelection%% = 2 Then RIST_MediaSource2Time = MediaSource2TimeMS ' RIST mode - Source 2
+
+                        If HTTP_Enabled = "true" Then ' HTTP
+                            If serverSelection%% = 0 Or serverSelection%% = 2 Then MediaSource2TimeMS = Val(JSON_Multi(2))
+                        Else
+                            If serverSelection%% = 0 Or serverSelection%% = 2 Then MediaSource2TimeMS = Val(file92)
+                        End If
+
+                        ' RIST mode - Source 2
+                        Select Case RIST_Fail_Mode_2
+                            Case "false"
+                                If serverSelection%% = 0 Or serverSelection%% = 2 Then RIST_MediaSource2Time_Count = 0
+                            Case "true"
+                                If serverSelection%% = 0 Or serverSelection%% = 2 Then
+                                    If MediaSource2TimeMS <> 0 Then
+                                        If RIST_MediaSource2Time = MediaSource2TimeMS Then
+                                            RIST_MediaSource2Time_Count = RIST_MediaSource2Time_Count + 1 ' Scene_Fail will be triggered at 5 seconds, the same as SRT timeout
+                                            If RIST_MediaSource2Time_Count > 99 Then RIST_MediaSource2Time_Count = 99 ' No need to have it count up forever
+                                        Else
+                                            RIST_MediaSource2Time_Count = 0
+                                        End If
+                                    End If
+                                End If
+                        End Select
+
+                        If serverSelection%% = 0 Or serverSelection%% = 2 Then MediaSource2Time = MediaSource2TimeMS / 1000
+
+                        LOF922:
+                    End If
+                    Close #92
+
+            End Select
+
 
             If NodejsFileSystem = "0" Or NodejsFileSystem = "1" Then If NoKill = 1 Then NoKill = 0 Else If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
             On Error GoTo 0
             App_Refresh = 0
         Case "SLS"
             If SLS_1_Enabled = "true" Then sls_client_connect
-            If SLS_2_Active = 1 Then sls_client_connect_2 ' SLS IP #2 (v1.0.1)
+            If SLS_2_Active = 1 Then sls_client_connect_2 ' SLS IP #2 (v1.1.0)
 
             On Error GoTo 0
             App_Refresh = 0
@@ -4939,7 +5457,7 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
             Else
 
 
-                ' SLS IP #2 (v1.0.1)
+                ' SLS IP #2 (v1.1.0)
                 Do
                     SLS_streams_seek = InStr(SLS_streams_seek + 1, sls_stats.xml, "uptime")
                     If SLS_streams_seek Then
@@ -4993,14 +5511,6 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
 
 
 
-
-
-
-
-
-
-
-
             ' ---------- BELABOX detection ----------
 
             BELABOX_1_Found = 0: BELABOX_2_Found = 0
@@ -5035,7 +5545,7 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                             If InStr(sls_stats.xml, SLS_Publisher1) Then SLS_Bitrate1 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, c34 + "bitrate" + c34 + ":") + Len(c34 + "bitrate" + c34 + ":")), 6))
 
                             If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
-                                BELABOX_1_Found = 1: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime ' Uptime not reported in JSON data
+                                BELABOX_1_Found = 1: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime: BELABOX_1_Offline = 0 ' Uptime not reported in JSON data
                             ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
                                 BELABOX_1_Found = 1: BELABOX_1_Offline = 1: BELABOX_1_Uptime = 0
                             End If
@@ -5058,7 +5568,7 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                             SLS_Bitrate1 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, "bitrate") + 9, 6))
 
                             If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
-                                BELABOX_1_Found = 1: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime ' Uptime not reported in JSON data
+                                BELABOX_1_Found = 1: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime: BELABOX_1_Offline = 0 ' Uptime not reported in JSON data
                             ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
                                 BELABOX_1_Found = 1: BELABOX_1_Offline = 1: BELABOX_1_Uptime = 0
                             End If
@@ -5081,7 +5591,7 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
             Else
 
 
-                ' SLS IP #2 (v1.0.1)
+                ' SLS IP #2 (v1.1.0)
                 Do
                     SLS_streams_seek = InStr(SLS_streams_seek + 1, sls_stats.xml, c34 + "connected" + c34 + ": true")
                     If SLS_streams_seek Then
@@ -5129,7 +5639,7 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                             If InStr(sls_stats_2.xml, SLS_Publisher2) Then SLS_Bitrate2 = Val(Mid$(sls_stats_2.xml, (InStr(sls_stats_2.xml, c34 + "bitrate" + c34 + ":") + Len(c34 + "bitrate" + c34 + ":")), 6))
 
                             If _Trim$(Mid$(sls_stats_2.xml, InStr(InStr(sls_stats_2.xml, SLS_Publisher2), sls_stats_2.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
-                                BELABOX_2_Found = 1: BELABOX_2_Uptime = BELABOX_2_Uptime + 1: SLS_Uptime2 = BELABOX_2_Uptime ' Uptime not reported in JSON data
+                                BELABOX_2_Found = 1: BELABOX_2_Uptime = BELABOX_2_Uptime + 1: SLS_Uptime2 = BELABOX_2_Uptime: BELABOX_2_Offline = 0 ' Uptime not reported in JSON data
                             ElseIf Left$(_Trim$(Mid$(sls_stats_2.xml, InStr(InStr(sls_stats_2.xml, SLS_Publisher2), sls_stats_2.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
                                 BELABOX_2_Found = 1: BELABOX_2_Offline = 1: BELABOX_2_Uptime = 0
                             End If
@@ -5141,7 +5651,7 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                             SLS_Bitrate1 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, "bitrate") + 9, 6))
 
                             If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
-                                BELABOX_1_Found = 1: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime ' Uptime not reported in JSON data
+                                BELABOX_1_Found = 1: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime: BELABOX_1_Offline = 0 ' Uptime not reported in JSON data
                             ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "false" Then
                                 BELABOX_1_Found = 1: BELABOX_1_Offline = 1: BELABOX_1_Uptime = 0
                             End If
@@ -5165,9 +5675,6 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
 
             If BELABOX_1_Found = 0 Then BELABOX_1_Uptime = 0
             If BELABOX_2_Found = 0 Then BELABOX_2_Uptime = 0
-
-
-
 
 
 
@@ -5221,48 +5728,52 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
             If i_XML > 2 Then
 
                 ' Check if stream name 1 = requested stream name 1
-                If RTMP_Publisher1 = XML_Multi(2) Then
-                    rtmp_stats.xml_XML = rtmp_stats.xml
-                    ReDim XML_Multi(64) As String
-                    GetAllKeyXML "time", rtmp_stats.xml_XML, XML_Multi()
-                    For i_XML = 1 To UBound(XML_Multi)
-                        ' XML_Multi(i_XML)
-                    Next
-                    If i_XML > 2 Then RTMP_Uptime1 = Val(XML_Multi(2)) / 1000
+                If RTMP_1_Enabled = "true" Then ' Bug fix for RTMP1Enabled=false ?
+                    If RTMP_Publisher1 = XML_Multi(2) Then
+                        rtmp_stats.xml_XML = rtmp_stats.xml
+                        ReDim XML_Multi(64) As String
+                        GetAllKeyXML "time", rtmp_stats.xml_XML, XML_Multi()
+                        For i_XML = 1 To UBound(XML_Multi)
+                            ' XML_Multi(i_XML)
+                        Next
+                        If i_XML > 2 Then RTMP_Uptime1 = Val(XML_Multi(2)) / 1000
 
-                    rtmp_stats.xml_XML = rtmp_stats.xml
-                    ReDim XML_Multi(64) As String
-                    GetAllKeyXML "bytes_in", rtmp_stats.xml_XML, XML_Multi()
-                    For i_XML = 1 To UBound(XML_Multi)
-                        ' XML_Multi(i_XML)
-                    Next
-                    If i_XML > 2 Then RTMP_Bytes_In = Val(XML_Multi(2))
+                        rtmp_stats.xml_XML = rtmp_stats.xml
+                        ReDim XML_Multi(64) As String
+                        GetAllKeyXML "bytes_in", rtmp_stats.xml_XML, XML_Multi()
+                        For i_XML = 1 To UBound(XML_Multi)
+                            ' XML_Multi(i_XML)
+                        Next
+                        If i_XML > 2 Then RTMP_Bytes_In = Val(XML_Multi(2))
 
-                    ' bw_in update interval is too slow, so get bytes_in minus the previous bytes_in = birate updated every second
-                    multiStream1 = RTMP_Bytes_In
+                        ' bw_in update interval is too slow, so get bytes_in minus the previous bytes_in = birate updated every second
+                        multiStream1 = RTMP_Bytes_In
 
+                    End If
                 End If
 
                 ' Check if stream name 1 = requested stream name 1
-                If RTMP_Publisher2 = XML_Multi(2) Then
-                    rtmp_stats.xml_XML = rtmp_stats.xml
-                    ReDim XML_Multi(64) As String
-                    GetAllKeyXML "time", rtmp_stats.xml_XML, XML_Multi()
-                    For i_XML = 1 To UBound(XML_Multi)
-                        ' XML_Multi(i_XML)
-                    Next
-                    If i_XML > 2 Then RTMP_Uptime2 = Val(XML_Multi(2)) / 1000
+                If RTMP_2_Enabled = "true" Then ' Bug fix for RTMP2Enabled=false ?
+                    If RTMP_Publisher2 = XML_Multi(2) Then
+                        rtmp_stats.xml_XML = rtmp_stats.xml
+                        ReDim XML_Multi(64) As String
+                        GetAllKeyXML "time", rtmp_stats.xml_XML, XML_Multi()
+                        For i_XML = 1 To UBound(XML_Multi)
+                            ' XML_Multi(i_XML)
+                        Next
+                        If i_XML > 2 Then RTMP_Uptime2 = Val(XML_Multi(2)) / 1000
 
-                    rtmp_stats.xml_XML = rtmp_stats.xml
-                    ReDim XML_Multi(64) As String
-                    GetAllKeyXML "bytes_in", rtmp_stats.xml_XML, XML_Multi()
-                    For i_XML = 1 To UBound(XML_Multi)
-                        ' XML_Multi(i_XML)
-                    Next
-                    If i_XML > 2 Then RTMP_Bytes_In = Val(XML_Multi(2))
+                        rtmp_stats.xml_XML = rtmp_stats.xml
+                        ReDim XML_Multi(64) As String
+                        GetAllKeyXML "bytes_in", rtmp_stats.xml_XML, XML_Multi()
+                        For i_XML = 1 To UBound(XML_Multi)
+                            ' XML_Multi(i_XML)
+                        Next
+                        If i_XML > 2 Then RTMP_Bytes_In = Val(XML_Multi(2))
 
-                    ' bw_in update interval is too slow, so get bytes_in minus the previous bytes_in = birate updated every second
-                    multiStream2 = RTMP_Bytes_In
+                        ' bw_in update interval is too slow, so get bytes_in minus the previous bytes_in = birate updated every second
+                        multiStream2 = RTMP_Bytes_In
+                    End If
                 End If
 
             End If
@@ -5277,48 +5788,52 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
 
             If i_XML > 3 Then
                 ' Check if stream name 2 = requested stream name 2
-                If RTMP_Publisher2 = XML_Multi(3) Then
-                    rtmp_stats.xml_XML = rtmp_stats.xml
-                    ReDim XML_Multi(64) As String
-                    GetAllKeyXML "time", rtmp_stats.xml_XML, XML_Multi()
-                    For i_XML = 1 To UBound(XML_Multi)
-                        ' XML_Multi(i_XML)
-                    Next
-                    If i_XML > 3 Then RTMP_Uptime2 = Val(XML_Multi(3)) / 1000
+                If RTMP_2_Enabled = "true" Then ' Bug fix for RTMP2Enabled=false ?
+                    If RTMP_Publisher2 = XML_Multi(3) Then
+                        rtmp_stats.xml_XML = rtmp_stats.xml
+                        ReDim XML_Multi(64) As String
+                        GetAllKeyXML "time", rtmp_stats.xml_XML, XML_Multi()
+                        For i_XML = 1 To UBound(XML_Multi)
+                            ' XML_Multi(i_XML)
+                        Next
+                        If i_XML > 3 Then RTMP_Uptime2 = Val(XML_Multi(3)) / 1000
 
-                    rtmp_stats.xml_XML = rtmp_stats.xml
-                    ReDim XML_Multi(64) As String
-                    GetAllKeyXML "bytes_in", rtmp_stats.xml_XML, XML_Multi()
-                    For i_XML = 1 To UBound(XML_Multi)
-                        ' XML_Multi(i_XML)
-                    Next
-                    If i_XML > 3 Then RTMP_Bytes_In = Val(XML_Multi(3))
+                        rtmp_stats.xml_XML = rtmp_stats.xml
+                        ReDim XML_Multi(64) As String
+                        GetAllKeyXML "bytes_in", rtmp_stats.xml_XML, XML_Multi()
+                        For i_XML = 1 To UBound(XML_Multi)
+                            ' XML_Multi(i_XML)
+                        Next
+                        If i_XML > 3 Then RTMP_Bytes_In = Val(XML_Multi(3))
 
-                    ' bw_in update interval is too slow, so get bytes_in minus the previous bytes_in = birate updated every second
-                    multiStream2 = RTMP_Bytes_In
+                        ' bw_in update interval is too slow, so get bytes_in minus the previous bytes_in = birate updated every second
+                        multiStream2 = RTMP_Bytes_In
 
+                    End If
                 End If
 
                 ' Check if stream name 2 = requested stream name 1
-                If RTMP_Publisher1 = XML_Multi(3) Then
-                    rtmp_stats.xml_XML = rtmp_stats.xml
-                    ReDim XML_Multi(64) As String
-                    GetAllKeyXML "time", rtmp_stats.xml_XML, XML_Multi()
-                    For i_XML = 1 To UBound(XML_Multi)
-                        ' XML_Multi(i_XML)
-                    Next
-                    If i_XML > 3 Then RTMP_Uptime1 = Val(XML_Multi(3)) / 1000
+                If RTMP_1_Enabled = "true" Then ' Bug fix for RTMP1Enabled=false ?
+                    If RTMP_Publisher1 = XML_Multi(3) Then
+                        rtmp_stats.xml_XML = rtmp_stats.xml
+                        ReDim XML_Multi(64) As String
+                        GetAllKeyXML "time", rtmp_stats.xml_XML, XML_Multi()
+                        For i_XML = 1 To UBound(XML_Multi)
+                            ' XML_Multi(i_XML)
+                        Next
+                        If i_XML > 3 Then RTMP_Uptime1 = Val(XML_Multi(3)) / 1000
 
-                    rtmp_stats.xml_XML = rtmp_stats.xml
-                    ReDim XML_Multi(64) As String
-                    GetAllKeyXML "bytes_in", rtmp_stats.xml_XML, XML_Multi()
-                    For i_XML = 1 To UBound(XML_Multi)
-                        ' XML_Multi(i_XML)
-                    Next
-                    If i_XML > 3 Then RTMP_Bytes_In = Val(XML_Multi(3))
+                        rtmp_stats.xml_XML = rtmp_stats.xml
+                        ReDim XML_Multi(64) As String
+                        GetAllKeyXML "bytes_in", rtmp_stats.xml_XML, XML_Multi()
+                        For i_XML = 1 To UBound(XML_Multi)
+                            ' XML_Multi(i_XML)
+                        Next
+                        If i_XML > 3 Then RTMP_Bytes_In = Val(XML_Multi(3))
 
-                    ' bw_in update interval is too slow, so get bytes_in minus the previous bytes_in = birate updated every second
-                    multiStream1 = RTMP_Bytes_In
+                        ' bw_in update interval is too slow, so get bytes_in minus the previous bytes_in = birate updated every second
+                        multiStream1 = RTMP_Bytes_In
+                    End If
                 End If
 
             End If
@@ -5342,7 +5857,7 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
             If serverSelection%% = 0 Or serverSelection%% = 2 Then
 
                 multiStream2_Temp1 = multiStream2
-                If multiStream2_Temp1 >= 1 And RTMP_Bytes_In_Temp2 >= 1 Then
+                If multiStream2_Temp1 >= 1 And multiStream2_Temp2 >= 1 Then ' Fixed in v1.1.0
                     RTMP_Bitrate2 = Int((multiStream2_Temp1 - multiStream2_Temp2) / 128)
                 End If
 
@@ -5482,12 +5997,31 @@ Sub Multi1_CMD_LBR_1
 
             ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
             If SRR = 1 Then
-                Shell _Hide _DontWait shell_cmd_1 + previousScene + " LBR" + shell_cmd_2
+                Select Case HTTP_Communication
+                    Case "native"
+                        http_client_connect "Set", previousScene + " LBR"
+                    Case "curl"
+                        Shell _Hide _DontWait shell_cmd_1 + previousScene + " LBR" + shell_cmd_2
+                End Select
                 SRR = 0
             Else
                 ' These two lines were the only code prior to LBR fix
-                If Scene_Current = titleScene1 Then Shell _Hide _DontWait shell_cmd_1 + titleScene1 + " LBR" + shell_cmd_2
-                If Scene_Current = titleScene12 Then Shell _Hide _DontWait shell_cmd_1 + titleScene12 + " LBR" + shell_cmd_2
+                If Scene_Current = titleScene1 Then
+                    Select Case HTTP_Communication
+                        Case "native"
+                            http_client_connect "Set", titleScene1 + " LBR"
+                        Case "curl"
+                            Shell _Hide _DontWait shell_cmd_1 + titleScene1 + " LBR" + shell_cmd_2
+                    End Select
+                End If
+                If Scene_Current = titleScene12 Then
+                    Select Case HTTP_Communication
+                        Case "native"
+                            http_client_connect "Set", titleScene12 + " LBR"
+                        Case "curl"
+                            Shell _Hide _DontWait shell_cmd_1 + titleScene12 + " LBR" + shell_cmd_2
+                    End Select
+                End If
             End If
 
         End If
@@ -5534,15 +6068,36 @@ Sub Multi1_CMD_LBR_2
             End If
 
             If SRR = 1 Then ' previousScene is current scene name so " LBR" needs to be removed from the end
-                If Right$(previousScene, 4) = " LBR" Then Shell _Hide _DontWait shell_cmd_1 + Mid$(previousScene, 1, Len(previousScene) - 4) + shell_cmd_2
+                If Right$(previousScene, 4) = " LBR" Then
+                    Select Case HTTP_Communication
+                        Case "native"
+                            http_client_connect "Set", Mid$(previousScene, 1, Len(previousScene) - 4)
+                        Case "curl"
+                            Shell _Hide _DontWait shell_cmd_1 + Mid$(previousScene, 1, Len(previousScene) - 4) + shell_cmd_2
+                    End Select
+                End If
                 ' titleScene change should not be permanent when ReturnPreviousSceneRemember=false, so use titleScene Temp to revert
                 titleScene1 = titleScene1Temp: titleScene2 = titleScene2Temp: titleScene12 = titleScene12Temp
                 SRR = 0
             Else
                 ' Change scene for multi camera
                 ' These two lines were the only code prior to LBR fix
-                If Scene_Current = titleScene1 Then Shell _Hide _DontWait shell_cmd_1 + titleScene1 + shell_cmd_2
-                If Scene_Current = titleScene12 Then Shell _Hide _DontWait shell_cmd_1 + titleScene12 + shell_cmd_2
+                If Scene_Current = titleScene1 Then
+                    Select Case HTTP_Communication
+                        Case "native"
+                            http_client_connect "Set", titleScene1
+                        Case "curl"
+                            Shell _Hide _DontWait shell_cmd_1 + titleScene1 + shell_cmd_2
+                    End Select
+                End If
+                If Scene_Current = titleScene12 Then
+                    Select Case HTTP_Communication
+                        Case "native"
+                            http_client_connect "Set", titleScene12
+                        Case "curl"
+                            Shell _Hide _DontWait shell_cmd_1 + titleScene12 + shell_cmd_2
+                    End Select
+                End If
             End If
 
         End If
@@ -5597,12 +6152,31 @@ Sub Multi1_CMD_LBR_3
 
         ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
         If SRR = 1 Then
-            Shell _Hide _DontWait shell_cmd_1 + previousScene + " LBR" + shell_cmd_2
+            Select Case HTTP_Communication
+                Case "native"
+                    http_client_connect "Set", previousScene + " LBR"
+                Case "curl"
+                    Shell _Hide _DontWait shell_cmd_1 + previousScene + " LBR" + shell_cmd_2
+            End Select
             SRR = 0
         Else
             ' These two lines were the only code prior to LBR fix
-            If Scene_Current = titleScene2 Then Shell _Hide _DontWait shell_cmd_1 + titleScene2 + " LBR" + shell_cmd_2
-            If Scene_Current = titleScene12 Then Shell _Hide _DontWait shell_cmd_1 + titleScene12 + " LBR" + shell_cmd_2
+            If Scene_Current = titleScene2 Then
+                Select Case HTTP_Communication
+                    Case "native"
+                        http_client_connect "Set", titleScene2 + " LBR"
+                    Case "curl"
+                        Shell _Hide _DontWait shell_cmd_1 + titleScene2 + " LBR" + shell_cmd_2
+                End Select
+            End If
+            If Scene_Current = titleScene12 Then
+                Select Case HTTP_Communication
+                    Case "native"
+                        http_client_connect "Set", titleScene12 + " LBR"
+                    Case "curl"
+                        Shell _Hide _DontWait shell_cmd_1 + titleScene12 + " LBR" + shell_cmd_2
+                End Select
+            End If
         End If
 
     End If
@@ -5742,15 +6316,36 @@ Sub Multi1_CMD_LBR_4
                 End If
 
                 If SRR = 1 Then ' previousScene is current scene name so " LBR" needs to be removed from the end
-                    If Right$(previousScene, 4) = " LBR" Then Shell _Hide _DontWait shell_cmd_1 + Mid$(previousScene, 1, Len(previousScene) - 4) + shell_cmd_2
+                    If Right$(previousScene, 4) = " LBR" Then
+                        Select Case HTTP_Communication
+                            Case "native"
+                                http_client_connect "Set", Mid$(previousScene, 1, Len(previousScene) - 4)
+                            Case "curl"
+                                Shell _Hide _DontWait shell_cmd_1 + Mid$(previousScene, 1, Len(previousScene) - 4) + shell_cmd_2
+                        End Select
+                    End If
                     ' titleScene change should not be permanent when ReturnPreviousSceneRemember=false, so use titleScene Temp to revert
                     titleScene1 = titleScene1Temp: titleScene2 = titleScene2Temp: titleScene12 = titleScene12Temp
                     SRR = 0
                 Else
                     ' Change scene for multi camera
                     ' These two lines were the only code prior to LBR fix
-                    If Scene_Current = titleScene2 Then Shell _Hide _DontWait shell_cmd_1 + titleScene2 + shell_cmd_2
-                    If Scene_Current = titleScene12 Then Shell _Hide _DontWait shell_cmd_1 + titleScene12 + shell_cmd_2
+                    If Scene_Current = titleScene2 Then
+                        Select Case HTTP_Communication
+                            Case "native"
+                                http_client_connect "Set", titleScene2
+                            Case "curl"
+                                Shell _Hide _DontWait shell_cmd_1 + titleScene2 + shell_cmd_2
+                        End Select
+                    End If
+                    If Scene_Current = titleScene12 Then
+                        Select Case HTTP_Communication
+                            Case "native"
+                                http_client_connect "Set", titleScene12
+                            Case "curl"
+                                Shell _Hide _DontWait shell_cmd_1 + titleScene12 + shell_cmd_2
+                        End Select
+                    End If
                 End If
 
             End If
@@ -5827,7 +6422,7 @@ Sub Timer01
     td_update = Timer(.001) - timer1
     timer1 = Timer(.001)
 
-    'SetCaption DebugTemp1LB, "" ' Temp
+    'SetCaption DebugTemp1LB, ' Temp
     'SetCaption DebugTemp1LB2, ' Temp
     'SetCaption DebugTemp2LB, "" ' Temp
     'SetCaption DebugTemp2LB2, ' Temp
@@ -5896,31 +6491,47 @@ Sub Timer01
     tPing2 = Timer(.001)
     tPingOut = (tPing2 - tPing1)
 
-    If Deny_Ping <> "true" And SLS_Active <> 1 Then
+    If Deny_Ping <> "true" Then
         tPingTimer = tPingTimer + 1
         If tPingTimer >= 10 Then
             tPingTimer = 0
-            On Error GoTo App_Fail
-            tIPPing1 = Timer(.001)
-            network_client = _OpenClient("TCP/IP:" + Mid$(OBS_URL, InStr(OBS_URL, ":") + 1) + ":" + Left$(OBS_URL, InStr(OBS_URL, ":") - 1))
-            Close network_client
-            tIPPing2 = Timer(.001)
-            tIPPingOut = (tIPPing2 - tIPPing1)
-            On Error GoTo 0
+            If SLS_Active <> 1 Then
+                On Error GoTo App_Fail
+                tIPPing1 = Timer(.001)
+                network_client = _OpenClient("TCP/IP:" + Mid$(OBS_URL, InStr(OBS_URL, ":") + 1) + ":" + Left$(OBS_URL, InStr(OBS_URL, ":") - 1))
+                Close network_client
+                tIPPing2 = Timer(.001)
+                tIPPingOut = (tIPPing2 - tIPPing1)
+                On Error GoTo 0
+            End If
 
             ' Check if obs-websocket-http is still connected and attempt to force close & reopen if it's not
             If OS = "WINDOWS" And _FileExists(HTTP_File) Then
                 If HTTP_Enabled = "true" Then
-                    Shell _Hide CMD_EXE_HTTP + c34 + "http://" + HTTP_Bind_Address + ":" + HTTP_Bind_Port + "/call/GetVersion" + c34 + " -o " + c34 + filePrevious_ms + c34
-                    Open filePrevious_ms For Binary As #128
-                    JSON = Space$(LOF(128))
-                    Get #128, , JSON
-                    Close #128
-                    If GetKey("obsWebSocketVersion", JSON) = "" Then
-                        Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
-                        _Delay 1
-                        Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
-                    End If
+                    Select Case HTTP_Communication
+                        Case "native"
+                            http_client_connect "GetVersion", ""
+                            JSON = Space$(Len(GetVersion.tmp))
+                            JSON = GetVersion.tmp
+                            If GetKey("obsWebSocketVersion", JSON) = "" Then
+                                Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
+                                _Delay 1
+                                Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
+                            End If
+                        Case "curl"
+                            Shell _Hide CMD_EXE_HTTP + c34 + "http://" + HTTP_Bind_Address + ":" + HTTP_Bind_Port + "/call/GetVersion" + c34 + " -o " + c34 + filePrevious_ms + c34
+                            Open filePrevious_ms For Binary As #128
+                            JSON = Space$(LOF(128))
+                            Get #128, , JSON
+                            Close #128
+                            If GetKey("obsWebSocketVersion", JSON) = "" Then
+                                Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
+                                _Delay 1
+                                Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
+                            End If
+                    End Select
+
+                    If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
                 End If
             End If
 
@@ -6000,13 +6611,6 @@ Sub Timer01
 
     End If
 
-    ' Display IP ping or SRT Live Server ping
-    tout = "": tout_2 = ""
-    If SLS_Active = 0 Then TIMEms tIPPingOut, 0, 0
-    If SLS_Active = 1 And SLS_2_Active = 0 Then TIMEms SLS_PingOut, 0, 0
-    If SLS_Active = 1 And SLS_2_Active = 1 Then TIMEms SLS_PingOut, 0, 0: TIMEms SLS_PingOut_2, 0, 1 ' SLS IP #2 (v1.0.1)
-
-    If Val(tout) >= .3 Or Val(tout_2) >= .3 Then Control(tIPPingOutLB).ForeColor = RED_WARNING Else Control(tIPPingOutLB).ForeColor = GREEN_OK
     CooldownLogWarn = CooldownLogWarn - 1: If CooldownLogWarn < 0 Then CooldownLogWarn = 0
     Select Case SLS_Active
         Case 0
@@ -6016,18 +6620,11 @@ Sub Timer01
             If CooldownLogWarn <= 0 Then If ConnectionsLog And Val(tout_2) >= .4 And CooldownLog = 0 Then statusConnectionsLogToFile "[WARN] SLS #2 ping exceeding 400ms": CooldownLog = CooldownLogTotal:: CooldownLogWarn = 60
     End Select
 
-    If SLS_2_Active <> 1 Then
-        SetCaption (tIPPingOutLB), LTrim$(Str$(Val(tout) * 1000)) + " ms"
-    Else
-        SetCaption (tIPPingOutLB), LTrim$(Str$(Val(tout) * 1000)) + " / " + LTrim$(Str$(Val(tout_2) * 1000)) + " ms" ' SLS IP #2 (v1.0.1)
-    End If
-
     TIMEms tPingOut, 0, 0
-    If Val(tout) >= .35 Then Control(tPingOutLB).ForeColor = RED_WARNING Else Control(tPingOutLB).ForeColor = GREEN_OK
-    If CooldownLogWarn <= 0 Then If ConnectionsLog And Val(tout) >= .5 And CooldownLog = 0 Then statusConnectionsLogToFile "[WARN] WebSocket ping exceeding 500ms": CooldownLog = CooldownLogTotal: CooldownLogWarn = 60
-    If Val(tout) >= .5 And CooldownLog = 0 Then SetCaption StatusLB, "WebSocket/Server ping very high...": updateDisplay = 1 ' Display error if WebSocket ping is too high
+    If Val(tout) >= .5 Then Control(tPingOutLB).ForeColor = RED_WARNING Else Control(tPingOutLB).ForeColor = GREEN_OK
+    If CooldownLogWarn <= 0 Then If ConnectionsLog And Val(tout) >= .55 And CooldownLog = 0 And sls_connect_timer_1 <> 1 And sls_connect_timer_2 <> 1 Then statusConnectionsLogToFile "[WARN] WebSocket ping exceeding 500ms": CooldownLog = CooldownLogTotal: CooldownLogWarn = 60
+    If Val(tout) >= .55 And CooldownLog = 0 And sls_connect_timer_1 <> 1 And sls_connect_timer_2 <> 1 Then SetCaption StatusLB, "WebSocket/Server ping very high...": updateDisplay = 1 ' Display error if WebSocket ping is too high
     SetCaption (tPingOutLB), LTrim$(Str$(Val(tout) * 1000)) + " ms"
-
 
     ' NGINX RTMP Server
     If RTMP_Active = 1 And __MultiCameraSwitch = 0 Then
@@ -6096,7 +6693,7 @@ Sub Timer01
     If SLS_Active = 1 And __MultiCameraSwitch = 1 Then
         If RTMP_1_Enabled = "false" Then If SLS_Bitrate1 > SLS_BitrateLow1 Then Control(Bitrate_Stream_1LB).ForeColor = GREEN_OK Else Control(Bitrate_Stream_1LB).ForeColor = RED_WARNING
         If RTMP_2_Enabled = "false" Then If SLS_Bitrate2 > SLS_BitrateLow2 Then Control(Bitrate_Stream_2LB).ForeColor = GREEN_OK Else Control(Bitrate_Stream_2LB).ForeColor = RED_WARNING
-        If RTMP_1_Enabled = "false" Then If SLS_Bitrate1 < SLS_BitrateFail1 Or SLS_Bitrate1 = 0 Then Control(Bitrate_Stream_1LB).ForeColor = RED_FAIL: If SLS_Bitrate2 < SLS_BitrateFail1 Or SLS_Bitrate2 = 0 Then Control(Bitrate_Stream_2LB).ForeColor = RED_FAIL
+        If RTMP_1_Enabled = "false" Then If SLS_Bitrate1 < SLS_BitrateFail1 Or SLS_Bitrate1 = 0 Then Control(Bitrate_Stream_1LB).ForeColor = RED_FAIL: If SLS_Bitrate2 < SLS_BitrateFail2 Or SLS_Bitrate2 = 0 Then Control(Bitrate_Stream_2LB).ForeColor = RED_FAIL
         If RTMP_1_Enabled = "false" Then
             Select Case SLS_Bitrate1
                 Case 0 To 99
@@ -6131,7 +6728,7 @@ Sub Timer01
     If srt_warmup = 1 Then
         If td_update <= 0.001 Then td_update = 0.001
         If td_update >= 9.999 Then td_update = 9.999
-        If td_update <= 0.989 Or td_update >= 1.011 Then Control(td_updateLB).ForeColor = RED_WARNING Else Control(td_updateLB).ForeColor = GREEN_OK
+        If td_update <= 0.979 Or td_update >= 1.021 Then Control(td_updateLB).ForeColor = RED_WARNING Else Control(td_updateLB).ForeColor = GREEN_OK
         TIMEms td_update, 0, 0
         SetCaption (td_updateLB), tout + " sec "
     End If
@@ -6168,10 +6765,48 @@ Sub Timer01
     If BELABOX_1_Found = 1 Or BELABOX_1_Offline = 1 Then Server_Display1 = "  //  [BELABOX]"
     If BELABOX_2_Found = 1 Or BELABOX_2_Offline = 1 Then Server_Display2 = "  //  [BELABOX]"
 
-    If SLS_2_Active = 1 And SLS_1_Enabled = "true" Then Stream_Title_1 = "Server" Else Stream_Title_1 = "Stream" ' SLS IP #2 (v1.0.1)
-    If SLS_2_Active = 1 And SLS_2_Enabled = "true" Then Stream_Title_2 = "Server" Else Stream_Title_2 = "Stream" ' SLS IP #2 (v1.0.1)
+    If SLS_2_Active = 1 And SLS_1_Enabled = "true" Then Stream_Title_1 = "Server" Else Stream_Title_1 = "Stream" ' SLS IP #2 (v1.1.0)
+    If SLS_2_Active = 1 And SLS_2_Enabled = "true" Then Stream_Title_2 = "Server" Else Stream_Title_2 = "Stream" ' SLS IP #2 (v1.1.0)
     If Timer_Fail_Stream1 Then SetCaption (Stream1), Stream_Title_1 + " #1" + Server_Display1 + " ": Control(Stream1).ForeColor = RED_FAIL Else SetCaption (Stream1), Stream_Title_1 + " #1" + Server_Display1: Control(Stream1).ForeColor = GREEN_STREAM_OK
     If Timer_Fail_Stream2 Then SetCaption (Stream2), Stream_Title_2 + " #2" + Server_Display2 + " ": Control(Stream2).ForeColor = RED_FAIL Else SetCaption (Stream2), Stream_Title_2 + " #2" + Server_Display2: Control(Stream2).ForeColor = GREEN_STREAM_OK
+
+
+    ' Set ping label for all situations
+    tout = "": tout_2 = ""
+    Select Case __MultiCameraSwitch
+        Case 0
+            Server_Ping_Display_1 = Server_1
+            If Server_Ping_Display_1 = "SRT" Then Server_Ping_Display_1 = "Network"
+            If BELABOX_1_Found = 1 Or BELABOX_1_Offline = 1 Then Server_Ping_Display_1 = "BELABOX"
+            SetCaption IPPingLB, Server_Ping_Display_1 + " ping"
+            ' Find ping
+            If Server_Ping_Display_1 = "SRT" Or Server_Ping_Display_1 = "Network" Then TIMEms tIPPingOut, 0, 0
+            If Server_Ping_Display_1 = "NGINX" Then TIMEms RTMP_PingOut, 0, 0
+            If Server_Ping_Display_1 = "SLS" Or Server_Ping_Display_1 = "BELABOX" Then TIMEms SLS_PingOut, 0, 0
+            ' Display ping
+            SetCaption (tIPPingOutLB), LTrim$(Str$(Val(tout) * 1000)) + " ms"
+        Case 1
+            Server_Ping_Display_1 = Server_1
+            Server_Ping_Display_2 = Server_2
+            If Server_Ping_Display_1 = "SRT" And Server_Ping_Display_2 = "SRT" Then Server_Ping_Display_1 = "Network": Server_Ping_Display_2 = "Network"
+            If BELABOX_1_Found = 1 Or BELABOX_1_Offline = 1 Then Server_Ping_Display_1 = "BELABOX"
+            If BELABOX_2_Found = 1 Or BELABOX_2_Offline = 1 Then Server_Ping_Display_2 = "BELABOX"
+            If Server_Ping_Display_1 = Server_Ping_Display_2 Then SetCaption IPPingLB, Server_Ping_Display_1 + " ping" Else SetCaption IPPingLB, Server_Ping_Display_1 + " / " + Server_Ping_Display_2
+            ' Find ping(s)
+            If Server_Ping_Display_1 = "SRT" Or Server_Ping_Display_1 = "Network" Then TIMEms tIPPingOut, 0, 0
+            If Server_Ping_Display_1 = "NGINX" Then TIMEms RTMP_PingOut, 0, 0
+            If Server_Ping_Display_1 = "SLS" Or Server_Ping_Display_1 = "BELABOX" Then TIMEms SLS_PingOut, 0, 0
+            If Server_Ping_Display_2 = "SRT" Or Server_Ping_Display_2 = "Network" Then TIMEms tIPPingOut, 0, 1
+            If Server_Ping_Display_2 = "NGINX" Then TIMEms RTMP_PingOut, 0, 1
+            If Server_Ping_Display_2 = "SLS" Or Server_Ping_Display_2 = "BELABOX" Then TIMEms SLS_PingOut_2, 0, 1
+            ' Display ping(s)
+            If Server_Ping_Display_1 = Server_Ping_Display_2 And SLS_2_Active = 0 Then
+                SetCaption (tIPPingOutLB), LTrim$(Str$(Val(tout) * 1000)) + " ms"
+            Else
+                SetCaption (tIPPingOutLB), LTrim$(Str$(Val(tout) * 1000)) + "   /   " + LTrim$(Str$(Val(tout_2) * 1000)) + " ms" ' SLS IP #2 (v1.1.0)
+            End If
+    End Select
+    If Val(tout) >= .5 Or Val(tout_2) >= .5 Then Control(tIPPingOutLB).ForeColor = RED_WARNING Else Control(tIPPingOutLB).ForeColor = GREEN_OK
 
 
     If __MultiCameraSwitch = 1 Then
@@ -6200,9 +6835,9 @@ Sub Timer01
 
         If MediaSource1Time <= 2 Then Control(Uptime_Stream_1LB).ForeColor = RED_FAIL Else If MediaSource1Time >= 3 And MediaSource1Time < 10 Then Control(Uptime_Stream_1LB).ForeColor = RED_WARNING Else Control(Uptime_Stream_1LB).ForeColor = GREEN_OK
 
-        If BELABOX_1_Found = 1 And MediaSource1Time >= 1 And MediaSource1Time <= 10 Then SetCaption (Uptime_Stream_1LB), calc_srt$(MediaSource1Time, 1) + calc_srt_sec$ + "*" Else SetCaption (Uptime_Stream_1LB), calc_srt$(MediaSource1Time, 1) + calc_srt_sec$ ' SRT ' SLS IP #2 (v1.0.1)
+        If BELABOX_1_Found = 1 And MediaSource1Time >= 1 And MediaSource1Time <= 10 Then SetCaption (Uptime_Stream_1LB), calc_srt$(MediaSource1Time, 1) + calc_srt_sec$ + "*" Else SetCaption (Uptime_Stream_1LB), calc_srt$(MediaSource1Time, 1) + calc_srt_sec$ ' SRT ' SLS IP #2 (v1.1.0)
         If MediaSource2Time <= 2 Then Control(Uptime_Stream_2LB).ForeColor = RED_FAIL Else If MediaSource2Time >= 3 And MediaSource2Time < 10 Then Control(Uptime_Stream_2LB).ForeColor = RED_WARNING Else Control(Uptime_Stream_2LB).ForeColor = GREEN_OK
-        If BELABOX_2_Found = 1 And MediaSource1Time >= 1 And MediaSource1Time <= 10 Then SetCaption (Uptime_Stream_2LB), calc_srt$(MediaSource2Time, 1) + calc_srt_sec$ + "*" Else SetCaption (Uptime_Stream_2LB), calc_srt$(MediaSource2Time, 1) + calc_srt_sec$ ' SRT ' SLS IP #2 (v1.0.1)
+        If BELABOX_2_Found = 1 And MediaSource2Time >= 1 And MediaSource2Time <= 10 Then SetCaption (Uptime_Stream_2LB), calc_srt$(MediaSource2Time, 1) + calc_srt_sec$ + "*" Else SetCaption (Uptime_Stream_2LB), calc_srt$(MediaSource2Time, 1) + calc_srt_sec$ ' SRT ' SLS IP #2 (v1.1.0)
 
         Control(StreamLightLB).Hidden = True
         If MediaSource1Time <= 1 Then
@@ -6243,7 +6878,7 @@ Sub Timer01
         If MediaSource1Time <= 3 Then Control(Stream_UptimeLB).ForeColor = RED_FAIL Else If MediaSource1Time > 3 And MediaSource1Time < 10 Then Control(Stream_UptimeLB).ForeColor = RED_WARNING Else Control(Stream_UptimeLB).ForeColor = GREEN_OK
         ' Stream #1 uptime
         SetCaption (Stream_UptimeLB), calc_srt$(MediaSource1Time, 1) + calc_srt_sec$ ' SRT
-        If BELABOX_1_Found = 1 And MediaSource1Time >= 1 And MediaSource1Time <= 10 Then SetCaption (Stream_UptimeLB), calc_srt$(MediaSource1Time, 1) + calc_srt_sec$ + "*" ' SRT ' SLS IP #2 (v1.0.1)
+        If BELABOX_1_Found = 1 And MediaSource1Time >= 1 And MediaSource1Time <= 10 Then SetCaption (Stream_UptimeLB), calc_srt$(MediaSource1Time, 1) + calc_srt_sec$ + "*" ' SRT ' SLS IP #2 (v1.1.0)
         If Timer_Fail_Stream1 >= Stream_Fail_Delay Then Control(Stream_Fail_TimerLB).ForeColor = RED_FAIL Else If Timer_Fail_Stream1 >= 1 Then Control(Stream_Fail_TimerLB).ForeColor = RED_WARNING Else Control(Stream_Fail_TimerLB).ForeColor = GREEN_OK
         If __FileStatusOutput = 1 Or ConnectionsLog = 1 Then If Timer_Fail_Stream1 >= 1 Then Timer_Fail_Output1 = Timer_Fail_Stream1
         SetCaption (Stream_Fail_TimerLB), calc_srt$(Timer_Fail_Stream1, 1) + calc_srt_sec$
@@ -6263,7 +6898,6 @@ Sub Timer01
     Else
         If SceneLBActive Then SetCaption Low_Bitrate_StatusLB, "Enabled" Else SetCaption Low_Bitrate_StatusLB, "Disabled" + SceneLBActive_Temp_Disable_Display ' Displayed same time as others and not "IF __MultiCameraSwitch" above
     End If
-
 
     ' Update Display: ---------------------------------------------------------------
     ' Debug
@@ -6423,7 +7057,12 @@ Sub Timer01
                 If HTTP_Enabled = "true" Then
                     Select Case HTTP_Access
                         Case "fast"
-                            Shell _Hide CMD_EXE_HTTP_FAST_GET_SCENE
+                            Select Case HTTP_Communication
+                                Case "native"
+                                    http_client_connect "Get", ""
+                                Case "curl"
+                                    Shell _Hide CMD_EXE_HTTP_FAST_GET_SCENE
+                            End Select
                         Case Else
                             Shell _Hide CMD_EXE_HTTP_GET_SCENE
                     End Select
@@ -6443,7 +7082,12 @@ Sub Timer01
                     If HTTP_Enabled = "true" Then
                         Select Case HTTP_Access
                             Case "fast"
-                                Shell _Hide CMD_EXE_HTTP_FAST_GET_SCENE
+                                Select Case HTTP_Communication
+                                    Case "native"
+                                        http_client_connect "Get", ""
+                                    Case "curl"
+                                        Shell _Hide CMD_EXE_HTTP_FAST_GET_SCENE
+                                End Select
                             Case Else
                                 Shell _Hide CMD_EXE_HTTP_GET_SCENE
                         End Select
@@ -6458,7 +7102,12 @@ Sub Timer01
                     If HTTP_Enabled = "true" Then
                         Select Case HTTP_Access
                             Case "fast"
-                                Shell CMD_EXE_HTTP_FAST_GET_SCENE
+                                Select Case HTTP_Communication
+                                    Case "native"
+                                        http_client_connect "Get", ""
+                                    Case "curl"
+                                        Shell CMD_EXE_HTTP_FAST_GET_SCENE
+                                End Select
                             Case Else
                                 Shell CMD_EXE_HTTP_GET_SCENE
                         End Select
@@ -6491,32 +7140,52 @@ Sub Timer01
 
         If HTTP_Enabled <> "true" Then ' HTTP
 
-            If _FileExists(filePrevious) Then
-                Open filePrevious For Input As #96
-                ' LOCK #96
-                Do Until EOF(96)
-                    If LOF(96) = 0 Then NoKill = 1: Exit Do ' Overkill with EOF checking, but just being safe
-                    If EOF(96) Then Exit Do
-                    Line Input #96, file96
-                    Scene_Bypass_Check = file96
-                    If streamsUp <> "0" Then previousScene = file96
-                    previousSceneDisplay = file96
-                    Exit Do ' Output to previousScene
-                Loop
-            End If
+            Select Case HTTP_Communication
+                Case "native"
+                    http_client_connect "Get", ""
+                    Scene_Bypass_Check = GetCurrentProgramScene.tmp
+                    If streamsUp <> "0" Then previousScene = GetCurrentProgramScene.tmp
+                    previousSceneDisplay = GetCurrentProgramScene.tmp
+                Case "curl"
+                    If _FileExists(filePrevious) Then
+                        Open filePrevious For Input As #96
+                        ' LOCK #96
+                        Do Until EOF(96)
+                            If LOF(96) = 0 Then NoKill = 1: Exit Do ' Overkill with EOF checking, but just being safe
+                            If EOF(96) Then Exit Do
+                            Line Input #96, file96
+                            Scene_Bypass_Check = file96
+                            If streamsUp <> "0" Then previousScene = file96
+                            previousSceneDisplay = file96
+                            Exit Do ' Output to previousScene
+                        Loop
+                    End If
+            End Select
 
         End If
 
         If HTTP_Enabled = "true" Then ' HTTP
 
-            Open filePrevious For Binary As #128
-            JSON = Space$(LOF(128))
-            Get #128, , JSON
-            Close #128
-            file96 = GetKey("currentProgramSceneName", JSON)
-            Scene_Bypass_Check = file96
-            If streamsUp <> "0" Then previousScene = file96
-            previousSceneDisplay = file96
+            Select Case HTTP_Communication
+                Case "native"
+                    http_client_connect "Get", ""
+                    JSON = Space$(Len(GetCurrentProgramScene.tmp))
+                    JSON = GetCurrentProgramScene.tmp
+                    file96 = GetKey("currentProgramSceneName", JSON)
+                    Scene_Bypass_Check = file96
+                    If streamsUp <> "0" Then previousScene = file96
+                    previousSceneDisplay = file96
+                Case "curl"
+                    Open filePrevious For Binary As #128
+                    JSON = Space$(LOF(128))
+                    Get #128, , JSON
+                    Close #128
+                    file96 = GetKey("currentProgramSceneName", JSON)
+                    Scene_Bypass_Check = file96
+                    If streamsUp <> "0" Then previousScene = file96
+                    previousSceneDisplay = file96
+            End Select
+
 
         End If
 
@@ -6531,7 +7200,12 @@ Sub Timer01
                     If HTTP_Enabled = "true" Then
                         Select Case HTTP_Access
                             Case "fast"
-                                Shell _Hide CMD_EXE_HTTP_FAST_GET_SCENE
+                                Select Case HTTP_Communication
+                                    Case "native"
+                                        http_client_connect "Get", ""
+                                    Case "curl"
+                                        Shell _Hide CMD_EXE_HTTP_FAST_GET_SCENE
+                                End Select
                             Case Else
                                 Shell _Hide CMD_EXE_HTTP_GET_SCENE
                         End Select
@@ -6552,7 +7226,12 @@ Sub Timer01
                         If HTTP_Enabled = "true" Then
                             Select Case HTTP_Access
                                 Case "fast"
-                                    Shell _Hide CMD_EXE_HTTP_FAST_GET_SCENE
+                                    Select Case HTTP_Communication
+                                        Case "native"
+                                            http_client_connect "Get", ""
+                                        Case "curl"
+                                            Shell _Hide CMD_EXE_HTTP_FAST_GET_SCENE
+                                    End Select
                                 Case Else
                                     Shell _Hide CMD_EXE_HTTP_GET_SCENE
                             End Select
@@ -6568,7 +7247,12 @@ Sub Timer01
                         If HTTP_Enabled = "true" Then
                             Select Case HTTP_Access
                                 Case "fast"
-                                    Shell CMD_EXE_HTTP_FAST_GET_SCENE
+                                    Select Case HTTP_Communication
+                                        Case "native"
+                                            http_client_connect "Get", ""
+                                        Case "curl"
+                                            Shell CMD_EXE_HTTP_FAST_GET_SCENE
+                                    End Select
                                 Case Else
                                     Shell CMD_EXE_HTTP_GET_SCENE
                             End Select
@@ -6590,32 +7274,48 @@ Sub Timer01
 
             If HTTP_Enabled <> "true" Then ' HTTP
 
-                If _FileExists(filePrevious) Then
-                    Open filePrevious For Input As #96
-                    ' LOCK #96
-                    Do Until EOF(96)
-                        If LOF(96) = 0 Then NoKill = 1: Exit Do ' Overkill with EOF checking, but just being safe
-                        If EOF(96) Then Exit Do
-                        Line Input #96, file96
-                        Scene_Bypass_Check = file96
-                        '
-                        '
-                        Exit Do ' Output to previousScene
-                    Loop
-                End If
+                Select Case HTTP_Communication
+                    Case "native"
+                        http_client_connect "Get", ""
+                        Scene_Bypass_Check = GetCurrentProgramScene.tmp
+                        'NoKill = 1
+                    Case "curl"
+                        If _FileExists(filePrevious) Then
+                            Open filePrevious For Input As #96
+                            ' LOCK #96
+                            Do Until EOF(96)
+                                If LOF(96) = 0 Then NoKill = 1: Exit Do ' Overkill with EOF checking, but just being safe
+                                If EOF(96) Then Exit Do
+                                Line Input #96, file96
+                                Scene_Bypass_Check = file96
+                                '
+                                '
+                                Exit Do ' Output to previousScene
+                            Loop
+                        End If
+                End Select
 
             End If
 
             If HTTP_Enabled = "true" Then ' HTTP
 
-                Open filePrevious For Binary As #128
-                JSON = Space$(LOF(128))
-                Get #128, , JSON
-                Close #128
-                file96 = GetKey("currentProgramSceneName", JSON)
-                Scene_Bypass_Check = file96
-                '
-                '
+                Select Case HTTP_Communication
+                    Case "native"
+                        http_client_connect "Get", ""
+                        JSON = Space$(Len(GetCurrentProgramScene.tmp))
+                        JSON = GetCurrentProgramScene.tmp
+                        file96 = GetKey("currentProgramSceneName", JSON)
+                        Scene_Bypass_Check = file96
+                    Case "curl"
+                        Open filePrevious For Binary As #128
+                        JSON = Space$(LOF(128))
+                        Get #128, , JSON
+                        Close #128
+                        file96 = GetKey("currentProgramSceneName", JSON)
+                        Scene_Bypass_Check = file96
+                        '
+                        '
+                End Select
 
             End If
 
@@ -6668,7 +7368,12 @@ Sub Timer01
                 Exe_Fail = 0
                 Exe_OK = 1
                 LoadImageMEM Control(PictureBox1), "tick.png"
-                Shell _Hide _DontWait shell_cmd_1 + Scene_OK + shell_cmd_2
+                Select Case HTTP_Communication
+                    Case "native"
+                        http_client_connect "Set", Scene_OK
+                    Case "curl"
+                        Shell _Hide _DontWait shell_cmd_1 + Scene_OK + shell_cmd_2
+                End Select
                 _Delay 0.033
                 If Timer_Fail_Output1 = 0 Then Timer_Fail_Output1_Str = "-" Else Timer_Fail_Output1_Str = Str$(Timer_Fail_Output1)
                 If __FileStatusOutput = 1 Then statusOutputToFile "[STREAM UP] (" + _Trim$(Timer_Fail_Output1_Str) + " sec)"
@@ -6684,11 +7389,21 @@ Sub Timer01
                     If Exe_Fail_First = 0 Then
                         Exe_Fail_First = 1
                         Scene_Current = Scene_Intro
-                        Shell _Hide _DontWait shell_cmd_1 + Scene_Intro + shell_cmd_2
+                        Select Case HTTP_Communication
+                            Case "native"
+                                http_client_connect "Set", Scene_Intro
+                            Case "curl"
+                                Shell _Hide _DontWait shell_cmd_1 + Scene_Intro + shell_cmd_2
+                        End Select
                         _Delay 0.033
                     Else
                         Scene_Current = Scene_Fail
-                        Shell _Hide _DontWait shell_cmd_1 + Scene_Fail + shell_cmd_2
+                        Select Case HTTP_Communication
+                            Case "native"
+                                http_client_connect "Set", Scene_Fail
+                            Case "curl"
+                                Shell _Hide _DontWait shell_cmd_1 + Scene_Fail + shell_cmd_2
+                        End Select
                         _Delay 0.033
                         If __FileStatusOutput = 1 Then statusOutputToFile "[STREAM DOWN]"
                         If ConnectionsLog Then statusConnectionsLogToFile "[WARN] No bandwidth for stream, " + _Trim$(Str$(ConnectionsLog1Count)) + " times"
@@ -6719,7 +7434,12 @@ Sub Timer01
                 If previousScene <> titleScene1 And streamsUp = "0" And __returnPreviousScene = 1 Then ' __returnPreviousScene added for ReturnPreviousSceneRemember=false
                     If lastStreamUp <> "1" Then previousScene = titleScene1
                     Scene_Current = previousScene
-                    Shell _Hide _DontWait shell_cmd_1 + previousScene + shell_cmd_2
+                    Select Case HTTP_Communication
+                        Case "native"
+                            http_client_connect "Set", previousScene
+                        Case "curl"
+                            Shell _Hide _DontWait shell_cmd_1 + previousScene + shell_cmd_2
+                    End Select
                     _Delay 0.033
                     If Timer_Fail_Output1 = 0 Then Timer_Fail_Output1_Str = "-" Else Timer_Fail_Output1_Str = Str$(Timer_Fail_Output1)
                     If Timer_Fail_Output2 = 0 Then Timer_Fail_Output2_Str = "-" Else Timer_Fail_Output2_Str = Str$(Timer_Fail_Output2)
@@ -6728,7 +7448,12 @@ Sub Timer01
                     Timer_Fail_Output1 = 0: Timer_Fail_Output2 = 0
                 Else ' ReturnPreviousSceneRemember=false
                     Scene_Current = titleScene1
-                    Shell _Hide _DontWait shell_cmd_1 + titleScene1 + shell_cmd_2
+                    Select Case HTTP_Communication
+                        Case "native"
+                            http_client_connect "Set", titleScene1
+                        Case "curl"
+                            Shell _Hide _DontWait shell_cmd_1 + titleScene1 + shell_cmd_2
+                    End Select
                     _Delay 0.033
                     If Timer_Fail_Output1 = 0 Then Timer_Fail_Output1_Str = "-" Else Timer_Fail_Output1_Str = Str$(Timer_Fail_Output1)
                     If Timer_Fail_Output2 = 0 Then Timer_Fail_Output2_Str = "-" Else Timer_Fail_Output2_Str = Str$(Timer_Fail_Output2)
@@ -6745,7 +7470,12 @@ Sub Timer01
                 If previousScene <> titleScene2 And streamsUp = "0" And __returnPreviousScene = 1 Then
                     If lastStreamUp <> "2" Then previousScene = titleScene2
                     Scene_Current = previousScene
-                    Shell _Hide _DontWait shell_cmd_1 + previousScene + shell_cmd_2
+                    Select Case HTTP_Communication
+                        Case "native"
+                            http_client_connect "Set", previousScene
+                        Case "curl"
+                            Shell _Hide _DontWait shell_cmd_1 + previousScene + shell_cmd_2
+                    End Select
                     _Delay 0.033
                     If Timer_Fail_Output1 = 0 Then Timer_Fail_Output1_Str = "-" Else Timer_Fail_Output1_Str = Str$(Timer_Fail_Output1)
                     If Timer_Fail_Output2 = 0 Then Timer_Fail_Output2_Str = "-" Else Timer_Fail_Output2_Str = Str$(Timer_Fail_Output2)
@@ -6754,7 +7484,12 @@ Sub Timer01
                     Timer_Fail_Output1 = 0: Timer_Fail_Output2 = 0
                 Else ' ReturnPreviousSceneRemember=false
                     Scene_Current = titleScene2
-                    Shell _Hide _DontWait shell_cmd_1 + titleScene2 + shell_cmd_2
+                    Select Case HTTP_Communication
+                        Case "native"
+                            http_client_connect "Set", titleScene2
+                        Case "curl"
+                            Shell _Hide _DontWait shell_cmd_1 + titleScene2 + shell_cmd_2
+                    End Select
                     _Delay 0.033
                     If Timer_Fail_Output1 = 0 Then Timer_Fail_Output1_Str = "-" Else Timer_Fail_Output1_Str = Str$(Timer_Fail_Output1)
                     If Timer_Fail_Output2 = 0 Then Timer_Fail_Output2_Str = "-" Else Timer_Fail_Output2_Str = Str$(Timer_Fail_Output2)
@@ -6771,7 +7506,12 @@ Sub Timer01
                 If previousScene <> titleScene12 And streamsUp = "0" And __returnPreviousScene = 1 Then
                     If lastStreamUp <> "12" Then previousScene = titleScene12
                     Scene_Current = previousScene
-                    Shell _Hide _DontWait shell_cmd_1 + previousScene + shell_cmd_2
+                    Select Case HTTP_Communication
+                        Case "native"
+                            http_client_connect "Set", previousScene
+                        Case "curl"
+                            Shell _Hide _DontWait shell_cmd_1 + previousScene + shell_cmd_2
+                    End Select
                     _Delay 0.033
                     If Timer_Fail_Output1 = 0 Then Timer_Fail_Output1_Str = "-" Else Timer_Fail_Output1_Str = Str$(Timer_Fail_Output1)
                     If Timer_Fail_Output2 = 0 Then Timer_Fail_Output2_Str = "-" Else Timer_Fail_Output2_Str = Str$(Timer_Fail_Output2)
@@ -6784,12 +7524,27 @@ Sub Timer01
                     If CooldownLog And CooldownStartup = 0 Then
                         Select Case SceneLBActive
                             Case 0
-                                Shell _Hide _DontWait shell_cmd_1 + titleScene12 + shell_cmd_2
+                                Select Case HTTP_Communication
+                                    Case "native"
+                                        http_client_connect "Set", titleScene12
+                                    Case "curl"
+                                        Shell _Hide _DontWait shell_cmd_1 + titleScene12 + shell_cmd_2
+                                End Select
                             Case 1
-                                Shell _Hide _DontWait shell_cmd_1 + titleScene12 + " LBR" + shell_cmd_2
+                                Select Case HTTP_Communication
+                                    Case "native"
+                                        http_client_connect "Set", titleScene12 + " LBR"
+                                    Case "curl"
+                                        Shell _Hide _DontWait shell_cmd_1 + titleScene12 + " LBR" + shell_cmd_2
+                                End Select
                         End Select
                     Else
-                        Shell _Hide _DontWait shell_cmd_1 + titleScene12 + shell_cmd_2
+                        Select Case HTTP_Communication
+                            Case "native"
+                                http_client_connect "Set", titleScene12
+                            Case "curl"
+                                Shell _Hide _DontWait shell_cmd_1 + titleScene12 + shell_cmd_2
+                        End Select
                     End If
                     _Delay 0.033
                     If Timer_Fail_Output1 = 0 Then Timer_Fail_Output1_Str = "-" Else Timer_Fail_Output1_Str = Str$(Timer_Fail_Output1)
@@ -6809,11 +7564,21 @@ Sub Timer01
                 If Exe_Fail_First = 0 Then
                     Exe_Fail_First = 1
                     Scene_Current = Scene_Intro
-                    Shell _Hide _DontWait shell_cmd_1 + Scene_Intro + shell_cmd_2
+                    Select Case HTTP_Communication
+                        Case "native"
+                            http_client_connect "Set", Scene_Intro
+                        Case "curl"
+                            Shell _Hide _DontWait shell_cmd_1 + Scene_Intro + shell_cmd_2
+                    End Select
                     _Delay 0.033
                 Else
                     Scene_Current = Scene_Fail
-                    Shell _Hide _DontWait shell_cmd_1 + Scene_Fail + shell_cmd_2
+                    Select Case HTTP_Communication
+                        Case "native"
+                            http_client_connect "Set", Scene_Fail
+                        Case "curl"
+                            Shell _Hide _DontWait shell_cmd_1 + Scene_Fail + shell_cmd_2
+                    End Select
                     _Delay 0.033
                     If __FileStatusOutput = 1 Then statusOutputToFile "[STREAM DOWN]:[ALL CAMERAS DOWN]"
                     If ConnectionsLog Then statusConnectionsLogToFile "[WARN] No bandwidth for stream #1, no bandwidth for stream #2"
@@ -6825,7 +7590,7 @@ Sub Timer01
         End If
     End If
 
-    If srt_warmup = 1 And returnFirstCheck = 1 And __MultiCameraSwitch = 1 And previousSceneDisplay = "" Then RefreshDisplayRequest = 1: Error_msg = "- Variable/s for scenes empty, check if OBS is open." + Chr$(10) + "- If OBS is open, check communication is available via Node.js or obs-websocket-http.": Error_msg_2$ = "- If Node.js is selected, check OBS WebSockets options are correctly set. (Error: #6)": _Delay 3
+    If srt_warmup = 1 And returnFirstCheck = 1 And __MultiCameraSwitch = 1 And previousSceneDisplay = "" Then RefreshDisplayRequest = 1: Error_msg = "- Variable/s for scenes empty, check if OBS is open." + Chr$(10) + "- If OBS is open, check communication is available via Node.js or obs-websocket-http.": Error_msg_2$ = "- If Node.js is selected, check OBS WebSocket options are correctly set. (Error: #6)": _Delay 3
 
     If RTMP_Active = 1 Then
         ' Temp2 variables
