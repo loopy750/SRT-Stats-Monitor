@@ -32,6 +32,7 @@ SLSServerKeepAlive2=Default
 - Added 'SLSServerStats2' configuration - see readme.txt for instructions
 - Added 'SLSServerKeepAlive1' configuration - see readme.txt for instructions
 - Added 'SLSServerKeepAlive2' configuration - see readme.txt for instructions
+- Removed some configurations - use 'config.default.ini' if updating.
 - Automatically restart "obs-websocket-http" on lost connection [Windows]
 - Minor fixes with LBR Delay setting
 - Minor fixes with NGINX
