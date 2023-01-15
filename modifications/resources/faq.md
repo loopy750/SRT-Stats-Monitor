@@ -6,6 +6,9 @@
 ### Q. **When I launch the program, I'm getting "Test #6 of 10 failed", how do I resolve this?**
 ##### A. Confirm **OBS Websocket** is enabled in OBS, and the desired port and password are set, and match the `config.ini` settings. The default port for **OBS Websocket 5.x** is **4455**, and **4445** for **obs-websocket-http**. Both `WebSocketPassword` and `ws_password` need to be correctly configured. See [here](https://github.com/loopy750/SRT-Stats-Monitor/blob/main/modifications/resources/quick_start_guide.md) for further assistance.
 
+### Q. **Scene is not switching, or not switching back after it's back online, what is wrong?**
+##### A. Ensure Media Sources must have "Restart playback when source becomes active" disabled. Carefully read through all instructions and notes.
+
 ### Q. **When streaming using OBS SRT, there is no bitrate information, where do I find it?**
 ##### A. Unfortunately this information isn't available via OBS, therefore making it impossible to fetch the current bitrate. It is only visible when streaming via a server such as 'SRT Live Server' (modified version by mattwb65), or 'BELABOX cloud relay server'.
 
