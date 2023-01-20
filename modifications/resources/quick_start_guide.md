@@ -1,5 +1,5 @@
-Quick Start Guide w/ OBS v28
-============================
+Quick Start Guide w/ OBS v28 or newer
+=====================================
 
 Resolving "Test #6 of 10 failed".
 
