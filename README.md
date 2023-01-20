@@ -36,7 +36,6 @@ DOWNLOADS
 Programs to download
 --------------------
 OBS Studio - [https://obsproject.com/](https://obsproject.com/)  
-OBS WebSocket - [https://github.com/Palakis/obs-websocket/releases/latest](https://github.com/Palakis/obs-websocket/releases/latest)  
 obs-websocket-http - [https://github.com/IRLToolkit/obs-websocket-http/releases/latest](https://github.com/IRLToolkit/obs-websocket-http/releases/latest)   
 Node.js - [https://nodejs.org/](https://nodejs.org/) <sup>_(not required if using obs-websocket-http)_</sup>  
 VLC 64-bit - [https://www.videolan.org/vlc/](https://www.videolan.org/vlc/)  
@@ -59,7 +58,7 @@ This guide assumes you have OBS installed and have spent time streaming and an u
 
 OBS Websocket
 -------------
-After installing OBS Websocket, create a password in OBS (Tools -> Websocket Server Settings).
+Open OBS, enable OBS Websocket, and create a password (Tools -> Websocket Server Settings).
 
 Node.js <sup>_(not required if using obs-websocket-http)_</sup>
 ---------------------------------------------------------------
