@@ -39,7 +39,7 @@ OBS Studio - [https://obsproject.com/](https://obsproject.com/)
 obs-websocket-http - [https://github.com/IRLToolkit/obs-websocket-http/releases/latest](https://github.com/IRLToolkit/obs-websocket-http/releases/latest)   
 Node.js - [https://nodejs.org/](https://nodejs.org/) <sup>_(not required if using obs-websocket-http)_</sup>  
 VLC 64-bit - [https://www.videolan.org/vlc/](https://www.videolan.org/vlc/)  
-OBS Tablet Remote - [http://t2t2.github.io/obs-tablet-remote/](http://t2t2.github.io/obs-tablet-remote/) <sup>_(requires [OBS WebSocket 4.9.1)](https://github.com/obsproject/obs-websocket/releases)_</sup>
+OBS Tablet Remote - [http://t2t2.github.io/obs-tablet-remote/](http://t2t2.github.io/obs-tablet-remote/) <sup>_(requires [OBS WebSocket 4.9.1](https://github.com/obsproject/obs-websocket/releases))_</sup>
 
 Known OBS SRT issues
 --------------------
