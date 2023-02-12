@@ -28,3 +28,5 @@ Configuring AdiIRC
 - Click "**Log On**"
 - Press _ALT_ + _R_ to open Scripts window and load scripts within that folder
 - Close and reopen AdiIRC
+
+For more information about commands, see https://github.com/loopy750/SRT-Stats-Monitor#adiirc
