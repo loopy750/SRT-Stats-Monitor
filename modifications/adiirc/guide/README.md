@@ -1,6 +1,7 @@
 Configuring AdiIRC
 ==================
 
+- Edit Loopy SRT Monitor's _config.ini_ file to enable `FileStatusOutput=true`
 - Go to: [https://www.adiirc.com/](https://www.adiirc.com/)
 - In this example we're downloading "**64 Bit - Portable version**"
 
