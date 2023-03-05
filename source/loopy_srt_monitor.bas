@@ -277,8 +277,8 @@ Common Shared sls_stats.xml As String
 Common Shared sls_stats_2.xml As String '               SLS 2nd IP
 Common Shared SLS_streams_seek As Integer
 Common Shared SLS_streams_found As Integer
-Common Shared SLS_Uptime1 As Integer
-Common Shared SLS_Uptime2 As Integer
+Common Shared SLS_Uptime1 As Long
+Common Shared SLS_Uptime2 As Long
 Common Shared SLS_Active As _Byte
 Common Shared SLS_2_Active As _Byte '                   SLS 2nd IP
 Common Shared Stream_Title_1 As String '                SLS 2nd IP
@@ -299,6 +299,53 @@ Common Shared KeepAlive_BELABOX_Default As Integer
 Common Shared KeepAlive_SLS_Default As Integer
 Common Shared SLS_Server_KeepAlive1 As Integer
 Common Shared SLS_Server_KeepAlive2 As Integer
+
+' Restreamer (v1.1.1)
+Common Shared RESTREAMER_1_Enabled As String '          RESTREAMER1Enabled=true
+Common Shared RESTREAMER_2_Enabled As String '          RESTREAMER2Enabled=true
+Common Shared RESTREAMER_Server_IP As String '          ServerIP=127.0.0.1
+Common Shared RESTREAMER_Server_Port As String '        ServerPort=8080
+Common Shared RESTREAMER_Port_Client As String
+Common Shared RESTREAMER_EOL As String
+Common Shared RESTREAMER_Header As String
+Common Shared RESTREAMER_Stats As String '              ServerStats=srt,rtmp
+Common Shared RESTREAMER_Data As String
+Common Shared RESTREAMER_Username As String
+Common Shared RESTREAMER_Password As String
+Common Shared RESTREAMER_ID_1 As String
+Common Shared RESTREAMER_ID_2 As String
+Common Shared RESTREAMER_Timer_GET As Single
+Common Shared RESTREAMER_GET_a As String
+Common Shared RESTREAMER_GET_a2 As String
+Common Shared RESTREAMER_GET_i As Single
+Common Shared RESTREAMER_GET_i2 As Single
+Common Shared RESTREAMER_GET_i3 As Single
+Common Shared RESTREAMER_GET_l As Single
+Common Shared RESTREAMER_GET_d As String
+Common Shared RESTREAMER_Bitrate1 As Single
+Common Shared RESTREAMER_Bitrate2 As Single
+Common Shared restreamer_client As Single
+Common Shared restreamer_stats.xml As String
+Common Shared RESTREAMER_streams_seek As Integer
+Common Shared RESTREAMER_streams_found As Integer
+Common Shared RESTREAMER_Uptime1 As Long
+Common Shared RESTREAMER_Uptime2 As Long
+Common Shared RESTREAMER_Active As _Byte
+Common Shared restreamer_token.xml As String
+
+Common Shared restreamer_connect_timer As Integer
+Common Shared RESTREAMER_Server_KeepAlive As Integer
+Common Shared KeepAlive_RESTREAMER_Default As Integer
+Common Shared RESTREAMER_Ping1 As Double
+Common Shared RESTREAMER_Ping2 As Double
+Common Shared RESTREAMER_PingOut As Double
+Common Shared RESTREAMER_BitrateLow1 As Single '        BitrateLow1=800
+Common Shared RESTREAMER_BitrateLow2 As Single '        BitrateLow2=800
+Common Shared RESTREAMER_BitrateFail1 As Single '       BitratFail1=400
+Common Shared RESTREAMER_BitrateFail2 As Single '       BitrateFail2=400
+Common Shared __RESTREAMER_1_Enabled As _Byte
+Common Shared __RESTREAMER_2_Enabled As _Byte
+Common Shared OpenClient_Interval_RESTREAMER As Integer
 
 ' NGINX RTMP Server
 Dim Shared i_XML
@@ -625,6 +672,7 @@ c34 = Chr$(34)
 DIR_documents = _CWD$
 SLS_EOL = Chr$(13) + Chr$(10)
 RTMP_EOL = Chr$(13) + Chr$(10)
+RESTREAMER_EOL = Chr$(13) + Chr$(10)
 BG = _RGB(32, 32, 32)
 Exe_OK = 1
 websocketVersion = 5
@@ -646,6 +694,7 @@ OpenClient_Interval_2 = 5
 KeepAlive_BELABOX_Default = 30
 KeepAlive_SLS_Default = 5
 KeepAlive_RTMP_Server_Default = 30
+KeepAlive_RESTREAMER_Default = 5
 Stream_Fail_Delay = 8
 ' ---------------------------------------------------------------
 
@@ -667,17 +716,17 @@ Sub __UI_BeforeInit
     $VersionInfo:ProductName=Loopy SRT Monitor
     $VersionInfo:Comments=Monitor SRT Streams
     $VersionInfo:FileDescription=Loopy SRT Monitor
-    $VersionInfo:FILEVERSION#=1,1,0,0
-    $VersionInfo:ProductVersion=1,1,0,0
+    $VersionInfo:FILEVERSION#=1,1,1,0
+    $VersionInfo:ProductVersion=1,1,1,0
     $VersionInfo:LegalCopyright=loopy750
     $VersionInfo:OriginalFilename=loopy_srt_monitor.exe
     $Checking:On
     '$EXEICON moved but still parsed on launch
 
     _Title "Loopy SRT Monitor - loopy750"
-    Ver = "1.0.0"
-    VerBeta = "1.1.0"
-    VerDate = "01/23"
+    Ver = "1.1.0"
+    VerBeta = "1.1.1"
+    VerDate = "03/23"
     VerPortable = "false"
 End Sub
 
@@ -902,6 +951,20 @@ Sub __UI_OnLoad
                     If file4_var$ = "slsbitratelow2" Then SLS_BitrateLow2 = Val(file4_val$)
                     If file4_var$ = "slsbitratefail1" Then SLS_BitrateFail1 = Val(file4_val$)
                     If file4_var$ = "slsbitratefail2" Then SLS_BitrateFail2 = Val(file4_val$)
+                    If file4_var$ = "restreamer1enabled" Then RESTREAMER_1_Enabled = file4_val$ '                    Restreamer server settings
+                    If file4_var$ = "restreamer2enabled" Then RESTREAMER_2_Enabled = file4_val$
+                    If file4_var$ = "restreamerusername" Then RESTREAMER_Username = file4_val$
+                    If file4_var$ = "restreamerpassword" Then RESTREAMER_Password = file4_val$
+                    If file4_var$ = "restreamerserverip" Then RESTREAMER_Server_IP = file4_val$
+                    If file4_var$ = "restreamerserverport" Then RESTREAMER_Server_Port = file4_val$
+                    If file4_var$ = "restreamerstats" Then RESTREAMER_Stats = file4_val$
+                    If file4_var$ = "restreamerserverkeepalive" Then RESTREAMER_Server_KeepAlive = Val(file4_val$)
+                    If file4_var$ = "restreamerid1" Then RESTREAMER_ID_1 = file4_val$
+                    If file4_var$ = "restreamerid2" Then RESTREAMER_ID_2 = file4_val$
+                    If file4_var$ = "restreamerbitratelow1" Then RESTREAMER_BitrateLow1 = Val(file4_val$)
+                    If file4_var$ = "restreamerbitratelow2" Then RESTREAMER_BitrateLow2 = Val(file4_val$)
+                    If file4_var$ = "restreamerbitratefail1" Then RESTREAMER_BitrateFail1 = Val(file4_val$)
+                    If file4_var$ = "restreamerbitratefail2" Then RESTREAMER_BitrateFail2 = Val(file4_val$)
                     If file4_var$ = "mediasourcetime" Then MediaSourceTime = file4_val$ '                           UNDOCUMENTED settings
                     If file4_var$ = "cooldowntotal" Then CooldownTotal = file4_val$
                     If file4_var$ = "forcedebugonstartup" Then ForceDebugOnStartup = file4_val$
@@ -980,7 +1043,7 @@ Sub __UI_OnLoad
             ' Automatically open obs-websocket-http
             If OS = "WINDOWS" And _FileExists(HTTP_File) Then
                 Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
-                If FastStart <> "true" Then _Delay 1
+                If FastStart <> "true" Then _Delay 1 Else _Delay .5
                 Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
             End If
         End If
@@ -1086,6 +1149,11 @@ Sub __UI_OnLoad
             If RTMP_Server_KeepAlive > 60 Then RTMP_Server_KeepAlive = 60
         End If
 
+        If RESTREAMER_Server_KeepAlive <> 0 Then
+            If SLS_Server_KeepAlive1 < 1 Then SLS_Server_KeepAlive1 = 1
+            If SLS_Server_KeepAlive1 > 60 Then SLS_Server_KeepAlive1 = 60
+        End If
+
         ' SRT Live Server
         SLS_Header = ""
         SLS_Header = SLS_Header + "GET /" + SLS_Stats + " HTTP/1.1" + SLS_EOL
@@ -1110,6 +1178,8 @@ Sub __UI_OnLoad
             If SLS_Server_IP <> SLS_Server_IP_2 Then SLS_2_Active = TRUE
             If SLS_Server_Port <> SLS_Server_Port_2 Then SLS_2_Active = TRUE
         End If
+
+        If MultiCameraSwitch = "true" And SLS_2_Enabled = "true" And SLS_1_Enabled = "false" Then SLS_2_Active = TRUE ' Fix when using SLS #2 only (v1.1.1)
 
         If SLS_2_Active And SLS_1_Enabled = "true" Then Stream_Title_1 = "Server" Else Stream_Title_1 = "Stream" ' SLS 2nd IP
         If SLS_2_Active And SLS_2_Enabled = "true" Then Stream_Title_2 = "Server" Else Stream_Title_2 = "Stream" ' SLS 2nd IP
@@ -1165,7 +1235,7 @@ Sub __UI_OnLoad
         If RTMP_2_Enabled = "true" Then SLS_2_Enabled = "false"
 
         ' SRT Live Server
-        If SLS_1_Enabled = "true" And SLS_2_Enabled = "true" Then RTMP_Active = FALSE: RTMP_1_Enabled = "false": RTMP_2_Enabled = "false"
+        If SLS_1_Enabled = "true" And SLS_2_Enabled = "true" Then RTMP_Active = FALSE: RTMP_1_Enabled = "false": RTMP_2_Enabled = "false": RESTREAMER_1_Enabled = "false": RESTREAMER_2_Enabled = "false"
 
         ' NGINX RTMP Server
         If RTMP_1_Enabled = "true" And RTMP_2_Enabled = "true" Then SLS_Active = FALSE: SLS_1_Enabled = "false": SLS_2_Enabled = "false"
@@ -1173,34 +1243,49 @@ Sub __UI_OnLoad
         If SLS_1_Enabled = "true" Or SLS_2_Enabled = "true" Then SLS_Active = TRUE
         If RTMP_1_Enabled = "true" Or RTMP_2_Enabled = "true" Then RTMP_Active = TRUE: RTMP_Kbps_Precision = SLS_Kbps_Precision
 
-        ' Set SLS and RTMP variables
+        ' RESTREAMER Server
+        If RESTREAMER_1_Enabled = "true" And SLS_1_Enabled = "true" Then RESTREAMER_1_Enabled = "false"
+        If RESTREAMER_2_Enabled = "true" And SLS_2_Enabled = "true" Then RESTREAMER_2_Enabled = "false"
+        If RESTREAMER_1_Enabled = "true" And RTMP_1_Enabled = "true" Then RESTREAMER_1_Enabled = "false"
+        If RESTREAMER_2_Enabled = "true" And RTMP_1_Enabled = "true" Then RESTREAMER_2_Enabled = "false"
+        If RESTREAMER_1_Enabled = "true" Or RESTREAMER_2_Enabled = "true" Then RESTREAMER_Active = TRUE
+
+        RESTREAMER_Port_Client = "TCP/IP:" + RESTREAMER_Server_Port + ":"
+
+        ' Set SLS, RTMP and RESTREAMER variables
         If SLS_1_Enabled = "true" Then __SLS_1_Enabled = TRUE Else __SLS_1_Enabled = FALSE
         If RTMP_1_Enabled = "true" Then __RTMP_1_Enabled = TRUE Else __RTMP_1_Enabled = FALSE
         If RTMP_2_Enabled = "true" Then __RTMP_2_Enabled = TRUE Else __RTMP_2_Enabled = FALSE
         If SLS_2_Enabled = "true" Then __SLS_2_Enabled = TRUE Else __SLS_2_Enabled = FALSE
+        If RESTREAMER_1_Enabled = "true" Then __RESTREAMER_1_Enabled = TRUE Else __RESTREAMER_1_Enabled = FALSE
+        If RESTREAMER_2_Enabled = "true" Then __RESTREAMER_2_Enabled = TRUE Else __RESTREAMER_2_Enabled = FALSE
 
         ' SRT Live Server ---------------------------------------------
         If SLS_Active Then
-            SetCaption IPPingLB, "SLS Ping" ' Start with displaying "SLS Ping" and will change if BELABOX server is detected
+            SetCaption IPPingLB, "SLS ping" ' Start with displaying "SLS ping" and will change if BELABOX server is detected
             SetCaption Bitrate_Stream_1LB, "-"
             SetCaption Bitrate_Stream_2LB, "-"
         ElseIf RTMP_Active Then
-            SetCaption IPPingLB, "NGINX Ping"
+            SetCaption IPPingLB, "NGINX ping"
+            SetCaption Bitrate_Stream_1LB, "-"
+            SetCaption Bitrate_Stream_2LB, "-"
+        ElseIf RESTREAMER_Active Then
+            SetCaption IPPingLB, "RESTREAMER ping"
             SetCaption Bitrate_Stream_1LB, "-"
             SetCaption Bitrate_Stream_2LB, "-"
         End If
 
         If Not __MultiCameraSwitch Then
-            If SLS_Active Or RTMP_Active Then
+            If SLS_Active Or RTMP_Active Or RESTREAMER_Active Then
                 SetCaption MultiCameraSwitchLB, "Bitrate"
             End If
         End If
 
-        ' Adjust SRT data position becuase of no bitrate information
+        ' Adjust SRT data position because of no bitrate information
         If __MultiCameraSwitch Then
 
-            If __SLS_1_Enabled Or __RTMP_1_Enabled Then
-                If Not __SLS_2_Enabled And Not __RTMP_2_Enabled Then
+            If __SLS_1_Enabled Or __RTMP_1_Enabled Or __RESTREAMER_1_Enabled Then
+                If Not __SLS_2_Enabled And Not __RTMP_2_Enabled And Not __RESTREAMER_2_Enabled Then
                     Control(StreamUptimeLB).Top = 254
                     Control(Uptime_Stream_1LB).Top = 254
                     Control(failLB).Top = 278
@@ -1210,8 +1295,8 @@ Sub __UI_OnLoad
                 End If
             End If
 
-            If __SLS_2_Enabled Or __RTMP_2_Enabled Then
-                If Not __SLS_1_Enabled And Not __RTMP_1_Enabled Then
+            If __SLS_2_Enabled Or __RTMP_2_Enabled Or __RESTREAMER_2_Enabled Then
+                If Not __SLS_1_Enabled And Not __RTMP_1_Enabled And Not __RESTREAMER_1_Enabled Then
                     Control(StreamUptimeLB2).Top = 254
                     Control(Uptime_Stream_2LB).Top = 254
                     Control(failLB2).Top = 278
@@ -1221,7 +1306,7 @@ Sub __UI_OnLoad
                 End If
             End If
 
-            If __SLS_1_Enabled And __SLS_2_Enabled Or __RTMP_1_Enabled And __RTMP_2_Enabled Or __SLS_1_Enabled And __RTMP_2_Enabled Or __SLS_2_Enabled And __RTMP_1_Enabled Then
+            If __SLS_1_Enabled And __SLS_2_Enabled Or __RTMP_1_Enabled And __RTMP_2_Enabled Or __RESTREAMER_1_Enabled And __RESTREAMER_2_Enabled Or SLS_Active And RTMP_Active Or SLS_Active And RESTREAMER_Active Or RTMP_Active And RESTREAMER_Active Then
                 Control(StreamUptimeLB).Top = 254
                 Control(Uptime_Stream_1LB).Top = 254
                 Control(failLB).Top = 278
@@ -1232,7 +1317,7 @@ Sub __UI_OnLoad
                 Control(Timer_Fail_Stream2LB).Top = 278
             End If
 
-            If Not SLS_Active And Not RTMP_Active Then
+            If Not SLS_Active And Not RTMP_Active And Not RESTREAMER_Active Then
                 Control(BitrateLB).Hidden = TRUE
                 Control(Bitrate_Stream_1LB).Hidden = TRUE
                 Control(BitrateLB2).Hidden = TRUE
@@ -3968,6 +4053,25 @@ Function GetKey$ (keyname As String, JSON As String)
     GetKey = jkey
 End Function
 
+Function GetKeyRestreamer$ (keyname As String, JSON As String)
+    ' Credit to SpriggsySpriggs
+    Dim jkey As String
+    If InStr(JSON, Chr$(34) + keyname + Chr$(34)) Then
+        jkey = Mid$(JSON, InStr(JSON, Chr$(34) + keyname + Chr$(34)) + Len(keyname))
+        jkey = Mid$(jkey, InStr(jkey, ":") + 1)
+        If Mid$(jkey, 1, 1) = Chr$(34) Then
+            jkey = Mid$(jkey, 2)
+        End If
+        jkey = Mid$(jkey, 1, InStr(jkey, Chr$(34)) - 1)
+        If Right$(jkey, 1) = "," Then
+            jkey = Mid$(jkey, 1, Len(jkey) - 1)
+        End If
+    Else
+        GetKeyRestreamer$ = ""
+    End If
+    GetKeyRestreamer$ = jkey
+End Function
+
 Sub GetAllKey (keyname As String, JSON As String, ParseKey() As String)
     ' Credit to SpriggsySpriggs
     Dim jkey As String
@@ -3979,6 +4083,29 @@ Sub GetAllKey (keyname As String, JSON As String, ParseKey() As String)
             JSON = Mid$(JSON, InStr(JSON, Chr$(34) + keyname + Chr$(34)) + Len(keyname))
             jkey = JSON
             jkey = Mid$(jkey, InStr(jkey, ":") + 2)
+            If Mid$(jkey, 1, 1) = Chr$(34) Then
+                jkey = Mid$(jkey, 2)
+            End If
+            jkey = Mid$(jkey, 1, InStr(jkey, Chr$(34)) - 1)
+            If Right$(jkey, 1) = "," Then
+                jkey = Mid$(jkey, 1, Len(jkey) - 1)
+            End If
+            ParseKey(x_JSON) = jkey
+        End If
+    Loop Until InStr(JSON, Chr$(34) + keyname + Chr$(34)) = 0
+End Sub
+
+Sub GetAllKeyRestreamer (keyname As String, JSON As String, ParseKey() As String)
+    ' Credit to SpriggsySpriggs
+    Dim jkey As String
+    Dim x_JSON
+    Do
+        If InStr(JSON, Chr$(34) + keyname + Chr$(34)) Then
+            x_JSON = x_JSON + 1
+            ReDim _Preserve ParseKey(x_JSON) As String
+            JSON = Mid$(JSON, InStr(JSON, Chr$(34) + keyname + Chr$(34)) + Len(keyname))
+            jkey = JSON
+            jkey = Mid$(jkey, InStr(jkey, ":") + 1)
             If Mid$(jkey, 1, 1) = Chr$(34) Then
                 jkey = Mid$(jkey, 2)
             End If
@@ -4040,7 +4167,7 @@ Sub http_client_connect (HTTP_Mode$, HTTP_Scene$)
             HTTP_Header = ""
             HTTP_Header = HTTP_Header + "POST /emit/SetCurrentProgramScene HTTP/1.1" + SLS_EOL
             HTTP_Header = HTTP_Header + "Host: " + HTTP_Bind_Address + ":" + HTTP_Bind_Port + SLS_EOL
-            HTTP_Header = HTTP_Header + "User-Agent: curl/7.87.0" + SLS_EOL
+            HTTP_Header = HTTP_Header + "User-Agent: curl/7.88.1" + SLS_EOL
             HTTP_Header = HTTP_Header + "Accept: */*" + SLS_EOL
             HTTP_Header = HTTP_Header + "Authorization: " + HTTP_Auth_Key + SLS_EOL
             HTTP_Header = HTTP_Header + "Content-type: application/json" + SLS_EOL
@@ -4061,7 +4188,7 @@ Sub http_client_connect (HTTP_Mode$, HTTP_Scene$)
             HTTP_Header = ""
             HTTP_Header = HTTP_Header + "POST /call/GetCurrentProgramScene HTTP/1.1" + SLS_EOL
             HTTP_Header = HTTP_Header + "Host: " + HTTP_Bind_Address + ":" + HTTP_Bind_Port + SLS_EOL
-            HTTP_Header = HTTP_Header + "User-Agent: curl/7.87.0" + SLS_EOL
+            HTTP_Header = HTTP_Header + "User-Agent: curl/7.88.1" + SLS_EOL
             HTTP_Header = HTTP_Header + "Accept: */*" + SLS_EOL
             HTTP_Header = HTTP_Header + "Authorization: " + HTTP_Auth_Key + SLS_EOL
             HTTP_Header = HTTP_Header + "Content-type: application/json" + SLS_EOL + SLS_EOL
@@ -4106,7 +4233,7 @@ Sub http_client_connect (HTTP_Mode$, HTTP_Scene$)
             HTTP_Header = ""
             HTTP_Header = HTTP_Header + "POST /call/GetMediaInputStatus HTTP/1.1" + SLS_EOL
             HTTP_Header = HTTP_Header + "Host: " + HTTP_Bind_Address + ":" + HTTP_Bind_Port + SLS_EOL
-            HTTP_Header = HTTP_Header + "User-Agent: curl/7.87.0" + SLS_EOL
+            HTTP_Header = HTTP_Header + "User-Agent: curl/7.88.1" + SLS_EOL
             HTTP_Header = HTTP_Header + "Accept: */*" + SLS_EOL
             HTTP_Header = HTTP_Header + "Authorization: " + HTTP_Auth_Key + SLS_EOL
             HTTP_Header = HTTP_Header + "Content-type: application/json" + SLS_EOL
@@ -4151,7 +4278,7 @@ Sub http_client_connect (HTTP_Mode$, HTTP_Scene$)
             HTTP_Header = ""
             HTTP_Header = HTTP_Header + "POST /call/GetVersion HTTP/1.1" + SLS_EOL
             HTTP_Header = HTTP_Header + "Host: " + HTTP_Bind_Address + ":" + HTTP_Bind_Port + SLS_EOL
-            HTTP_Header = HTTP_Header + "User-Agent: curl/7.87.0" + SLS_EOL
+            HTTP_Header = HTTP_Header + "User-Agent: curl/7.88.1" + SLS_EOL
             HTTP_Header = HTTP_Header + "Accept: */*" + SLS_EOL
             HTTP_Header = HTTP_Header + "Authorization: " + HTTP_Auth_Key + SLS_EOL
             HTTP_Header = HTTP_Header + "Content-type: application/json" + SLS_EOL + SLS_EOL
@@ -4194,7 +4321,9 @@ End Sub
 Sub sls_client_connect
 
     ' Reset SLS data
-    SLS_GET_a = "": SLS_GET_a2 = "": SLS_GET_i = 0: SLS_GET_i2 = 0: SLS_GET_i3 = 0: SLS_GET_l = 0: SLS_GET_d = "": sls_stats.xml = "": SLS_Bitrate1 = 0: SLS_Bitrate2 = 0
+    SLS_GET_a = "": SLS_GET_a2 = "": SLS_GET_i = 0: SLS_GET_i2 = 0: SLS_GET_i3 = 0: SLS_GET_l = 0: SLS_GET_d = "": sls_stats.xml = ""
+    If __SLS_1_Enabled Then SLS_Bitrate1 = 0
+    If __SLS_2_Enabled Then SLS_Bitrate2 = 0
     SLS_streams_found = 0: SLS_Uptime1 = 0: SLS_Uptime2 = 0: SLS_streams_seek = 0
 
     On Error GoTo App_Fail
@@ -4260,7 +4389,9 @@ End Sub
 Sub sls_client_connect_2 ' SLS 2nd IP
 
     ' Reset SLS data
-    SLS_GET_a = "": SLS_GET_a2 = "": SLS_GET_i = 0: SLS_GET_i2 = 0: SLS_GET_i3 = 0: SLS_GET_l = 0: SLS_GET_d_2 = "": sls_stats_2.xml = "": SLS_Bitrate1 = 0: SLS_Bitrate2 = 0
+    SLS_GET_a = "": SLS_GET_a2 = "": SLS_GET_i = 0: SLS_GET_i2 = 0: SLS_GET_i3 = 0: SLS_GET_l = 0: SLS_GET_d_2 = "": sls_stats_2.xml = ""
+    If __SLS_1_Enabled Then SLS_Bitrate1 = 0
+    If __SLS_2_Enabled Then SLS_Bitrate2 = 0
     SLS_streams_found = 0: SLS_Uptime1 = 0: SLS_Uptime2 = 0: SLS_streams_seek = 0
 
     On Error GoTo App_Fail
@@ -4320,6 +4451,184 @@ Sub sls_client_connect_2 ' SLS 2nd IP
 
     ' Store json data in sls_stats_2.xml
     sls_stats_2.xml = SLS_GET_d_2
+
+End Sub
+
+Sub restreamer_client_connect
+
+    ' Reset RESTREAMER data
+    RESTREAMER_GET_a = "": RESTREAMER_GET_a2 = "": RESTREAMER_GET_i = 0: RESTREAMER_GET_i2 = 0: RESTREAMER_GET_i3 = 0: RESTREAMER_GET_l = 0: RESTREAMER_GET_d = "": restreamer_stats.xml = "": RESTREAMER_Bitrate1 = 0: RESTREAMER_Bitrate2 = 0
+    RESTREAMER_streams_found = 0: RESTREAMER_streams_seek = 0
+    restreamer_token.xml = ""
+
+    On Error GoTo App_Fail
+    App_Refresh = TRUE
+
+    ' Open client every x seconds to prevent program freezing every second with high pings (v1.1.1)
+    If RESTREAMER_Server_KeepAlive <> 0 Then
+        OpenClient_Interval_RESTREAMER = RESTREAMER_Server_KeepAlive
+    Else
+        OpenClient_Interval_RESTREAMER = KeepAlive_RESTREAMER_Default
+    End If
+
+    restreamer_connect_timer = restreamer_connect_timer + 1
+    If restreamer_connect_timer >= OpenClient_Interval_RESTREAMER Then restreamer_connect_timer = 1: Close restreamer_client
+    If restreamer_connect_timer = 1 Then
+
+        RESTREAMER_Ping1 = Timer(.001)
+
+        restreamer_client = _OpenClient(RESTREAMER_Port_Client + RESTREAMER_Server_IP)
+
+        If restreamer_client = 0 Then RefreshDisplayRequest = TRUE: Error_msg$ = "- Unable to connect, check if " + c34 + RESTREAMER_Server_IP + ":" + RESTREAMER_Server_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to read the RESTREAMER stats URL from its http server. (Error: #16)": _Delay 3: Exit Sub
+
+        RESTREAMER_Ping2 = Timer(.001)
+        RESTREAMER_PingOut = (RESTREAMER_Ping2 - RESTREAMER_Ping1)
+
+    End If
+
+    ' Reset timer and delay if connection was not established, else Put will cause a program error
+    If restreamer_client = 0 Then restreamer_connect_timer = 99: _Delay 3
+
+
+
+    ' Get RESTREAMER token ---------------------------------------------------------------------------------------------------------- BEGIN
+
+    restreamer_client = _OpenClient(RESTREAMER_Port_Client + RESTREAMER_Server_IP)
+
+    RESTREAMER_Data = "{" + c34 + "username" + c34 + ":" + c34 + RESTREAMER_Username + c34 + "," + c34 + "password" + c34 + ":" + c34 + RESTREAMER_Password + c34 + "}"
+
+    RESTREAMER_Header = ""
+    RESTREAMER_Header = RESTREAMER_Header + "POST /api/login HTTP/1.1" + RESTREAMER_EOL
+    RESTREAMER_Header = RESTREAMER_Header + "Host: " + RESTREAMER_Server_IP + ":" + RESTREAMER_Server_Port + RESTREAMER_EOL
+    RESTREAMER_Header = RESTREAMER_Header + "User-Agent: curl/7.88.1" + RESTREAMER_EOL
+    RESTREAMER_Header = RESTREAMER_Header + "Accept: */*" + RESTREAMER_EOL
+    RESTREAMER_Header = RESTREAMER_Header + "Content-type: application/json" + RESTREAMER_EOL
+    RESTREAMER_Header = RESTREAMER_Header + "Content-Length: " + _Trim$(Str$(Len(RESTREAMER_Data))) + RESTREAMER_EOL + RESTREAMER_EOL
+    RESTREAMER_Header = RESTREAMER_Header + RESTREAMER_Data
+
+    ' Reset timer and delay if connection was not established, else Put will cause a program error
+    If restreamer_client = 0 Then restreamer_connect_timer = 99: _Delay 1
+
+    Put #restreamer_client, , RESTREAMER_Header
+    'Close restreamer_client
+
+    ' Reset RESTREAMER data
+    RESTREAMER_GET_a = "": RESTREAMER_GET_a2 = "": RESTREAMER_GET_i = 0: RESTREAMER_GET_i2 = 0: RESTREAMER_GET_i3 = 0: RESTREAMER_GET_l = 0: RESTREAMER_GET_d = "": restreamer_stats.xml = "": RESTREAMER_Bitrate1 = 0: RESTREAMER_Bitrate2 = 0
+    RESTREAMER_streams_found = 0: RESTREAMER_streams_seek = 0
+    restreamer_token.xml = ""
+
+    ' Connect to RESTREAMER Live Server and grab json data
+    RESTREAMER_Timer_GET = Timer
+    Do
+        _Delay 0.01
+        Get #restreamer_client, , RESTREAMER_GET_a2
+        RESTREAMER_GET_a = RESTREAMER_GET_a + RESTREAMER_GET_a2
+        RESTREAMER_GET_i = InStr(RESTREAMER_GET_a, "Content-Length:")
+        If RESTREAMER_GET_i Then
+            RESTREAMER_GET_i2 = InStr(RESTREAMER_GET_i, RESTREAMER_GET_a, RESTREAMER_EOL)
+            If RESTREAMER_GET_i2 Then
+                RESTREAMER_GET_l = Val(Mid$(RESTREAMER_GET_a, RESTREAMER_GET_i + 15, RESTREAMER_GET_i2 - RESTREAMER_GET_i - 14))
+                RESTREAMER_GET_i3 = InStr(RESTREAMER_GET_i2, RESTREAMER_GET_a, RESTREAMER_EOL + RESTREAMER_EOL)
+                If RESTREAMER_GET_i3 Then
+                    RESTREAMER_GET_i3 = RESTREAMER_GET_i3 + 4 'move i3 to start of data
+                    If (Len(RESTREAMER_GET_a) - RESTREAMER_GET_i3 + 1) = RESTREAMER_GET_l Then
+                        'Close restreamer_client ' CLOSE CLIENT
+                        RESTREAMER_GET_d = Mid$(RESTREAMER_GET_a, RESTREAMER_GET_i3, RESTREAMER_GET_l)
+                        Exit Do
+                    End If ' available data = l
+                End If ' i3
+            End If ' i2
+        End If ' i
+    Loop Until Timer > RESTREAMER_Timer_GET + 2 ' 2 second timeout
+    'Close restreamer_client
+
+    ' Store json data in restreamer_token.xml
+    restreamer_token.xml = RESTREAMER_GET_d
+
+    restreamer_token.xml = GetKeyRestreamer("access_token", restreamer_token.xml)
+
+    ' Get RESTREAMER token ---------------------------------------------------------------------------------------------------------- END
+
+
+
+
+    RESTREAMER_Header = ""
+    RESTREAMER_Header = RESTREAMER_Header + "GET /api/v3/session/active?collectors=" + RESTREAMER_Stats + " HTTP/1.1" + RESTREAMER_EOL
+    RESTREAMER_Header = RESTREAMER_Header + "Host: " + RESTREAMER_Server_IP + ":" + RESTREAMER_Server_Port + RESTREAMER_EOL
+    RESTREAMER_Header = RESTREAMER_Header + "User-Agent: curl/7.88.1" + RESTREAMER_EOL
+    RESTREAMER_Header = RESTREAMER_Header + "Accept: application/json" + RESTREAMER_EOL
+    RESTREAMER_Header = RESTREAMER_Header + "Authorization: Bearer " + restreamer_token.xml + RESTREAMER_EOL
+    RESTREAMER_Header = RESTREAMER_Header + RESTREAMER_EOL
+
+    RESTREAMER_Port_Client = "TCP/IP:" + RESTREAMER_Server_Port + ":"
+
+
+
+    ' Reset RESTREAMER data
+    RESTREAMER_GET_a = "": RESTREAMER_GET_a2 = "": RESTREAMER_GET_i = 0: RESTREAMER_GET_i2 = 0: RESTREAMER_GET_i3 = 0: RESTREAMER_GET_l = 0: RESTREAMER_GET_d = "": restreamer_stats.xml = "": RESTREAMER_Bitrate1 = 0: RESTREAMER_Bitrate2 = 0
+    RESTREAMER_streams_found = 0: RESTREAMER_streams_seek = 0
+
+    On Error GoTo App_Fail
+    App_Refresh = TRUE
+
+
+
+    ' For code 401
+    ' Open client every x seconds to prevent program freezing every second with high pings (v1.1.1)
+    If RESTREAMER_Server_KeepAlive <> 0 Then
+        OpenClient_Interval_RESTREAMER = RESTREAMER_Server_KeepAlive
+    Else
+        OpenClient_Interval_RESTREAMER = KeepAlive_RESTREAMER_Default
+    End If
+
+    If restreamer_connect_timer >= OpenClient_Interval_RESTREAMER Then restreamer_connect_timer = 1: Close restreamer_client
+    If restreamer_connect_timer = 1 Then
+
+        RESTREAMER_Ping1 = Timer(.001)
+
+        restreamer_client = _OpenClient(RESTREAMER_Port_Client + RESTREAMER_Server_IP)
+
+        If restreamer_client = 0 Then RefreshDisplayRequest = TRUE: Error_msg$ = "- Unable to connect, check if " + c34 + RESTREAMER_Server_IP + ":" + RESTREAMER_Server_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to read the RESTREAMER stats URL from its http server. (Error: #16)": _Delay 3: Exit Sub
+
+        RESTREAMER_Ping2 = Timer(.001)
+        RESTREAMER_PingOut = (RESTREAMER_Ping2 - RESTREAMER_Ping1)
+
+    End If
+
+    ' Reset timer and delay if connection was not established, else Put will cause a program error
+    If restreamer_client = 0 Then restreamer_connect_timer = 99: _Delay 3
+
+
+
+    Put #restreamer_client, , RESTREAMER_Header
+
+    ' Connect to RESTREAMER Live Server and grab json data
+    RESTREAMER_Timer_GET = Timer
+    Do
+        _Delay 0.01
+        Get #restreamer_client, , RESTREAMER_GET_a2
+        RESTREAMER_GET_a = RESTREAMER_GET_a + RESTREAMER_GET_a2
+        RESTREAMER_GET_i = InStr(RESTREAMER_GET_a, "Content-Length:")
+        If RESTREAMER_GET_i Then
+            RESTREAMER_GET_i2 = InStr(RESTREAMER_GET_i, RESTREAMER_GET_a, RESTREAMER_EOL)
+            If RESTREAMER_GET_i2 Then
+                RESTREAMER_GET_l = Val(Mid$(RESTREAMER_GET_a, RESTREAMER_GET_i + 15, RESTREAMER_GET_i2 - RESTREAMER_GET_i - 14))
+                RESTREAMER_GET_i3 = InStr(RESTREAMER_GET_i2, RESTREAMER_GET_a, RESTREAMER_EOL + RESTREAMER_EOL)
+                If RESTREAMER_GET_i3 Then
+                    RESTREAMER_GET_i3 = RESTREAMER_GET_i3 + 4 'move i3 to start of data
+                    If (Len(RESTREAMER_GET_a) - RESTREAMER_GET_i3 + 1) = RESTREAMER_GET_l Then
+                        'Close restreamer_client ' CLOSE CLIENT
+                        RESTREAMER_GET_d = Mid$(RESTREAMER_GET_a, RESTREAMER_GET_i3, RESTREAMER_GET_l)
+                        Exit Do
+                    End If ' available data = l
+                End If ' i3
+            End If ' i2
+        End If ' i
+    Loop Until Timer > RESTREAMER_Timer_GET + 2 ' 2 second timeout
+    'Close restreamer_client
+
+    ' Store json data in restreamer_stats.xml
+    restreamer_stats.xml = RESTREAMER_GET_d
 
 End Sub
 
@@ -4504,7 +4813,6 @@ Sub Multi0 (serverType$)
             If __SLS_1_Enabled Then sls_client_connect
             If SLS_2_Active Then sls_client_connect_2 ' SLS 2nd IP
 
-
             On Error GoTo 0
             App_Refresh = FALSE
 
@@ -4594,6 +4902,38 @@ Sub Multi0 (serverType$)
 
             ' Check BitrateFail1 - if bitrate is below fail value, appear to be 0
             If SLS_Bitrate1 < SLS_BitrateFail1 Then MediaSource1TimeMS = 0
+
+        Case "RESTREAMER"
+
+            If __RESTREAMER_1_Enabled Then restreamer_client_connect
+
+            On Error GoTo 0
+            App_Refresh = FALSE
+
+
+            If Dummy_Server <> "" Then DummyServer Dummy_Server
+
+
+            If GetKeyRestreamer("message", restreamer_stats.xml) = "Missing or invalid JWT token" Then RefreshDisplayRequest = TRUE: Error_msg$ = "- Unable to connect, check if " + c34 + RESTREAMER_Server_IP + ":" + RESTREAMER_Server_Port + c34 + " is correct. Confirm correct username and password." + Chr$(10) + "- Restreamer response is " + c34 + "Missing or invalid JWT token" + c34 + ". (Error: #17)": _Delay 3: Exit Sub
+
+            If InStr(restreamer_stats.xml, RESTREAMER_ID_1) Then
+                RESTREAMER_Bitrate1 = Int(Val(GetKeyRestreamer("bandwidth_rx_kbit", Mid$(restreamer_stats.xml, InStr(restreamer_stats.xml, RESTREAMER_ID_1)))))
+                If RESTREAMER_Bitrate1 > 0 Then RESTREAMER_Uptime1 = RESTREAMER_Uptime1 + 1 Else RESTREAMER_Uptime1 = 0
+                SLS_Uptime1 = RESTREAMER_Uptime1
+            Else
+                RESTREAMER_Bitrate1 = 0
+                RESTREAMER_Uptime1 = 0
+            End If
+
+            SLS_Bitrate1 = RESTREAMER_Bitrate1
+
+            ' Uptime
+            MediaSource1Time = SLS_Uptime1
+            MediaSource1TimeMS = SLS_Uptime1 * 1000
+
+            ' Check BitrateFail1 - if bitrate is below fail value, appear to be 0
+            If RESTREAMER_Bitrate1 < RESTREAMER_BitrateFail1 Then MediaSource1TimeMS = 0
+
         Case "NGINX"
             rtmp_client_connect
 
@@ -4722,6 +5062,15 @@ Sub Multi0 (serverType$)
                 If LBR_Delay >= LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: If CooldownLog > CooldownLogTotal Then CooldownLog = CooldownLogTotal
                 LBR_Delay = LBR_Delay + 1: If LBR_Delay > LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total
             End If
+        Case "RESTREAMER"
+            ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
+            If RESTREAMER_Bitrate1 < RESTREAMER_BitrateLow1 And Timer_Fail_Stream1 = 0 And CooldownLog = 0 And LBR_Delay >= LBR_Delay_Total Then Multi0_CMD_LBR
+
+            If RESTREAMER_Bitrate1 < RESTREAMER_BitrateLow1 And Timer_Fail_Stream1 = 0 Then
+                ' LBR_Delay
+                If LBR_Delay >= LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: If CooldownLog > CooldownLogTotal Then CooldownLog = CooldownLogTotal
+                LBR_Delay = LBR_Delay + 1: If LBR_Delay > LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total
+            End If
         Case "NGINX"
             ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
             If RTMP_Bitrate1 < RTMP_BitrateLow1 And Timer_Fail_Stream1 = 0 And CooldownLog = 0 And LBR_Delay >= LBR_Delay_Total Then Multi0_CMD_LBR
@@ -4743,6 +5092,12 @@ Sub Multi0 (serverType$)
             ' Bitrate can be used here. Case 960 - 1040 is invalid.
             Select Case SLS_Bitrate1
                 Case Is > SLS_BitrateLow1, 0
+                    LBR_Delay = LBR_Delay - 1: If LBR_Delay <= 0 Then LBR_Delay = 0
+            End Select
+        Case "RESTREAMER"
+            ' Bitrate can be used here. Case 960 - 1040 is invalid.
+            Select Case SLS_Bitrate1
+                Case Is > RESTREAMER_BitrateLow1, 0
                     LBR_Delay = LBR_Delay - 1: If LBR_Delay <= 0 Then LBR_Delay = 0
             End Select
         Case "NGINX"
@@ -5000,7 +5355,6 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
 
             ' Discover if one or two streams are running
             If Not SLS_2_Active Then
-
 
                 Do
                     SLS_streams_seek = InStr(SLS_streams_seek + 1, sls_stats.xml, "uptime")
@@ -5270,6 +5624,60 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                 If SLS_Bitrate2 < SLS_BitrateFail2 Then MediaSource2TimeMS = 0
                 MediaSource2Time = MediaSource2TimeMS / 1000
             End If
+
+        Case "RESTREAMER"
+
+            If __RESTREAMER_1_Enabled Or __RESTREAMER_2_Enabled Then restreamer_client_connect
+
+            On Error GoTo 0
+            App_Refresh = FALSE
+
+            If Dummy_Server <> "" Then DummyServer Dummy_Server
+
+            If GetKeyRestreamer("message", restreamer_stats.xml) = "Missing or invalid JWT token" Then RefreshDisplayRequest = TRUE: Error_msg$ = "- Unable to connect, check if " + c34 + RESTREAMER_Server_IP + ":" + RESTREAMER_Server_Port + c34 + " is correct. Confirm correct username and password." + Chr$(10) + "- Restreamer response is " + c34 + "Missing or invalid JWT token" + c34 + ". (Error: #18)": _Delay 3: Exit Sub
+
+            If __RESTREAMER_1_Enabled Then
+                If InStr(restreamer_stats.xml, RESTREAMER_ID_1) Then
+                    RESTREAMER_Bitrate1 = Int(Val(GetKeyRestreamer("bandwidth_rx_kbit", Mid$(restreamer_stats.xml, InStr(restreamer_stats.xml, RESTREAMER_ID_1)))))
+                    If RESTREAMER_Bitrate1 > 0 Then RESTREAMER_Uptime1 = RESTREAMER_Uptime1 + 1 Else RESTREAMER_Uptime1 = 0
+                    SLS_Uptime1 = RESTREAMER_Uptime1
+                Else
+                    RESTREAMER_Bitrate1 = 0
+                    RESTREAMER_Uptime1 = 0
+                End If
+                SLS_Bitrate1 = RESTREAMER_Bitrate1
+            End If
+
+            If __RESTREAMER_2_Enabled Then
+                If InStr(restreamer_stats.xml, RESTREAMER_ID_2) Then
+                    RESTREAMER_Bitrate2 = Int(Val(GetKeyRestreamer("bandwidth_rx_kbit", Mid$(restreamer_stats.xml, InStr(restreamer_stats.xml, RESTREAMER_ID_2)))))
+                    If RESTREAMER_Bitrate2 > 0 Then RESTREAMER_Uptime2 = RESTREAMER_Uptime2 + 1 Else RESTREAMER_Uptime2 = 0
+                    SLS_Uptime2 = RESTREAMER_Uptime2
+                Else
+                    RESTREAMER_Bitrate2 = 0
+                    RESTREAMER_Uptime2 = 0
+                End If
+                SLS_Bitrate2 = RESTREAMER_Bitrate2
+            End If
+
+
+            ' Uptime
+            If serverSelection%% = 0 Or serverSelection%% = 1 Then
+                MediaSource1Time = SLS_Uptime1
+                MediaSource1TimeMS = SLS_Uptime1 * 1000
+                ' Check BitrateFail1 - if bitrate is below fail value, appear to be 0
+                If RESTREAMER_Bitrate1 < RESTREAMER_BitrateFail1 Then MediaSource1TimeMS = 0
+                MediaSource1Time = MediaSource1TimeMS / 1000
+            End If
+
+            If serverSelection%% = 0 Or serverSelection%% = 2 Then
+                MediaSource2Time = SLS_Uptime2
+                MediaSource2TimeMS = SLS_Uptime2 * 1000
+                ' Check BitrateFail2 - if bitrate is below fail value, appear to be 0
+                If RESTREAMER_Bitrate2 < RESTREAMER_BitrateFail2 Then MediaSource2TimeMS = 0
+                MediaSource2Time = MediaSource2TimeMS / 1000
+            End If
+
         Case "NGINX"
             rtmp_client_connect
 
@@ -5500,6 +5908,30 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                     LBR_Delay_Plus = 1
                 End If
             End If
+        Case "RESTREAMER"
+            ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
+            If serverSelection%% = 0 Or serverSelection%% = 1 Then
+                If RESTREAMER_Bitrate1 < RESTREAMER_BitrateLow1 And Timer_Fail_Stream1 = 0 And CooldownLog = 0 And LBR_Delay >= LBR_Delay_Total Then Multi1_CMD_LBR_1
+
+                If RESTREAMER_Bitrate1 < RESTREAMER_BitrateLow1 And Timer_Fail_Stream1 = 0 Then
+                    ' LBR_Delay
+                    If LBR_Delay >= LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: If CooldownLog > CooldownLogTotal Then CooldownLog = CooldownLogTotal
+                    LBR_Delay_Plus = 1
+                End If
+                Multi1_CMD_LBR_2
+            End If
+
+            ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
+            If serverSelection%% = 0 Or serverSelection%% = 2 Then
+                If RESTREAMER_Bitrate2 < RESTREAMER_BitrateLow2 And Timer_Fail_Stream2 = 0 And CooldownLog = 0 And LBR_Delay >= LBR_Delay_Total And Not Scene2LBInactive Then Multi1_CMD_LBR_3
+
+                ' Disable Scene #2 LBR if Scene2LBRDisabled is true
+                If RESTREAMER_Bitrate2 < RESTREAMER_BitrateLow2 And Timer_Fail_Stream2 = 0 And Not Scene2LBInactive Then
+                    ' LBR_Delay
+                    If LBR_Delay >= LBR_Delay_Total Then LBR_Delay = LBR_Delay_Total: CooldownLog = CooldownLogTotal: If CooldownLog > CooldownLogTotal Then CooldownLog = CooldownLogTotal
+                    LBR_Delay_Plus = 1
+                End If
+            End If
         Case "NGINX"
             ' Added LBR_Delay >= LBR_Delay_Total for LBR_Delay and ConnectionsLog=true
             If serverSelection%% = 0 Or serverSelection%% = 1 Then
@@ -5721,6 +6153,14 @@ Sub Multi1_CMD_LBR_4
             Case Is > SLS_BitrateLow2, 0
                 If Server_2 = "SLS" Then LBR_Delay_Minus = 1
         End Select
+        Select Case RESTREAMER_Bitrate1 ' Bitrate can be used here. Case 960 - 1040 is invalid.
+            Case Is > RESTREAMER_BitrateLow1, 0
+                If Server_1 = "RESTREAMER" Then LBR_Delay_Minus = 1
+        End Select
+        Select Case RESTREAMER_Bitrate2 ' Bitrate can be used here. Case 960 - 1040 is invalid.
+            Case Is > RESTREAMER_BitrateLow2, 0
+                If Server_2 = "RESTREAMER" Then LBR_Delay_Minus = 1
+        End Select
         Select Case RTMP_Bitrate1 ' Bitrate can be used here. Case 960 - 1040 is invalid.
             Case Is > RTMP_BitrateLow1, 0
                 If Server_1 = "NGINX" Then LBR_Delay_Minus = 1
@@ -5938,36 +6378,41 @@ Sub Timer01
     ' Get Media Source times (1 stream) ------------------------------------------------------------------------------------------------------------------------------
     If Not __MultiCameraSwitch Then
 
-        If Not __SLS_1_Enabled And Not __RTMP_1_Enabled Then Multi0 "SRT": Server_1 = "SRT"
-        If __SLS_1_Enabled And Not __RTMP_1_Enabled Then Multi0 "SLS": Server_1 = "SLS"
-        If __RTMP_1_Enabled And Not __SLS_1_Enabled Then Multi0 "NGINX": Server_1 = "NGINX"
+        If Not __SLS_1_Enabled And Not __RTMP_1_Enabled And Not __RESTREAMER_1_Enabled Then Multi0 "SRT": Server_1 = "SRT"
+        If __SLS_1_Enabled And Not __RTMP_1_Enabled And Not __RESTREAMER_1_Enabled Then Multi0 "SLS": Server_1 = "SLS"
+        If __RTMP_1_Enabled And Not __SLS_1_Enabled And Not __RESTREAMER_1_Enabled Then Multi0 "NGINX": Server_1 = "NGINX"
+        If __RESTREAMER_1_Enabled And Not __SLS_1_Enabled And Not __RTMP_1_Enabled Then Multi0 "RESTREAMER": Server_1 = "RESTREAMER"
 
     End If
 
+    ' Get Media Source times (2 streams) ------------------------------------------------------------------------------------------------------------------------------
     If __MultiCameraSwitch Then
-        ' Get Media Source times (2 streams) ------------------------------------------------------------------------------------------------------------------------------
 
-        If Not SLS_Active And Not RTMP_Active Then
-            Multi1 "SRT", 0: Server_1 = "SRT": Server_2 = "SRT"
-        End If
+        ' OBS SRT only
+        If Not SLS_Active And Not RTMP_Active And Not RESTREAMER_Active Then Multi1 "SRT", 0: Server_1 = "SRT": Server_2 = "SRT": GoTo Servers_Found
 
-        If SLS_Active And Not RTMP_Active Then
-            If __SLS_1_Enabled And __SLS_2_Enabled Then Multi1 "SLS", 0: Server_1 = "SLS": Server_2 = "SLS"
-            If __SLS_1_Enabled And Not __SLS_2_Enabled Then Multi1 "SLS", 1: Multi1 "SRT", 2: Server_1 = "SLS": Server_2 = "SRT"
-            If Not __SLS_1_Enabled And __SLS_2_Enabled Then Multi1 "SRT", 1: Multi1 "SLS", 2: Server_1 = "SRT": Server_2 = "SLS"
-        End If
+        ' Both true for same server (no OBS SRT)
+        If __SLS_1_Enabled And __SLS_2_Enabled Then Multi1 "SLS", 0: Server_1 = "SLS": Server_2 = "SLS": GoTo Servers_Found
+        If __RTMP_1_Enabled And __RTMP_2_Enabled Then Multi1 "NGINX", 0: Server_1 = "NGINX": Server_2 = "NGINX": GoTo Servers_Found
+        If __RESTREAMER_1_Enabled And __RESTREAMER_2_Enabled Then Multi1 "RESTREAMER", 0: Server_1 = "RESTREAMER": Server_2 = "RESTREAMER": GoTo Servers_Found
 
-        If Not SLS_Active And RTMP_Active Then
-            If __RTMP_1_Enabled And __RTMP_2_Enabled Then Multi1 "NGINX", 0: Server_1 = "NGINX": Server_2 = "NGINX"
-            If __RTMP_1_Enabled And Not __RTMP_2_Enabled Then Multi1 "NGINX", 1: Multi1 "SRT", 2: Server_1 = "NGINX": Server_2 = "SRT"
-            If Not __RTMP_1_Enabled And __RTMP_2_Enabled Then Multi1 "SRT", 1: Multi1 "NGINX", 2: Server_1 = "SRT": Server_2 = "NGINX"
-        End If
+        ' Mixed servers (no OBS SRT)
+        If __SLS_1_Enabled And __RTMP_2_Enabled Then Multi1 "SLS", 1: Multi1 "RTMP", 2: Server_1 = "SLS": Server_2 = "RTMP": GoTo Servers_Found
+        If __RTMP_1_Enabled And __SLS_2_Enabled Then Multi1 "RTMP", 1: Multi1 "SLS", 2: Server_1 = "RTMP": Server_2 = "SLS": GoTo Servers_Found
+        If __SLS_1_Enabled And __RESTREAMER_2_Enabled Then Multi1 "SLS", 1: Multi1 "RESTREAMER", 2: Server_1 = "SLS": Server_2 = "RESTREAMER": GoTo Servers_Found
+        If __RESTREAMER_1_Enabled And __SLS_2_Enabled Then Multi1 "RESTREAMER", 1: Multi1 "SLS", 2: Server_1 = "RESTREAMER": Server_2 = "SLS": GoTo Servers_Found
+        If __RTMP_1_Enabled And __RESTREAMER_2_Enabled Then Multi1 "RTMP", 1: Multi1 "RESTREAMER", 2: Server_1 = "RTMP": Server_2 = "RESTREAMER": GoTo Servers_Found
+        If __RESTREAMER_1_Enabled And __RTMP_2_Enabled Then Multi1 "RESTREAMER", 1: Multi1 "RTMP", 2: Server_1 = "RESTREAMER": Server_2 = "RTMP": GoTo Servers_Found
 
-        If SLS_Active And RTMP_Active Then
-            If __SLS_1_Enabled And Not __SLS_2_Enabled Then Multi1 "SLS", 1: Multi1 "NGINX", 2: Server_1 = "SLS": Server_2 = "NGINX"
-            If Not __SLS_1_Enabled And __SLS_2_Enabled Then Multi1 "NGINX", 1: Multi1 "SLS", 2: Server_1 = "NGINX": Server_2 = "SLS"
-        End If
+        ' Mixed servers (with OBS SRT)
+        If __SLS_1_Enabled And Not __SLS_2_Enabled And Not RTMP_Active And Not RESTREAMER_Active Then Multi1 "SLS", 1: Multi1 "SRT", 2: Server_1 = "SLS": Server_2 = "SRT": GoTo Servers_Found
+        If __SLS_2_Enabled And Not __SLS_1_Enabled And Not RTMP_Active And Not RESTREAMER_Active Then Multi1 "SRT", 1: Multi1 "SLS", 2: Server_1 = "SRT": Server_2 = "SLS": GoTo Servers_Found
+        If __RTMP_1_Enabled And Not __RTMP_2_Enabled And Not SLS_Active And Not RESTREAMER_Active Then Multi1 "RTMP", 1: Multi1 "SRT", 2: Server_1 = "RTMP": Server_2 = "SRT": GoTo Servers_Found
+        If __RTMP_2_Enabled And Not __RTMP_1_Enabled And Not SLS_Active And Not RESTREAMER_Active Then Multi1 "SRT", 1: Multi1 "RTMP", 2: Server_1 = "SRT": Server_2 = "RTMP": GoTo Servers_Found
+        If __RESTREAMER_1_Enabled And Not __RESTREAMER_2_Enabled And Not RTMP_Active And Not SLS_Active Then Multi1 "RESTREAMER", 1: Multi1 "SRT", 2: Server_1 = "RESTREAMER": Server_2 = "SRT": GoTo Servers_Found
+        If __RESTREAMER_2_Enabled And Not __RESTREAMER_1_Enabled And Not RTMP_Active And Not SLS_Active Then Multi1 "SRT", 1: Multi1 "RESTREAMER", 2: Server_1 = "SRT": Server_2 = "RESTREAMER": GoTo Servers_Found
 
+        Servers_Found:
         Multi1_CMD_LBR_4 ' Can't be called more than once
 
     End If
@@ -6161,9 +6606,12 @@ Sub Timer01
 
 
     ' SRT Live Server
-    If SLS_Active And Not __MultiCameraSwitch Then
-        If SLS_Bitrate1 > SLS_BitrateLow1 Then Control(MultiCameraSwitchStatusLB).ForeColor = GREEN_OK Else Control(MultiCameraSwitchStatusLB).ForeColor = RED_WARNING
-        If SLS_Bitrate1 < SLS_BitrateFail1 Or SLS_Bitrate1 = 0 Then Control(MultiCameraSwitchStatusLB).ForeColor = RED_FAIL
+    If SLS_Active And Not __MultiCameraSwitch Or RESTREAMER_Active And Not __MultiCameraSwitch Then
+        If __SLS_1_Enabled Then If SLS_Bitrate1 > SLS_BitrateLow1 Then Control(MultiCameraSwitchStatusLB).ForeColor = GREEN_OK Else Control(MultiCameraSwitchStatusLB).ForeColor = RED_WARNING
+        If __SLS_1_Enabled Then If SLS_Active Then If SLS_Bitrate1 < SLS_BitrateFail1 Or SLS_Bitrate1 = 0 Then Control(MultiCameraSwitchStatusLB).ForeColor = RED_FAIL
+
+        If __RESTREAMER_1_Enabled Then If RESTREAMER_Bitrate1 > RESTREAMER_BitrateLow1 Then Control(MultiCameraSwitchStatusLB).ForeColor = GREEN_OK Else Control(MultiCameraSwitchStatusLB).ForeColor = RED_WARNING
+        If __RESTREAMER_1_Enabled Then If RESTREAMER_Active Then If RESTREAMER_Bitrate1 < RESTREAMER_BitrateFail1 Or RESTREAMER_Bitrate1 = 0 Then Control(MultiCameraSwitchStatusLB).ForeColor = RED_FAIL
         Select Case SLS_Bitrate1
             Case 0 To 99
                 If SLS_Kbps_Precision <> "nerd" Then bitrateOutput1Display = _Trim$(Str$(Int(SLS_Bitrate1 / 100))) + " Kbps" Else bitrateOutput1Display = _Trim$(Str$(Int(SLS_Bitrate1))) + " Kbps"
@@ -6174,10 +6622,15 @@ Sub Timer01
         End Select
     End If
 
-    If SLS_Active And __MultiCameraSwitch Then
-        If Not __RTMP_1_Enabled Then If SLS_Bitrate1 > SLS_BitrateLow1 Then Control(Bitrate_Stream_1LB).ForeColor = GREEN_OK Else Control(Bitrate_Stream_1LB).ForeColor = RED_WARNING
-        If Not __RTMP_2_Enabled Then If SLS_Bitrate2 > SLS_BitrateLow2 Then Control(Bitrate_Stream_2LB).ForeColor = GREEN_OK Else Control(Bitrate_Stream_2LB).ForeColor = RED_WARNING
-        If Not __RTMP_1_Enabled Then If SLS_Bitrate1 < SLS_BitrateFail1 Or SLS_Bitrate1 = 0 Then Control(Bitrate_Stream_1LB).ForeColor = RED_FAIL: If SLS_Bitrate2 < SLS_BitrateFail2 Or SLS_Bitrate2 = 0 Then Control(Bitrate_Stream_2LB).ForeColor = RED_FAIL
+    If SLS_Active And __MultiCameraSwitch Or RESTREAMER_Active And __MultiCameraSwitch Then
+        If Not __RTMP_1_Enabled And __SLS_1_Enabled Then If SLS_Bitrate1 > SLS_BitrateLow1 Then Control(Bitrate_Stream_1LB).ForeColor = GREEN_OK Else Control(Bitrate_Stream_1LB).ForeColor = RED_WARNING
+        If Not __RTMP_2_Enabled And __SLS_2_Enabled Then If SLS_Bitrate2 > SLS_BitrateLow2 Then Control(Bitrate_Stream_2LB).ForeColor = GREEN_OK Else Control(Bitrate_Stream_2LB).ForeColor = RED_WARNING
+        If Not __RTMP_1_Enabled And __SLS_1_Enabled Then If SLS_Bitrate1 < SLS_BitrateFail1 Or SLS_Bitrate1 = 0 Then Control(Bitrate_Stream_1LB).ForeColor = RED_FAIL: If SLS_Bitrate2 < SLS_BitrateFail2 Or SLS_Bitrate2 = 0 Then Control(Bitrate_Stream_2LB).ForeColor = RED_FAIL
+
+        If Not __RTMP_1_Enabled And __RESTREAMER_1_Enabled Then If RESTREAMER_Bitrate1 > RESTREAMER_BitrateLow1 Then Control(Bitrate_Stream_1LB).ForeColor = GREEN_OK Else Control(Bitrate_Stream_1LB).ForeColor = RED_WARNING
+        If Not __RTMP_2_Enabled And __RESTREAMER_2_Enabled Then If RESTREAMER_Bitrate2 > RESTREAMER_BitrateLow2 Then Control(Bitrate_Stream_2LB).ForeColor = GREEN_OK Else Control(Bitrate_Stream_2LB).ForeColor = RED_WARNING
+        If Not __RTMP_1_Enabled And __RESTREAMER_1_Enabled Then If RESTREAMER_Bitrate1 < RESTREAMER_BitrateFail1 Or RESTREAMER_Bitrate1 = 0 Then Control(Bitrate_Stream_1LB).ForeColor = RED_FAIL: If SLS_Bitrate2 < SLS_BitrateFail2 Or SLS_Bitrate2 = 0 Then Control(Bitrate_Stream_2LB).ForeColor = RED_FAIL
+
         If Not __RTMP_1_Enabled Then
             Select Case SLS_Bitrate1
                 Case 0 To 99
@@ -6231,17 +6684,19 @@ Sub Timer01
 
     SetCaption (Stream_Fail_DelayLB), calc_srt$(Stream_Fail_Delay, 1) + calc_srt_sec$
     If Timer_Fail And MediaSource1Time = 0 And MediaSource2Time = 0 Then Control(Scene_CurrentLB).ForeColor = RED_FAIL Else Control(Scene_CurrentLB).ForeColor = GREEN_SCENE_OK
-    If Not SLS_Active And Not RTMP_Active And Not __MultiCameraSwitch Then SetCaption (MultiCameraSwitchStatusLB), "Disabled"
+    If Not SLS_Active And Not RTMP_Active And Not RESTREAMER_Active And Not __MultiCameraSwitch Then SetCaption (MultiCameraSwitchStatusLB), "Disabled"
 
     'If RTMP_Width1 And RTMP_Height1 Then Server_Display1 = " / " + LTrim$(Str$(RTMP_Width1)) + "x" + LTrim$(Str$(RTMP_Height1))
     'If RTMP_Width2 And RTMP_Height2 Then Server_Display2 = " / " + LTrim$(Str$(RTMP_Width2)) + "x" + LTrim$(Str$(RTMP_Height2))
 
     If __SLS_1_Enabled Then Server_Display1 = "  //  [SLS]"
     If __SLS_2_Enabled Then Server_Display2 = "  //  [SLS]"
+    If __RESTREAMER_1_Enabled Then Server_Display1 = "  //  [RESTREAMER]"
+    If __RESTREAMER_2_Enabled Then Server_Display2 = "  //  [RESTREAMER]"
     If __RTMP_1_Enabled Then Server_Display1 = "  //  [NGINX]"
     If __RTMP_2_Enabled Then Server_Display2 = "  //  [NGINX]"
-    If Not __SLS_1_Enabled And Not __RTMP_1_Enabled Then Server_Display1 = "  //  [SRT]"
-    If Not __SLS_2_Enabled And Not __RTMP_2_Enabled Then Server_Display2 = "  //  [SRT]"
+    If Not __SLS_1_Enabled And Not __RTMP_1_Enabled And Not __RESTREAMER_1_Enabled Then Server_Display1 = "  //  [SRT]"
+    If Not __SLS_2_Enabled And Not __RTMP_2_Enabled And Not __RESTREAMER_2_Enabled Then Server_Display2 = "  //  [SRT]"
     If BELABOX_1_Found Or BELABOX_1_Offline Then Server_Display1 = "  //  [BELABOX]"
     If BELABOX_2_Found Or BELABOX_2_Offline Then Server_Display2 = "  //  [BELABOX]"
 
@@ -6262,6 +6717,7 @@ Sub Timer01
         If Server_Ping_Display_1 = "SRT" Or Server_Ping_Display_1 = "Network" Then TIMEms tIPPingOut, 0, 0
         If Server_Ping_Display_1 = "NGINX" Then TIMEms RTMP_PingOut, 0, 0
         If Server_Ping_Display_1 = "SLS" Or Server_Ping_Display_1 = "BELABOX" Then TIMEms SLS_PingOut, 0, 0
+        If Server_Ping_Display_1 = "RESTREAMER" Then TIMEms RESTREAMER_PingOut, 0, 0
         ' Display ping
         SetCaption (tIPPingOutLB), LTrim$(Str$(Val(tout) * 1000)) + " ms"
     Else
@@ -6275,9 +6731,11 @@ Sub Timer01
         If Server_Ping_Display_1 = "SRT" Or Server_Ping_Display_1 = "Network" Then TIMEms tIPPingOut, 0, 0
         If Server_Ping_Display_1 = "NGINX" Then TIMEms RTMP_PingOut, 0, 0
         If Server_Ping_Display_1 = "SLS" Or Server_Ping_Display_1 = "BELABOX" Then TIMEms SLS_PingOut, 0, 0
+        If Server_Ping_Display_1 = "RESTREAMER" Then TIMEms RESTREAMER_PingOut, 0, 0
         If Server_Ping_Display_2 = "SRT" Or Server_Ping_Display_2 = "Network" Then TIMEms tIPPingOut, 0, 1
         If Server_Ping_Display_2 = "NGINX" Then TIMEms RTMP_PingOut, 0, 1
         If Server_Ping_Display_2 = "SLS" Or Server_Ping_Display_2 = "BELABOX" Then TIMEms SLS_PingOut_2, 0, 1
+        If Server_Ping_Display_2 = "RESTREAMER" Then TIMEms RESTREAMER_PingOut, 0, 1
         ' Display ping(s)
         If Server_Ping_Display_1 = Server_Ping_Display_2 And Not SLS_2_Active Then
             SetCaption (tIPPingOutLB), LTrim$(Str$(Val(tout) * 1000)) + " ms"

@@ -1,6 +1,8 @@
-Download QB64 v2.0.2 or newer from: https://www.qb64.org/ or https://qb64phoenix.com/
-Download InForm v1.3 or newer from: https://www.qb64.org/inform/ or https://github.com/FellippeHeitor/InForm
+Download QB64 from: https://qb64phoenix.com/
+Download InForm v1.3 or newer from: https://github.com/FellippeHeitor/InForm
 Download BIN2INCLUDE from: https://github.com/tailscreatesstuff32/BIN2INCLUDE
+
+Copy the InForm folder and files to the QB64 folder.
 
 Changes to InForm:
 
