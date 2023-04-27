@@ -1044,7 +1044,11 @@ Sub __UI_OnLoad
             If OS = "WINDOWS" And _FileExists(HTTP_File) Then
                 Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
                 If FastStart <> "true" Then _Delay 1 Else _Delay .5
-                Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
+                If HTTP_Auth_Key = "" Then
+                    Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
+                Else
+                    Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW + " --http_auth_key " + HTTP_Auth_Key
+                End If
             End If
         End If
 
@@ -2724,15 +2728,18 @@ Sub __UI_BeforeUpdateDisplay
         End If
     End If
 
-    If _Exit Then
-        If _FileExists(filePrevious) Then Kill filePrevious
-        If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
-        If _FileExists(outputBitrateFile) Then Kill outputBitrateFile
-        If _FileExists(outputStatusFile) Then Kill outputStatusFile
-        If _FileExists(http_media2_File) Then Kill http_media2_File
-        If ConnectionsLog Then statusConnectionsLogToFile "[INFO] Program exit"
-        System
-    End If
+    q = _Exit
+    Select Case q
+        Case 1
+            If _FileExists(filePrevious) Then Kill filePrevious
+            If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
+            If _FileExists(outputBitrateFile) Then Kill outputBitrateFile
+            If _FileExists(outputStatusFile) Then Kill outputStatusFile
+            If _FileExists(http_media2_File) Then Kill http_media2_File
+            If ConnectionsLog Then statusConnectionsLogToFile "[INFO] Program exit"
+            If OS = "WINDOWS" And _FileExists(HTTP_File) Then Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
+            System
+    End Select
 
     ProgressCounter = ProgressCounter + 1 ' | / - \ | / - \
     Select Case ProgressCounter
@@ -2850,6 +2857,7 @@ Sub __UI_Click (id As Long)
             If _FileExists(outputStatusFile) Then Kill outputStatusFile
             If _FileExists(http_media2_File) Then Kill http_media2_File
             If ConnectionsLog Then statusConnectionsLogToFile "[INFO] Program exit"
+            If OS = "WINDOWS" And _FileExists(HTTP_File) Then Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
             System
 
         Case StreamFailTimerLB
@@ -6453,7 +6461,12 @@ Sub Timer01
                         If GetKey("obsWebSocketVersion", JSON) = "" Then
                             Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
                             _Delay 1
-                            Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
+                            ' Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
+                            If HTTP_Auth_Key = "" Then
+                                Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
+                            Else
+                                Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW + " --http_auth_key " + HTTP_Auth_Key
+                            End If
                         End If
                     Else
                         Shell _Hide CMD_EXE_HTTP + c34 + "http://" + HTTP_Bind_Address + ":" + HTTP_Bind_Port + "/call/GetVersion" + c34 + " -o " + c34 + filePrevious_ms + c34
@@ -6464,7 +6477,12 @@ Sub Timer01
                         If GetKey("obsWebSocketVersion", JSON) = "" Then
                             Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
                             _Delay 1
-                            Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
+                            ' Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
+                            If HTTP_Auth_Key = "" Then
+                                Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
+                            Else
+                                Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW + " --http_auth_key " + HTTP_Auth_Key
+                            End If
                         End If
                     End If
 
