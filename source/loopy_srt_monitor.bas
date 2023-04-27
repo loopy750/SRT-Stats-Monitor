@@ -1042,13 +1042,11 @@ Sub __UI_OnLoad
             If _FileExists(config_dir + "\obs-websocket-http.exe") Then HTTP_File = config_dir + "\obs-websocket-http.exe": HTTP_Filename = "obs-websocket-http.exe"
             ' Automatically open obs-websocket-http
             If OS = "WINDOWS" And _FileExists(HTTP_File) Then
+                If _DirExists(config_dir) And VerPortable = "false" Then ChDir config_dir ' obs-websocket-http cannot read program's "config.ini" unless started from its directory
                 Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
                 If FastStart <> "true" Then _Delay 1 Else _Delay .5
-                If HTTP_Auth_Key = "" Then
-                    Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
-                Else
-                    Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW + " --http_auth_key " + HTTP_Auth_Key
-                End If
+                Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File
+                'If HTTP_Auth_Key = "" Then Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW Else Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW + " --http_auth_key " + HTTP_Auth_Key
             End If
         End If
 
@@ -4031,6 +4029,7 @@ Sub ErrorDisplay (ErrorTestVal)
         _PrintString (645, 21 * 18), "Loopy SRT Monitor v" + Ver + ""
         _Display
         _Delay 0.5
+        If HTTP_Enabled And HTTP_Auto_Open <> "false" Then If OS = "WINDOWS" And _FileExists(HTTP_File) Then Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
         Error_msg_3 = ""
         For Error_Exit = 1 To 120
             _Delay 0.5
@@ -6461,12 +6460,8 @@ Sub Timer01
                         If GetKey("obsWebSocketVersion", JSON) = "" Then
                             Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
                             _Delay 1
-                            ' Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
-                            If HTTP_Auth_Key = "" Then
-                                Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
-                            Else
-                                Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW + " --http_auth_key " + HTTP_Auth_Key
-                            End If
+                            Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File
+                            'If HTTP_Auth_Key = "" Then Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW Else Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW + " --http_auth_key " + HTTP_Auth_Key
                         End If
                     Else
                         Shell _Hide CMD_EXE_HTTP + c34 + "http://" + HTTP_Bind_Address + ":" + HTTP_Bind_Port + "/call/GetVersion" + c34 + " -o " + c34 + filePrevious_ms + c34
@@ -6477,12 +6472,8 @@ Sub Timer01
                         If GetKey("obsWebSocketVersion", JSON) = "" Then
                             Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
                             _Delay 1
-                            ' Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
-                            If HTTP_Auth_Key = "" Then
-                                Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW
-                            Else
-                                Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW + " --http_auth_key " + HTTP_Auth_Key
-                            End If
+                            Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File
+                            'If HTTP_Auth_Key = "" Then Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW Else Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW + " --http_auth_key " + HTTP_Auth_Key
                         End If
                     End If
 
