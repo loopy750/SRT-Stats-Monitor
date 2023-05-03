@@ -462,6 +462,7 @@ Common Shared shell_cmd_2 As String
 Common Shared ConnectionsLog_Check As String
 Common Shared PingLogTimer As Double
 Common Shared segment_LBR As _Byte
+Common Shared Scene_Disabled As String
 
 Common Shared config_dir As String
 Common Shared nodejs_dir As String
@@ -975,6 +976,7 @@ Sub __UI_OnLoad
                     If file4_var$ = "pinglog" Then PingLog = file4_val$
                     If file4_var$ = "faststart" Then FastStart = file4_val$
                     If file4_var$ = "httpautoopen" Then HTTP_Auto_Open = file4_val$ ' For coding only
+                    If file4_var$ = "scenedisabled" Then Scene_Disabled = file4_val$
                     If file4_var$ = "dummyserver" Then Dummy_Server = file4_val$ ' For coding only
                 End If
             End If
@@ -1009,6 +1011,7 @@ Sub __UI_OnLoad
         'PingLog=false
         'FastStart=false
         'HTTPAutoOpen=true
+        'SceneDisabled=false
         'DummyServer=
         '---------------------------------------------------------------
         'Depreciated `config`
@@ -2570,12 +2573,22 @@ Sub __UI_OnLoad
 
     If Not __MultiCameraSwitch Then
         Scene_Current = Scene_OK
-        If HTTP_Communication_Native Then http_client_connect "Set", Scene_OK Else Shell _Hide _DontWait shell_cmd_1 + Scene_OK + shell_cmd_2
+        If Scene_Disabled <> "true" Then
+            If HTTP_Communication_Native Then http_client_connect "Set", Scene_OK Else Shell _Hide _DontWait shell_cmd_1 + Scene_OK + shell_cmd_2
+        End If
     End If
 
     If __MultiCameraSwitch Then
         Scene_Current = titleScene12
-        If HTTP_Communication_Native Then http_client_connect "Set", titleScene12 Else Shell _Hide _DontWait shell_cmd_1 + titleScene12 + shell_cmd_2
+        If Scene_Disabled <> "true" Then
+            If HTTP_Communication_Native Then http_client_connect "Set", titleScene12 Else Shell _Hide _DontWait shell_cmd_1 + titleScene12 + shell_cmd_2
+        End If
+    End If
+
+    ' Disable changing of scenes if enabled
+    If Scene_Disabled = "true" Then
+        ' CMD_EXE = "": CMD_EXE_FAST = "": CMD_EXE_HTTP = "": CMD_EXE_HTTP_FAST = "": CMD_EXE_HTTP_FAST_GET_SCENE = "": CMD_EXE_HTTP_FAST_GET_MEDIA1 = "": CMD_EXE_HTTP_GET_SCENE = "": CMD_EXE_HTTP_GET_MEDIA2 = "": shell_cmd_1 = "": shell_cmd_2 = ""
+        Scene_OK = "-": Scene_LBR = "-": Scene_Fail = "-": Scene_Intro = "-": titleScene1 = "": titleScene2 = "": titleScene12 = ""
     End If
 
     _Delay 0.03
