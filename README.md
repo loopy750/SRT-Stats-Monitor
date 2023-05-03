@@ -1,4 +1,4 @@
-# Loopy SRT Stats Monitor v1.1.1 (28-Apr-2023)
+# Loopy SRT Stats Monitor v1.1.1 (04-May-2023)
 
 NOTE: If updating from a previous version !!!
 
