@@ -43,7 +43,7 @@ OBS Tablet Remote - [http://t2t2.github.io/obs-tablet-remote/](http://t2t2.githu
 
 Known OBS SRT issues
 --------------------
-* [SRT streams have trouble connecting/reconnecting while Recording is running](https://github.com/obsproject/obs-studio/issues/4596)
+* [SRT streams have trouble connecting/reconnecting while Recording is running](https://github.com/obsproject/obs-studio/issues/4596) [(possible solution)](https://github.com/obsproject/obs-studio/issues/4596#issuecomment-1548255120)
 * [obs-websocket-http doesn't reconnect on connection loss](https://github.com/IRLToolkit/obs-websocket-http/issues/11)
 
 INSTALLATION
