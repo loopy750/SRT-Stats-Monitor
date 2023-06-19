@@ -27,8 +27,13 @@ Print "BASIMAGE v0.21"
 Print "=============="
 Print
 
-Input "IMAGE File to load --> ", IN$
-Input "BAS File to make ----> ", OUT$: If OUT$ = "" Then End
+If Command$(1) <> "" Then
+    IN$ = Command$(1)
+    OUT$ = IN$ + ".MEM"
+Else
+    Input "IMAGE File to load --> ", IN$
+    Input "BAS File to make ----> ", OUT$: If OUT$ = "" Then End
+End If
 
 'Load image file to screen mode
 Screen _LoadImage(IN$, 32): Sleep 1
@@ -112,7 +117,8 @@ Print #2, "END FUNCTION"
 
 Print "Done!"
 Print UCase$(OUT$); " saved."
-End
+If Command$(1) = "" Then Sleep 3
+System
 
 Function E$ (B$)
 
