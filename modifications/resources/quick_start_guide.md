@@ -9,7 +9,9 @@ For fresh installs, this is a quick guide to get everything working. All **READM
 - [OBS WebSocket GitHub](https://github.com/Palakis/obs-websocket/releases/latest) - If required, install ```4.9.1-compat``` to maintain support for programs yet to support the latest **OBS WebSocket**
 - [Loopy_SRT_Monitor.json](https://raw.githubusercontent.com/loopy750/SRT-Stats-Monitor/main/modifications/resources/Loopy_SRT_Monitor.json) - Import the _Loopy SRT Monitor .json_ test scenes into **OBS Studio**
 - [Loopy SRT Monitor GitHub](https://github.com/loopy750/SRT-Stats-Monitor/releases) - Install the latest **Loopy SRT Monitor**
-- [obs-websocket-http GitHub](https://github.com/IRLToolkit/obs-websocket-http/releases) - Download **obs-websocket-http** and copy the .exe file as ```obs-websocket-http.exe``` to the ```Documents\Loopy SRT Monitor``` folder ***(This step is not required for Loopy SRT Monitor v1.1.1+, the installer will download & copy this file)***
+- [obs-websocket-http GitHub](https://github.com/IRLToolkit/obs-websocket-http/releases) - Download **obs-websocket-http** and copy the .exe file as ```obs-websocket-http.exe``` to the ```Documents\Loopy SRT Monitor``` folder
+  * ***This step is not required for Loopy SRT Monitor v1.1.1 or newer, the installer will download & copy this file***
+  * ***For Loopy SRT Monitor v1.1.0 or older, you might need to download `obs-websocket-http v1`***
 - Open **OBS Studio**, enable **OBS WebSocket** and configure _Server Port_ as ```4455``` and _Server Password_ as ```PassWS```
 - If using ```4.9.1-compat```, configure _Server Port_ as ```4444``` or a port that is unused by the latest **OBS WebSocket**
 - Linux and macOS users will need to manually launch **obs-websocket-http** in Terminal
