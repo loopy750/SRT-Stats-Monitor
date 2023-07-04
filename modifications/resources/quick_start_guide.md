@@ -25,7 +25,7 @@ For fresh installs, this is a quick guide to get everything working. All **READM
 Quick Start Video Guide
 -----------------------
 
-[![Loopy SRT Monitor - Quick Guide Setup - Resolve Test #6 of 10 failed - OBS v29 - No Audio](https://img.youtube.com/vi/tmMaYMAg7LM/0.jpg)](https://www.youtube.com/watch?v=tmMaYMAg7LM)
+[![Loopy SRT Monitor - Quick Guide Setup - Resolve Test #6 of 10 failed - OBS v29 - No Audio](https://img.youtube.com/vi/MvGUUH8TieI/0.jpg)](https://www.youtube.com/watch?v=MvGUUH8TieI)
 
 
 
