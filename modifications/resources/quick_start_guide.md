@@ -3,7 +3,7 @@ Quick Start Guide
 
 Resolving "Test #6 of 10 failed".
 
-For fresh installs, this is a quick guide to get everything working. All **README.md** & **Readme.txt** instructions must then be read and followed for your scenes and connections to function correctly. Select your version:
+For fresh installs, this is a quick guide to get everything working. All **README.md** & **Readme.txt** instructions must then be read and followed for your scenes and connections to function correctly. **OBS WebSocket 5.x** is included with the latest OBS Studio. Select your version:
 
 [Loopy SRT Monitor v1.1.1 w/ OBS v29.1](#loopy-srt-monitor-v111-w-obs-v291)  
 [Loopy SRT Monitor v1.0.0 w/ OBS v28.0](#loopy-srt-monitor-v100-w-obs-v280)  
