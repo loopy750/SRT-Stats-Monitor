@@ -1,7 +1,7 @@
 # F.A.Q.
 
 ### Q. **Which Operating Systems does this support?**
-##### A. The program has been tested on _**Windows 10**_, _**Windows 11**_, _**Linux Mint**_, and _**macOS Catalina**_.
+##### A. The program has been built/tested on _**Windows 10**_, _**Windows 11**_, _**Linux Mint 20.3**_, and _**macOS Catalina 10.15**_.
 
 ### Q. **When I launch the program, I'm getting "Test #6 of 10 failed", how do I resolve this?**
 ##### A. Confirm **OBS Websocket** is enabled in OBS, and the desired port and password are set, and match the `config.ini` settings. The default port for **OBS Websocket 5.x** is **4455**, and **4445** for **obs-websocket-http**. Both `WebSocketPassword` and `ws_password` need to be correctly configured. See [here](https://github.com/loopy750/SRT-Stats-Monitor/blob/main/modifications/resources/quick_start_guide.md) for further assistance.
