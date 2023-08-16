@@ -1,6 +1,6 @@
 ': This program uses
-': InForm - GUI library for QB64 - v1.3
-': Fellippe Heitor, 2016-2021 - fellippe@qb64.org - @fellippeheitor
+': InForm - GUI library for QB64 - v1.5
+': Fellippe Heitor, 2016-2023 - fellippe@qb64.org - @fellippeheitor
 ': https://github.com/FellippeHeitor/InForm
 '-----------------------------------------------------------
 
@@ -100,10 +100,21 @@ Dim Shared Bitrate_Stream_2LB As Long
 ' Added after InForm entry - BEGIN
 DefInt A-Z
 Common Shared Error_msg As String
+Common Shared Error_msg_1 As String
 Common Shared Error_msg_2 As String
 Common Shared Error_msg_3 As String
+Common Shared Error_msg_4 As String
+Common Shared Error_msg_6_1 As String
+Common Shared Error_msg_6_1a As String
+Common Shared Error_msg_6_2 As String
+Common Shared Error_msg_6_2a As String
+Common Shared Error_msg_6_3 As String
+Common Shared Error_msg_6_3a As String
+Common Shared Error_msg_6_4 As String
+Common Shared Error_msg_6_4a As String
 Common Shared Ver As String
 Common Shared VerBeta As String
+Common Shared VerBetaTag As String
 Common Shared VerDate As String
 Common Shared VerPortable As String
 Common Shared bout As String
@@ -180,7 +191,7 @@ Common Shared CMD_EXE_FAST As String
 Common Shared tFileFound As Double
 Common Shared SettingsMissing As _Byte
 Common Shared tmpFileRestore As _Byte
-Common Shared t1 As Single
+Common Shared t1 As Double
 Common Shared LBR_Delay As Integer
 Common Shared LBR_Delay_Minus As Integer
 Common Shared LBR_Delay_Plus As Integer
@@ -196,6 +207,7 @@ Common Shared Server_1 As String
 Common Shared Server_2 As String
 Common Shared Server_Ping_Display_1 As String
 Common Shared Server_Ping_Display_2 As String
+Common Shared EOL As String
 
 ' HTTP OpenClient
 Common Shared HTTP_Header As String
@@ -577,6 +589,9 @@ Common Shared file4_val As String
 Common Shared BSOD As Long
 Common Shared AlwaysOnTop As Integer
 Common Shared Answer As Integer
+Common Shared String_6_1 As Integer
+Common Shared String_6_2 As Integer
+Common Shared String_6_3 As Integer
 Common Shared NULL As Integer
 
 ' OnLoad
@@ -634,8 +649,8 @@ $If WIN Then
     Dim Shared y& ' Windows only
 $End If
 
-$If VERSION < 3.5.0 Then
-        $ERROR Requires at least QB64 v3.5.0
+$If VERSION < 3.8.0 Then
+        $ERROR Requires QB64 v3.8.0 or newer
 $End If
 
 ' Set variables on load: ---------------------------------------------------------------
@@ -650,13 +665,15 @@ If Mid$(_OS$, 2, 5) = "MACOS" Then OS = "LINUX"
 If OS = "LINUX" Then s = "/" Else s = "\"
 
 ' Darker text in light mode for improved visibility
-If Not InStr(Command$, "-light") Then
+If InStr(Command$, "-light") = 0 Then
+    ' Dark mode
     RED_WARNING = _RGB32(160, 64, 48)
     RED_FAIL = _RGB32(255, 48, 32)
     GREEN_OK = _RGB32(120, 192, 164)
     GREEN_SCENE_OK = _RGB32(155, 255, 240)
     GREEN_STREAM_OK = _RGB32(64, 252, 48)
 Else
+    ' Light mode
     RED_WARNING = _RGB32(192, 60, 28)
     RED_FAIL = _RGB32(240, 28, 12)
     GREEN_OK = _RGB32(80, 118, 120)
@@ -665,12 +682,12 @@ Else
 End If
 
 ' Default program settings
-'Const FALSE = 0 '           Located in file "InForm\InForm.bi", line 328
-'Const TRUE = Not FALSE '    Located in file "InForm\InForm.bi", line 328
+'Const False = 0, True = Not False '    Located in file "InForm\InForm.bi", line ~328
 q = _Exit
 c10 = Chr$(10)
 c34 = Chr$(34)
 DIR_documents = _CWD$
+EOL = Chr$(13) + Chr$(10)
 SLS_EOL = Chr$(13) + Chr$(10)
 RTMP_EOL = Chr$(13) + Chr$(10)
 RESTREAMER_EOL = Chr$(13) + Chr$(10)
@@ -678,6 +695,7 @@ BG = _RGB(32, 32, 32)
 Exe_OK = 1
 websocketVersion = 5
 checkWebSocketVersion = "unknown"
+VerBetaTag = " BETA"
 websocketOK = 0
 srt_warmup_LB = 10
 BELABOX_1_Uptime = 0 ' BELABOX
@@ -701,16 +719,17 @@ Stream_Fail_Delay = 8
 
 ' Error handling when enabled takes place here
 App_Fail:
-If Err Then Cls: _PrintString (30, 32), "ERR, _ERRORLINE:" + Str$(Err) + "," + Str$(_ErrorLine): _AutoDisplay: _Delay 5: If App_Refresh = 1 Then App_Refresh = 0: Refresh_Request = 1: Resume Next Else Resume Next
+If Err Then Cls: _UPrintString (30, 32), "ERR, _ERRORLINE:" + Str$(Err) + "," + Str$(_ErrorLine): _AutoDisplay: _Delay 5: If App_Refresh = -1 Then App_Refresh = 0: Refresh_Request = -1: Resume Next Else Resume Next
 ' Added after InForm entry - END
 
 ': External modules: ---------------------------------------------------------------
-'$INCLUDE:'InForm\InForm.bi'
+'$INCLUDE:'InForm\InForm.loopy_srt.bi'
 '$INCLUDE:'InForm\xp.uitheme'
 '$INCLUDE:'loopy_srt_monitor.frm'
 
 ': Event procedures: ---------------------------------------------------------------
 '$INCLUDE:'loopy_srt_monitor_light.frm'
+'$INCLUDE:'loopy_srt_monitor_classic.frm'
 '$INCLUDE:'image.png.MEM'
 Sub __UI_BeforeInit
     $VersionInfo:CompanyName=loopy750
@@ -725,9 +744,9 @@ Sub __UI_BeforeInit
     '$EXEICON moved but still parsed on launch
 
     _Title "Loopy SRT Monitor - loopy750"
-    Ver = "1.1.0"
-    VerBeta = "1.1.1"
-    VerDate = "03/23"
+    Ver = "1.1.1"
+    VerBeta = "1.1.2"
+    VerDate = "07/23"
     VerPortable = "false"
 End Sub
 
@@ -838,13 +857,13 @@ Sub __UI_OnLoad
 
     On Error GoTo App_Fail
     _Delay 0.03
-    If VerBeta <> "" Then _Title "Loopy SRT Monitor v" + VerBeta + "beta" Else _Title "Loopy SRT Monitor v" + Ver
+    If VerBeta <> "" Then _Title "Loopy SRT Monitor v" + VerBeta + VerBetaTag Else _Title "Loopy SRT Monitor v" + Ver
     If _DirExists(config_dir) Then If Not _DirExists(temp_dir) Then MkDir temp_dir
     If _FileExists(filePrevious) Then Kill filePrevious
     If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
     _AllowFullScreen Off
     Randomize Timer
-    ErrorTestRunOnce = TRUE
+    ErrorTestRunOnce = True
 
     ' Set font for error screen
     On Error GoTo App_Fail
@@ -867,10 +886,10 @@ Sub __UI_OnLoad
         End If
     End If
 
-    If Not _FileExists(config_main) Then RefreshDisplayRequest = TRUE: Error_msg = "- Unable to read config file in the " + c34 + "Documents\Loopy SRT Monitor" + c34 + " folder" + Chr$(10) + "- File " + c34 + config_main + c34 + " cannot be accessed, check if it exists. (Error: #1)": _Delay 3
+    If Not _FileExists(config_main) Then RefreshDisplayRequest = True: Error_msg = "- Unable to read config file in the " + c34 + "Documents\Loopy SRT Monitor" + c34 + " folder" + Chr$(10) + "- File " + c34 + config_main + c34 + " cannot be accessed, check if it exists. (Error: #1)": _Delay 3
     If _FileExists(config_main) Then
         Open config_main For Input As #4 ' Basic INI management, nothing fancy needed
-        If EOF(4) Then RefreshDisplayRequest = TRUE: Error_msg = "- Unable to read config file in the " + c34 + "Documents\Loopy SRT Monitor" + c34 + " folder" + Chr$(10) + "- File " + c34 + config_main + c34 + " cannot be accessed, check if it exists. (Error: #10)": _Delay 3
+        If EOF(4) Then RefreshDisplayRequest = True: Error_msg = "- Unable to read config file in the " + c34 + "Documents\Loopy SRT Monitor" + c34 + " folder" + Chr$(10) + "- File " + c34 + config_main + c34 + " cannot be accessed, check if it exists. (Error: #10)": _Delay 3
         Do
             If Not EOF(4) Then Line Input #4, file4
             If Left$(file4, 1) <> "#" And Left$(file4, 1) <> ";" And Left$(file4, 1) <> "" Then
@@ -984,20 +1003,17 @@ Sub __UI_OnLoad
         Close #4
 
         '---------------------------------------------------------------
-        'v1.1.0
+        'v1.1.2
         '------
-        'SLSServerIP2=127.0.0.1
-        'SLSServerPort2=8181
-        'SLSServerStats2=stats
-        'RTMPServerKeepAlive=Default
-        'SLSServerKeepAlive1=Default
-        'SLSServerKeepAlive2=Default
-        'HTTPCommunication=native
+        'Changes:
+        'Font changes
+        'Test 6 error page changed
+        'Parameter "-classic" for old fonts
+        'Restart obs-websocket-http during error screen
+        'Delete temp files on error screen
         '
-        'DEPRECIATED
-        'NodejsFileSystem=0
-        'NodejsAccess=fast
-        'jsEncoding=json
+        '* Changed some fonts ("-classic" parameter reverts)
+        '* Minor fixes
         '
         'UNDOCUMENTED
         '------------
@@ -1014,6 +1030,11 @@ Sub __UI_OnLoad
         'SceneDisabled=false
         'DummyServer=
         '---------------------------------------------------------------
+        'DEPRECIATED
+        'NodejsFileSystem=0
+        'NodejsAccess=fast
+        'jsEncoding=json
+        '
         'Depreciated `config`
         'NodejsFileSystem, jsEncoding, HTTPAccess, NodejsAccess
         '
@@ -1028,19 +1049,22 @@ Sub __UI_OnLoad
         ' Set config variables ------------------------------------------------------------------------------------------------------------------------------
 
         ' Set "WebSocketConnection" and "HTTPCommunication"
-        If OBS_Connection = "" Then HTTP_Enabled = FALSE Else HTTP_Enabled = TRUE '                     Assume older version if WebSocketConnection does not exist and use obs-websocket-js by default for backwards compatibility
-        If OBS_Connection = "http" Or OBS_Connection = "obs-websocket-http" Then HTTP_Enabled = TRUE
-        If OBS_Connection = "js" Or OBS_Connection = "obs-websocket-js" Then HTTP_Enabled = FALSE
+        If OBS_Connection = "" Then HTTP_Enabled = False Else HTTP_Enabled = True '                     Assume older version if WebSocketConnection does not exist and use obs-websocket-js by default for backwards compatibility
+        If OBS_Connection = "http" Or OBS_Connection = "obs-websocket-http" Then HTTP_Enabled = True
+        If OBS_Connection = "js" Or OBS_Connection = "obs-websocket-js" Then HTTP_Enabled = False
         If HTTP_Communication = "" And HTTP_Enabled Then HTTP_Communication = "native" '                New HTTP default is "native"
         If Not HTTP_Enabled Then HTTP_Communication = "curl" '                                          curl must be used for obs-websocket-js
         If HTTP_Communication <> "native" Then HTTP_Communication = "curl"
-        If HTTP_Communication = "native" Then HTTP_Communication_Native = TRUE Else HTTP_Communication_Native = FALSE
-        If HTTP_Enabled Then SetCaption ServerPingLB, "HTTP ping" Else HTTP_Enabled = FALSE ' HTTP
+        If HTTP_Communication = "native" Then HTTP_Communication_Native = True Else HTTP_Communication_Native = False
+        If HTTP_Enabled Then SetCaption ServerPingLB, "HTTP ping" Else HTTP_Enabled = False ' HTTP
 
         ' Automatically open obs-websocket-http if it's located in the same folder
         If HTTP_Enabled And HTTP_Auto_Open <> "false" Then
             If _FileExists(config_dir + "\obs-websocket-http-v1-Windows.exe") Then HTTP_File = config_dir + "\obs-websocket-http-v1-Windows.exe": HTTP_Filename = "obs-websocket-http-v1-Windows.exe"
             If _FileExists(config_dir + "\obs-websocket-http-v2-Windows.exe") Then HTTP_File = config_dir + "\obs-websocket-http-v2-Windows.exe": HTTP_Filename = "obs-websocket-http-v2-Windows.exe"
+            If _FileExists(config_dir + "\obs-websocket-http-v3-Windows.exe") Then HTTP_File = config_dir + "\obs-websocket-http-v3-Windows.exe": HTTP_Filename = "obs-websocket-http-v3-Windows.exe"
+            If _FileExists(config_dir + "\obs-websocket-http-v4-Windows.exe") Then HTTP_File = config_dir + "\obs-websocket-http-v4-Windows.exe": HTTP_Filename = "obs-websocket-http-v4-Windows.exe"
+            If _FileExists(config_dir + "\obs-websocket-http-v5-Windows.exe") Then HTTP_File = config_dir + "\obs-websocket-http-v5-Windows.exe": HTTP_Filename = "obs-websocket-http-v5-Windows.exe"
             If _FileExists(config_dir + "\obs-websocket-http-Windows.exe") Then HTTP_File = config_dir + "\obs-websocket-http-Windows.exe": HTTP_Filename = "obs-websocket-http-Windows.exe"
             If _FileExists(config_dir + "\obs-websocket-http.exe") Then HTTP_File = config_dir + "\obs-websocket-http.exe": HTTP_Filename = "obs-websocket-http.exe"
             ' Automatically open obs-websocket-http
@@ -1049,7 +1073,6 @@ Sub __UI_OnLoad
                 Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
                 If FastStart <> "true" Then _Delay 1 Else _Delay .5
                 Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File
-                'If HTTP_Auth_Key = "" Then Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW Else Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW + " --http_auth_key " + HTTP_Auth_Key
             End If
         End If
 
@@ -1084,44 +1107,44 @@ Sub __UI_OnLoad
 
         ' Check for missing variables
         Select Case ""
-            Case Scene_OK: SettingsMissing = TRUE
-            Case Scene_Fail: SettingsMissing = TRUE
-            Case Scene_Intro: SettingsMissing = TRUE
-            Case Scene_Bypass: SettingsMissing = TRUE
-            Case OBS_URL: SettingsMissing = TRUE
-            Case OBS_PW: SettingsMissing = TRUE
-            Case FileStatusOutput: SettingsMissing = TRUE
-            Case ConnectionsLog_Check: SettingsMissing = TRUE
-            Case Scene_LBR_Enabled: SettingsMissing = TRUE
-            Case Scene_LBR_Delay_Total: SettingsMissing = TRUE
-            Case Scene2_LBR_Disabled: SettingsMissing = TRUE
-            Case RIST_Fail_Mode_1: SettingsMissing = TRUE ' RIST mode
-            Case RIST_Fail_Mode_2: SettingsMissing = TRUE ' RIST mode - Source 2
-            Case LoopySRTMonitorTheme: SettingsMissing = TRUE
-            Case Allow_Resize: SettingsMissing = TRUE
-            Case CheckUpdateOnStartup: SettingsMissing = TRUE
-            Case MultiCameraSwitch: SettingsMissing = TRUE
-            Case titleScene1: SettingsMissing = TRUE
-            Case titleScene2: SettingsMissing = TRUE
-            Case titleScene12: SettingsMissing = TRUE
-            Case returnPreviousScene: SettingsMissing = TRUE
-            Case returnPreviousSceneRemember: SettingsMissing = TRUE
-            Case SLS_1_Enabled: SettingsMissing = TRUE ' SRT Live Server
-            Case SLS_2_Enabled: SettingsMissing = TRUE
-            Case SLS_Server_IP: SettingsMissing = TRUE
-            Case SLS_Server_Port: SettingsMissing = TRUE
-            Case SLS_Stats: SettingsMissing = TRUE
-            Case SLS_Publisher1: SettingsMissing = TRUE
-            Case SLS_Publisher2: SettingsMissing = TRUE
-            Case Str$(SLS_BitrateLow1): SettingsMissing = TRUE
-            Case Str$(SLS_BitrateLow2): SettingsMissing = TRUE
-            Case Str$(SLS_BitrateFail1): SettingsMissing = TRUE
-            Case Str$(SLS_BitrateFail2): SettingsMissing = TRUE
+            Case Scene_OK: SettingsMissing = True
+            Case Scene_Fail: SettingsMissing = True
+            Case Scene_Intro: SettingsMissing = True
+            Case Scene_Bypass: SettingsMissing = True
+            Case OBS_URL: SettingsMissing = True
+            Case OBS_PW: SettingsMissing = True
+            Case FileStatusOutput: SettingsMissing = True
+            Case ConnectionsLog_Check: SettingsMissing = True
+            Case Scene_LBR_Enabled: SettingsMissing = True
+            Case Scene_LBR_Delay_Total: SettingsMissing = True
+            Case Scene2_LBR_Disabled: SettingsMissing = True
+            Case RIST_Fail_Mode_1: SettingsMissing = True ' RIST mode
+            Case RIST_Fail_Mode_2: SettingsMissing = True ' RIST mode - Source 2
+            Case LoopySRTMonitorTheme: SettingsMissing = True
+            Case Allow_Resize: SettingsMissing = True
+            Case CheckUpdateOnStartup: SettingsMissing = True
+            Case MultiCameraSwitch: SettingsMissing = True
+            Case titleScene1: SettingsMissing = True
+            Case titleScene2: SettingsMissing = True
+            Case titleScene12: SettingsMissing = True
+            Case returnPreviousScene: SettingsMissing = True
+            Case returnPreviousSceneRemember: SettingsMissing = True
+            Case SLS_1_Enabled: SettingsMissing = True ' SRT Live Server
+            Case SLS_2_Enabled: SettingsMissing = True
+            Case SLS_Server_IP: SettingsMissing = True
+            Case SLS_Server_Port: SettingsMissing = True
+            Case SLS_Stats: SettingsMissing = True
+            Case SLS_Publisher1: SettingsMissing = True
+            Case SLS_Publisher2: SettingsMissing = True
+            Case Str$(SLS_BitrateLow1): SettingsMissing = True
+            Case Str$(SLS_BitrateLow2): SettingsMissing = True
+            Case Str$(SLS_BitrateFail1): SettingsMissing = True
+            Case Str$(SLS_BitrateFail2): SettingsMissing = True
         End Select
 
         If SettingsMissing Then
             verCheck$ = "Settings missing in 'config.ini' file, check 'readme.txt'..."
-            iniFeatures = TRUE
+            iniFeatures = True
         End If
 
         If Scene_Bypass = "" Then Scene_Bypass = "none"
@@ -1134,10 +1157,10 @@ Sub __UI_OnLoad
         If Scene_Bypass_8 = "" Then Scene_Bypass_8 = "none"
         If Scene_Bypass_9 = "" Then Scene_Bypass_9 = "none"
 
-        If RIST_Fail_Mode_1 = "true" Then __RIST_Fail_Mode_1 = TRUE Else __RIST_Fail_Mode_1 = FALSE
-        If RIST_Fail_Mode_2 = "true" Then __RIST_Fail_Mode_2 = TRUE Else __RIST_Fail_Mode_2 = FALSE
+        If RIST_Fail_Mode_1 = "true" Then __RIST_Fail_Mode_1 = True Else __RIST_Fail_Mode_1 = False
+        If RIST_Fail_Mode_2 = "true" Then __RIST_Fail_Mode_2 = True Else __RIST_Fail_Mode_2 = False
 
-        If Leading_Zero = "true" Then leadingZero = TRUE
+        If Leading_Zero = "true" Then leadingZero = True
         If SLS_Kbps_Precision = "true" Then SLS_Kbps_Precision = "nerd"
 
         If SLS_Server_KeepAlive1 <> 0 Then
@@ -1180,11 +1203,11 @@ Sub __UI_OnLoad
 
         ' SLS 2nd IP
         If MultiCameraSwitch = "true" And SLS_2_Enabled = "true" Then
-            If SLS_Server_IP <> SLS_Server_IP_2 Then SLS_2_Active = TRUE
-            If SLS_Server_Port <> SLS_Server_Port_2 Then SLS_2_Active = TRUE
+            If SLS_Server_IP <> SLS_Server_IP_2 Then SLS_2_Active = True
+            If SLS_Server_Port <> SLS_Server_Port_2 Then SLS_2_Active = True
         End If
 
-        If MultiCameraSwitch = "true" And SLS_2_Enabled = "true" And SLS_1_Enabled = "false" Then SLS_2_Active = TRUE ' Fix when using SLS #2 only (v1.1.1)
+        If MultiCameraSwitch = "true" And SLS_2_Enabled = "true" And SLS_1_Enabled = "false" Then SLS_2_Active = True ' Fix when using SLS #2 only (v1.1.1)
 
         If SLS_2_Active And SLS_1_Enabled = "true" Then Stream_Title_1 = "Server" Else Stream_Title_1 = "Stream" ' SLS 2nd IP
         If SLS_2_Active And SLS_2_Enabled = "true" Then Stream_Title_2 = "Server" Else Stream_Title_2 = "Stream" ' SLS 2nd IP
@@ -1223,10 +1246,10 @@ Sub __UI_OnLoad
         RTMP_Port_Client = "TCP/IP:" + RTMP_Server_Port + ":"
 
         If MultiCameraSwitch = "true" Then
-            __MultiCameraSwitch = TRUE
+            __MultiCameraSwitch = True
         Else
             MultiCameraSwitch = "false"
-            __MultiCameraSwitch = FALSE
+            __MultiCameraSwitch = False
         End If
 
         ' Set true and false
@@ -1240,30 +1263,30 @@ Sub __UI_OnLoad
         If RTMP_2_Enabled = "true" Then SLS_2_Enabled = "false"
 
         ' SRT Live Server
-        If SLS_1_Enabled = "true" And SLS_2_Enabled = "true" Then RTMP_Active = FALSE: RTMP_1_Enabled = "false": RTMP_2_Enabled = "false": RESTREAMER_1_Enabled = "false": RESTREAMER_2_Enabled = "false"
+        If SLS_1_Enabled = "true" And SLS_2_Enabled = "true" Then RTMP_Active = False: RTMP_1_Enabled = "false": RTMP_2_Enabled = "false": RESTREAMER_1_Enabled = "false": RESTREAMER_2_Enabled = "false"
 
         ' NGINX RTMP Server
-        If RTMP_1_Enabled = "true" And RTMP_2_Enabled = "true" Then SLS_Active = FALSE: SLS_1_Enabled = "false": SLS_2_Enabled = "false"
+        If RTMP_1_Enabled = "true" And RTMP_2_Enabled = "true" Then SLS_Active = False: SLS_1_Enabled = "false": SLS_2_Enabled = "false"
         If Not __MultiCameraSwitch Then SLS_2_Enabled = "false": RTMP_2_Enabled = "false"
-        If SLS_1_Enabled = "true" Or SLS_2_Enabled = "true" Then SLS_Active = TRUE
-        If RTMP_1_Enabled = "true" Or RTMP_2_Enabled = "true" Then RTMP_Active = TRUE: RTMP_Kbps_Precision = SLS_Kbps_Precision
+        If SLS_1_Enabled = "true" Or SLS_2_Enabled = "true" Then SLS_Active = True
+        If RTMP_1_Enabled = "true" Or RTMP_2_Enabled = "true" Then RTMP_Active = True: RTMP_Kbps_Precision = SLS_Kbps_Precision
 
         ' RESTREAMER Server
         If RESTREAMER_1_Enabled = "true" And SLS_1_Enabled = "true" Then RESTREAMER_1_Enabled = "false"
         If RESTREAMER_2_Enabled = "true" And SLS_2_Enabled = "true" Then RESTREAMER_2_Enabled = "false"
         If RESTREAMER_1_Enabled = "true" And RTMP_1_Enabled = "true" Then RESTREAMER_1_Enabled = "false"
         If RESTREAMER_2_Enabled = "true" And RTMP_1_Enabled = "true" Then RESTREAMER_2_Enabled = "false"
-        If RESTREAMER_1_Enabled = "true" Or RESTREAMER_2_Enabled = "true" Then RESTREAMER_Active = TRUE
+        If RESTREAMER_1_Enabled = "true" Or RESTREAMER_2_Enabled = "true" Then RESTREAMER_Active = True
 
         RESTREAMER_Port_Client = "TCP/IP:" + RESTREAMER_Server_Port + ":"
 
         ' Set SLS, RTMP and RESTREAMER variables
-        If SLS_1_Enabled = "true" Then __SLS_1_Enabled = TRUE Else __SLS_1_Enabled = FALSE
-        If RTMP_1_Enabled = "true" Then __RTMP_1_Enabled = TRUE Else __RTMP_1_Enabled = FALSE
-        If RTMP_2_Enabled = "true" Then __RTMP_2_Enabled = TRUE Else __RTMP_2_Enabled = FALSE
-        If SLS_2_Enabled = "true" Then __SLS_2_Enabled = TRUE Else __SLS_2_Enabled = FALSE
-        If RESTREAMER_1_Enabled = "true" Then __RESTREAMER_1_Enabled = TRUE Else __RESTREAMER_1_Enabled = FALSE
-        If RESTREAMER_2_Enabled = "true" Then __RESTREAMER_2_Enabled = TRUE Else __RESTREAMER_2_Enabled = FALSE
+        If SLS_1_Enabled = "true" Then __SLS_1_Enabled = True Else __SLS_1_Enabled = False
+        If RTMP_1_Enabled = "true" Then __RTMP_1_Enabled = True Else __RTMP_1_Enabled = False
+        If RTMP_2_Enabled = "true" Then __RTMP_2_Enabled = True Else __RTMP_2_Enabled = False
+        If SLS_2_Enabled = "true" Then __SLS_2_Enabled = True Else __SLS_2_Enabled = False
+        If RESTREAMER_1_Enabled = "true" Then __RESTREAMER_1_Enabled = True Else __RESTREAMER_1_Enabled = False
+        If RESTREAMER_2_Enabled = "true" Then __RESTREAMER_2_Enabled = True Else __RESTREAMER_2_Enabled = False
 
         ' SRT Live Server ---------------------------------------------
         If SLS_Active Then
@@ -1295,8 +1318,8 @@ Sub __UI_OnLoad
                     Control(Uptime_Stream_1LB).Top = 254
                     Control(failLB).Top = 278
                     Control(Timer_Fail_Stream1LB).Top = 278
-                    Control(BitrateLB2).Hidden = TRUE
-                    Control(Bitrate_Stream_2LB).Hidden = TRUE
+                    Control(BitrateLB2).Hidden = True
+                    Control(Bitrate_Stream_2LB).Hidden = True
                 End If
             End If
 
@@ -1306,8 +1329,8 @@ Sub __UI_OnLoad
                     Control(Uptime_Stream_2LB).Top = 254
                     Control(failLB2).Top = 278
                     Control(Timer_Fail_Stream2LB).Top = 278
-                    Control(BitrateLB).Hidden = TRUE
-                    Control(Bitrate_Stream_1LB).Hidden = TRUE
+                    Control(BitrateLB).Hidden = True
+                    Control(Bitrate_Stream_1LB).Hidden = True
                 End If
             End If
 
@@ -1323,18 +1346,18 @@ Sub __UI_OnLoad
             End If
 
             If Not SLS_Active And Not RTMP_Active And Not RESTREAMER_Active Then
-                Control(BitrateLB).Hidden = TRUE
-                Control(Bitrate_Stream_1LB).Hidden = TRUE
-                Control(BitrateLB2).Hidden = TRUE
-                Control(Bitrate_Stream_2LB).Hidden = TRUE
+                Control(BitrateLB).Hidden = True
+                Control(Bitrate_Stream_1LB).Hidden = True
+                Control(BitrateLB2).Hidden = True
+                Control(Bitrate_Stream_2LB).Hidden = True
             End If
 
         Else
 
-            Control(BitrateLB).Hidden = TRUE
-            Control(Bitrate_Stream_1LB).Hidden = TRUE
-            Control(BitrateLB2).Hidden = TRUE
-            Control(Bitrate_Stream_2LB).Hidden = TRUE
+            Control(BitrateLB).Hidden = True
+            Control(Bitrate_Stream_1LB).Hidden = True
+            Control(BitrateLB2).Hidden = True
+            Control(Bitrate_Stream_2LB).Hidden = True
 
         End If
         ' SRT Live Server ---------------------------------------------
@@ -1343,7 +1366,7 @@ Sub __UI_OnLoad
         _Resize Off , _Smooth
         If Allow_Resize <> "true" Then
             Allow_Resize = "false"
-            Control(OptionsMenuRestoreWindowSize).Hidden = TRUE
+            Control(OptionsMenuRestoreWindowSize).Hidden = True
         Else
             ' Resize will be enabled regardless
             $Resize:Smooth
@@ -1351,7 +1374,7 @@ Sub __UI_OnLoad
 
         ' Set variables for low bitrate detection
         CooldownStartup = 10
-        If ConnectionsLog_Check = "true" Then ConnectionsLog = TRUE Else ConnectionsLog = FALSE
+        If ConnectionsLog_Check = "true" Then ConnectionsLog = True Else ConnectionsLog = False
         If PingLog <> "true" Then PingLog = "false": If Not ConnectionsLog Then PingLog = "false"
         CooldownLogTotal = 8
         MediaSourceTimeLB = 800
@@ -1467,15 +1490,15 @@ Sub __UI_OnLoad
         End If
     End If
 
-    If returnPreviousScene = "true" Then __returnPreviousScene = TRUE Else __returnPreviousScene = FALSE
-    If FileStatusOutput = "true" Then __FileStatusOutput = TRUE Else __FileStatusOutput = FALSE
-    If returnPreviousSceneRemember = "true" Then __returnPreviousSceneRemember = TRUE Else __returnPreviousSceneRemember = FALSE
-    If Not __MultiCameraSwitch Then __returnPreviousScene = FALSE: __returnPreviousSceneRemember = FALSE ' multi-camera-switch options disabled if not required
+    If returnPreviousScene = "true" Then __returnPreviousScene = True Else __returnPreviousScene = False
+    If FileStatusOutput = "true" Then __FileStatusOutput = True Else __FileStatusOutput = False
+    If returnPreviousSceneRemember = "true" Then __returnPreviousSceneRemember = True Else __returnPreviousSceneRemember = False
+    If Not __MultiCameraSwitch Then __returnPreviousScene = False: __returnPreviousSceneRemember = False ' multi-camera-switch options disabled if not required
 
     ' LBR enabled if required
-    If Scene_LBR_Enabled = "true" Then SceneLBActive = TRUE
+    If Scene_LBR_Enabled = "true" Then SceneLBActive = True
     ' Disable Scene #2 LBR if Scene2LBRDisabled is true
-    If Scene2_LBR_Disabled = "true" Then Scene2LBInactive = TRUE
+    If Scene2_LBR_Disabled = "true" Then Scene2LBInactive = True
 
     If Not SceneLBActive Then
         If Stream_Fail_Delay < 3 Then
@@ -1498,14 +1521,14 @@ Sub __UI_OnLoad
         _PutImage (25, 46)-(82, 158), BSOD&
         _FreeImage BSOD&
         Color _RGB(254, 254, 254), _RGB(1, 100, 200)
-        _PrintString (20, 12 * 18), "Program encountered an error and needs to restart."
+        _UPrintString (20, 12 * 18), "Program encountered an error and needs to restart."
         If InStr(Error_msg, Chr$(10)) >= 1 Then
-            _PrintString (20, 14 * 18), Left$(Error_msg, InStr(Error_msg, Chr$(10)) - 1)
-            _PrintString (20, 15 * 18), Mid$(Error_msg, InStr(Error_msg, Chr$(10)) + 1)
+            _UPrintString (20, 14 * 18), Left$(Error_msg, InStr(Error_msg, Chr$(10)) - 1)
+            _UPrintString (20, 15 * 18), Mid$(Error_msg, InStr(Error_msg, Chr$(10)) + 1)
         Else
-            _PrintString (20, 14 * 18), Error_msg
+            _UPrintString (20, 14 * 18), Error_msg
         End If
-        _PrintString (20, 20 * 18), "Program will exit shortly or press any key to exit now..."
+        _UPrintString (20, 20 * 18), "Program will exit shortly or press any key to exit now..."
         _Display
         _Delay 1
         If InKey$ <> "" Then System
@@ -2170,7 +2193,7 @@ Sub __UI_OnLoad
         If _FileExists(fileCheckVersion) Then
             Open fileCheckVersion For Input As #224
             Do Until EOF(224)
-                If LOF(224) = 0 Then NoKill = TRUE: Exit Do ' Overkill with EOF checking, but just being safe
+                If LOF(224) = 0 Then NoKill = True: Exit Do ' Overkill with EOF checking, but just being safe
                 If EOF(224) Then Exit Do
                 Line Input #224, file224$
             Loop
@@ -2178,11 +2201,11 @@ Sub __UI_OnLoad
         Close #224
         If _FileExists(fileCheckVersion) Then Kill fileCheckVersion
         updateResult$ = file224$
-        If file224$ <> Ver Then verCheck$ = "New version is available (v" + _Trim$(Left$(updateResult$, 10)) + ")": _NotifyPopup "Loopy SRT Monitor", "New version is available (v" + _Trim$(Left$(updateResult$, 10)) + ")", "info"
+        If file224$ <> Ver And file224$ <> "" And file224$ <> "404: Not Found" Then verCheck$ = "New version is available (v" + _Trim$(Left$(updateResult$, 10)) + ")": _NotifyPopup "Loopy SRT Monitor", "New version is available (v" + _Trim$(Left$(updateResult$, 10)) + ")", "info"
         If file224$ = "" Or file224$ = "404: Not Found" Then verCheck$ = "Unable to check for new version..."
-        If file224$ = Ver Then verCheck$ = "This is the latest version (v" + _Trim$(Left$(Ver, 10)) + ")..."
+        If file224$ = Ver Then verCheck$ = "This is the latest version (v" + _Trim$(Left$(Ver, 10)) + ")"
     End If
-    iniFeatures = FALSE
+    iniFeatures = False
 
     ' Test #4
     If ErrorTestRunOnce Then
@@ -2209,7 +2232,6 @@ Sub __UI_OnLoad
     If ErrorTestRunOnce Then
 
         If HTTP_Enabled Then
-            ' curl -s -XPOST -H "Authorization: password" -H "Content-type: application/json" "http://127.0.0.1:4445/call/GetVersion"
             Shell _Hide CMD_EXE_HTTP + c34 + "http://" + HTTP_Bind_Address + ":" + HTTP_Bind_Port + "/call/GetVersion" + c34 + " -o " + c34 + filePrevious_ms + c34
             Open filePrevious_ms For Binary As #128
             JSON = Space$(LOF(128))
@@ -2242,9 +2264,9 @@ Sub __UI_OnLoad
                     If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
                     On Error GoTo 0
                     ' Check for 4.x else error
-                    websocketOK = FALSE
+                    websocketOK = False
                 Else
-                    websocketOK = TRUE
+                    websocketOK = True
                 End If
 
                 If websocketOK Then Line Input #90, file90
@@ -2252,9 +2274,9 @@ Sub __UI_OnLoad
                     Close #90
                     If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
                     ' Check for 4.x else error
-                    websocketOK = FALSE
+                    websocketOK = False
                 Else
-                    websocketOK = TRUE
+                    websocketOK = True
                     If EOF(90) Or LOF(90) = 0 Then
                         Close #90
                     Else
@@ -2283,22 +2305,22 @@ Sub __UI_OnLoad
                         On Error GoTo App_Fail
                         If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
                         On Error GoTo 0
-                        websocketOK = FALSE
+                        websocketOK = False
                         Error_msg = "- OBS " + c34 + "WebSocket Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check OBS Studio is open, " + c34 + "WebSocket Server" + c34 + " is enabled in OBS Studio, and " + c34 + "Node.js" + c34 + " is installed.": Error_msg_3 = "- Check " + c34 + "WebSocketConnection" + c34 + " in " + c34 + "config.ini" + c34 + " is set to the required connection method."
                         ErrorDisplay (6)
                     Else
-                        websocketOK = TRUE
+                        websocketOK = True
                     End If
 
                     Line Input #90, file90
                     If file90 <> "OK" Then
                         Close #90
                         If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
-                        websocketOK = FALSE
+                        websocketOK = False
                         Error_msg = "- OBS " + c34 + "WebSocket Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check OBS Studio is open, " + c34 + "WebSocket Server" + c34 + " is enabled in OBS Studio, and " + c34 + "Node.js" + c34 + " is installed.": Error_msg_3 = "- Check " + c34 + "WebSocketConnection" + c34 + " in " + c34 + "config.ini" + c34 + " is set to the required connection method."
                         ErrorDisplay (6)
                     Else
-                        websocketOK = TRUE
+                        websocketOK = True
                         If EOF(90) Or LOF(90) = 0 Then
                             Close #90
                         Else
@@ -2347,7 +2369,7 @@ Sub __UI_OnLoad
                 Get #128, , JSON
                 Close #128
                 If GetKey("mediaCursor", JSON) = "" Then
-                    Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ". Correctly configure " + c34 + "MediaSource1" + c34 + " in " + c34 + "config.ini and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSocket version is 4.9.0 or newer."
+                    Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ". Correctly configure " + c34 + "MediaSource1" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled."
                     ErrorDisplay (7)
                 End If
             Else
@@ -2358,7 +2380,7 @@ Sub __UI_OnLoad
                     If EOF(90) Or LOF(90) = 0 Then
                         Close #90
                         If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
-                        Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ". Correctly configure " + c34 + "MediaSource1" + c34 + " in " + c34 + "config.ini and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSocket version is 4.9.0 or newer."
+                        Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ". Correctly configure " + c34 + "MediaSource1" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSocket version is 4.9.0 or newer."
                         ErrorDisplay (7)
                     End If
 
@@ -2381,7 +2403,7 @@ Sub __UI_OnLoad
                 Get #128, , JSON
                 Close #128
                 If GetKey("mediaCursor", JSON) = "" Then
-                    Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ". Correctly configure " + c34 + "MediaSource1" + c34 + " in " + c34 + "config.ini and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSocket version is 4.9.0 or newer."
+                    Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ". Correctly configure " + c34 + "MediaSource1" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled."
                     ErrorDisplay (8)
                 End If
                 Shell _Hide CMD_EXE_HTTP + "-d " + c34 + "{\" + c34 + "inputName\" + c34 + ": \" + c34 + MediaSource2 + "\" + c34 + "}" + c34 + " " + c34 + "http://" + HTTP_Bind_Address + ":" + HTTP_Bind_Port + "/call/GetMediaInputStatus" + c34 + " > " + c34 + filePrevious_ms + c34
@@ -2390,7 +2412,7 @@ Sub __UI_OnLoad
                 Get #128, , JSON
                 Close #128
                 If GetKey("mediaCursor", JSON) = "" Then
-                    Error_msg = "- Unable to read " + c34 + "MediaSource2" + c34 + ". Correctly configure " + c34 + "MediaSource2" + c34 + " in " + c34 + "config.ini and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSocket version is 4.9.0 or newer."
+                    Error_msg = "- Unable to read " + c34 + "MediaSource2" + c34 + ". Correctly configure " + c34 + "MediaSource2" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled."
                     ErrorDisplay (8)
                 End If
             Else
@@ -2401,7 +2423,7 @@ Sub __UI_OnLoad
                     If EOF(90) Or LOF(90) = 0 Then
                         Close #90
                         If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
-                        Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ". Correctly configure " + c34 + "MediaSource1" + c34 + " in " + c34 + "config.ini and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSocket version is 4.9.0 or newer."
+                        Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ". Correctly configure " + c34 + "MediaSource1" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSocket version is 4.9.0 or newer."
                         ErrorDisplay (8)
                     End If
 
@@ -2409,7 +2431,7 @@ Sub __UI_OnLoad
                     If EOF(90) Or LOF(90) = 0 Then
                         Close #90
                         If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
-                        Error_msg = "- Unable to read " + c34 + "MediaSource2" + c34 + ". Correctly configure " + c34 + "MediaSource2" + c34 + " in " + c34 + "config.ini and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSocket version is 4.9.0 or newer."
+                        Error_msg = "- Unable to read " + c34 + "MediaSource2" + c34 + ". Correctly configure " + c34 + "MediaSource2" + c34 + " in " + c34 + "config.ini" + c34 + " and retry." + Chr$(10) + "- If configuration is correct, check " + c34 + "Restart Playback" + c34 + " is disabled and WebSocket version is 4.9.0 or newer."
                         ErrorDisplay (8)
                     End If
                     Close #90
@@ -2564,7 +2586,7 @@ Sub __UI_OnLoad
     End If
     ' ---------------------------------------------------------------
 
-    If Scene_OK = "" Or Scene_Fail = "" Or Scene_Intro = "" Or OBS_URL = "" Then RefreshDisplayRequest = TRUE: Error_msg = "- Variable/s for scenes empty, check if " + c34 + config_main + c34 + " exists. (Error: #3)": _Delay 3
+    If Scene_OK = "" Or Scene_Fail = "" Or Scene_Intro = "" Or OBS_URL = "" Then RefreshDisplayRequest = True: Error_msg = "- Variable/s for scenes empty, check if " + c34 + config_main + c34 + " exists. (Error: #3)": _Delay 3
 
     If _FileExists(filePrevious_ms) And HTTP_Communication_Native Then Kill filePrevious_ms
 
@@ -2597,29 +2619,29 @@ Sub __UI_OnLoad
     ' Enable Debug window on startup if enabled
     If VerBeta <> "" Or ForceDebugOnStartup = "true" Then
         If ForceDebugOnStartup <> "false" Then
-            Debug = TRUE
-            Control(DebugFrame).Hidden = FALSE
-            Control(versionFrame).Hidden = TRUE
-            Control(PictureBoxLogoBottom).Hidden = TRUE
+            Debug = True
+            Control(DebugFrame).Hidden = False
+            Control(versionFrame).Hidden = True
+            Control(PictureBoxLogoBottom).Hidden = True
             SetRadioButtonValue OptionsMenuDebug
         End If
     End If
 
     ' Update display: ---------------------------------------------------------------
     If Not __MultiCameraSwitch Then
-        Control(Stream1).Hidden = TRUE
-        Control(Stream2).Hidden = TRUE
-        Control(StreamUptimeLB).Hidden = TRUE
-        Control(failLB).Hidden = TRUE
-        Control(Uptime_Stream_1LB).Hidden = TRUE
-        Control(Timer_Fail_Stream1LB).Hidden = TRUE
-        Control(StreamUptimeLB2).Hidden = TRUE
-        Control(failLB2).Hidden = TRUE
-        Control(Uptime_Stream_2LB).Hidden = TRUE
-        Control(Timer_Fail_Stream2LB).Hidden = TRUE
+        Control(Stream1).Hidden = True
+        Control(Stream2).Hidden = True
+        Control(StreamUptimeLB).Hidden = True
+        Control(failLB).Hidden = True
+        Control(Uptime_Stream_1LB).Hidden = True
+        Control(Timer_Fail_Stream1LB).Hidden = True
+        Control(StreamUptimeLB2).Hidden = True
+        Control(failLB2).Hidden = True
+        Control(Uptime_Stream_2LB).Hidden = True
+        Control(Timer_Fail_Stream2LB).Hidden = True
         ' Low bitrate scene for multiple cameras only
-        Control(LowBitrateSceneLB).Hidden = TRUE
-        Control(Low_Bitrate_StatusLB).Hidden = TRUE
+        Control(LowBitrateSceneLB).Hidden = True
+        Control(Low_Bitrate_StatusLB).Hidden = True
         SetCaption FailCount2LB, ""
         SetCaption Timer_Fail_Count_2LB, ""
         SetCaption FailCount1LB, "DC / Low bitrate"
@@ -2634,45 +2656,45 @@ Sub __UI_OnLoad
         SetCaption Low_Bitrate_StatusLB, "-" ' This is set in TIMER
     End If
 
-    Control(DebugFrame).Hidden = TRUE
+    Control(DebugFrame).Hidden = True
     ' Debug Temp
     If Debug_Temp <> "true" Then
-        Control(DebugFrameTemp).Hidden = TRUE
-        Control(DebugTemp1LB).Hidden = TRUE
-        Control(DebugTemp2LB).Hidden = TRUE
-        Control(DebugTemp3LB).Hidden = TRUE
-        Control(DebugTemp4LB).Hidden = TRUE
-        Control(DebugTemp1LB2).Hidden = TRUE
-        Control(DebugTemp2LB2).Hidden = TRUE
-        Control(DebugTemp3LB2).Hidden = TRUE
-        Control(DebugTemp4LB2).Hidden = TRUE
+        Control(DebugFrameTemp).Hidden = True
+        Control(DebugTemp1LB).Hidden = True
+        Control(DebugTemp2LB).Hidden = True
+        Control(DebugTemp3LB).Hidden = True
+        Control(DebugTemp4LB).Hidden = True
+        Control(DebugTemp1LB2).Hidden = True
+        Control(DebugTemp2LB2).Hidden = True
+        Control(DebugTemp3LB2).Hidden = True
+        Control(DebugTemp4LB2).Hidden = True
     Else
-        Control(Settings).Hidden = TRUE
+        Control(Settings).Hidden = True
     End If
-    Control(versionFrame).Hidden = FALSE
+    Control(versionFrame).Hidden = False
     LoadImageMEM Control(PictureBoxLogoBottom), "srt_logo_bottom.png"
-    Control(TimerLB).Hidden = TRUE
-    Control(TimerSnapshotLB).Hidden = TRUE
-    Control(td_displayLB2).Hidden = TRUE
-    Control(mouseXLB2).Hidden = TRUE
-    Control(mouseYLB2).Hidden = TRUE
-    Control(__ERRORLINELB2).Hidden = TRUE
-    Control(Debug_TimerLB).Hidden = TRUE
-    Control(Debug_Timer_SnapshotLB).Hidden = TRUE
-    Control(td_displayLB).Hidden = TRUE
-    Control(mouseXLB).Hidden = TRUE
-    Control(mouseYLB).Hidden = TRUE
-    Control(__ERRORLINELB).Hidden = TRUE
-    Control(LowBRTimerLB).Hidden = TRUE
-    Control(br_countdownLB).Hidden = TRUE
-    Control(MSRateLB).Hidden = TRUE
-    Control(MSRateLB2).Hidden = TRUE
-    Control(ms_playLB).Hidden = TRUE
-    Control(ms_playLB2).Hidden = TRUE
-    Control(LBRDelayLB).Hidden = TRUE
-    Control(br_delayLB).Hidden = TRUE
-    Control(PictureBoxLogoBottom).Hidden = FALSE
-    If VerBeta = "" Then SetCaption (versionFrame), "v" + Ver Else SetCaption (versionFrame), "v" + VerBeta + "beta"
+    Control(TimerLB).Hidden = True
+    Control(TimerSnapshotLB).Hidden = True
+    Control(td_displayLB2).Hidden = True
+    Control(mouseXLB2).Hidden = True
+    Control(mouseYLB2).Hidden = True
+    Control(__ERRORLINELB2).Hidden = True
+    Control(Debug_TimerLB).Hidden = True
+    Control(Debug_Timer_SnapshotLB).Hidden = True
+    Control(td_displayLB).Hidden = True
+    Control(mouseXLB).Hidden = True
+    Control(mouseYLB).Hidden = True
+    Control(__ERRORLINELB).Hidden = True
+    Control(LowBRTimerLB).Hidden = True
+    Control(br_countdownLB).Hidden = True
+    Control(MSRateLB).Hidden = True
+    Control(MSRateLB2).Hidden = True
+    Control(ms_playLB).Hidden = True
+    Control(ms_playLB2).Hidden = True
+    Control(LBRDelayLB).Hidden = True
+    Control(br_delayLB).Hidden = True
+    Control(PictureBoxLogoBottom).Hidden = False
+    If VerBeta = "" Then SetCaption (versionFrame), "v" + Ver Else SetCaption (versionFrame), "v" + VerBeta + VerBetaTag
     ' ---------------------------------------------------------------
 
     t1 = _FreeTimer
@@ -2686,31 +2708,39 @@ Sub __UI_BeforeUpdateDisplay
     If Not _WindowHasFocus Then SetFrameRate 15 Else SetFrameRate 30
 
     If RefreshDisplayRequest Then
-        RefreshDisplayRequest = FALSE
+        RefreshDisplayRequest = False
         Timer(t1) Stop
         Cls , _RGB(1, 100, 200)
         BSOD& = __imageMEM&("face_sad_x.png")
         _PutImage (25, 46)-(82, 158), BSOD&
         _FreeImage BSOD&
         Color _RGB(254, 254, 254), _RGB(1, 100, 200)
-        _PrintString (20, 12 * 18), "Program encountered an error and needs to restart."
+        _UPrintString (20, 12 * 18), "Program encountered an error and needs to restart."
         If InStr(Error_msg, Chr$(10)) >= 1 Then
-            _PrintString (20, 14 * 18), Left$(Error_msg, InStr(Error_msg, Chr$(10)) - 1)
-            _PrintString (20, 15 * 18), Mid$(Error_msg, InStr(Error_msg, Chr$(10)) + 1)
+            _UPrintString (20, 14 * 18), Left$(Error_msg, InStr(Error_msg, Chr$(10)) - 1)
+            _UPrintString (20, 15 * 18), Mid$(Error_msg, InStr(Error_msg, Chr$(10)) + 1)
         Else
-            _PrintString (20, 14 * 18), Error_msg
+            _UPrintString (20, 14 * 18), Error_msg
         End If
         If InStr(Error_msg_2$, Chr$(10)) >= 1 Then
-            _PrintString (20, 16 * 18), Left$(Error_msg_2$, InStr(Error_msg_2$, Chr$(10)) - 1)
-            _PrintString (20, 17 * 18), Mid$(Error_msg_2$, InStr(Error_msg_2$, Chr$(10)) + 1)
+            _UPrintString (20, 16 * 18), Left$(Error_msg_2$, InStr(Error_msg_2$, Chr$(10)) - 1)
+            _UPrintString (20, 17 * 18), Mid$(Error_msg_2$, InStr(Error_msg_2$, Chr$(10)) + 1)
         Else
-            _PrintString (20, 16 * 18), Error_msg_2$
+            _UPrintString (20, 16 * 18), Error_msg_2$
         End If
-        _PrintString (20, 20 * 18), "Program will resume shortly"
+        _UPrintString (20, 20 * 18), "Program will resume shortly"
         _Display: _Delay 8
         Error_msg = ""
         Error_msg_2$ = ""
         Cls , BG
+
+        ' Restart obs-websocket-http if connection is lost
+        If http_client = 0 Then
+            Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
+            _Delay 1
+            Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File
+        End If
+
         Timer(t1) On
     End If
 
@@ -2719,9 +2749,9 @@ Sub __UI_BeforeUpdateDisplay
         mouseY = _MouseY
         Debug_Timer = Timer(.001)
         TIMEms Debug_Timer, 0, 0
-        SetCaption (Debug_TimerLB), tout + " sec   "
+        SetCaption (Debug_TimerLB), tout + "s   "
         TIMEms td_display, 1, 0
-        SetCaption (td_displayLB), tout + " sec   "
+        SetCaption (td_displayLB), tout + "s   "
         SetCaption (mouseXLB), LTrim$(Str$(mouseX + 1)) + "   "
         SetCaption (mouseYLB), LTrim$(Str$(mouseY + 1)) + "   "
         SetCaption (__ERRORLINELB), LTrim$(Str$(_ErrorLine)) + "   "
@@ -2778,9 +2808,9 @@ Sub __UI_BeforeUpdateDisplay
     If Tooltip_Mouse Then
         mouseX = _MouseX
         mouseY = _MouseY
-        If mouseX >= 170 And mouseX <= 250 And mouseY >= 75 And mouseY <= 90 Then Tooltip_Mouse_Active = TRUE Else Tooltip_Mouse_Active = FALSE
+        If mouseX >= 170 And mouseX <= 250 And mouseY >= 75 And mouseY <= 90 Then Tooltip_Mouse_Active = True Else Tooltip_Mouse_Active = False
         If __MultiCameraSwitch Then
-            If mouseX >= 300 And mouseX <= 380 And mouseY >= 75 And mouseY <= 90 And Tooltip_Mouse_Active = FALSE Then Tooltip_Mouse_Active = TRUE
+            If mouseX >= 300 And mouseX <= 380 And mouseY >= 75 And mouseY <= 90 And Tooltip_Mouse_Active = False Then Tooltip_Mouse_Active = True
         End If
         If Tooltip_Mouse_Active Then _MouseShow "LINK" Else _MouseShow "DEFAULT"
     End If
@@ -2939,13 +2969,13 @@ Sub __UI_Click (id As Long)
 
         Case OptionsMenuAlwaysOnTop
             If Not AlwaysOnTop Then
-                AlwaysOnTop = TRUE
+                AlwaysOnTop = True
                 $If WIN Then
                     If OS = "WINDOWS" Then y& = SetWindowPos&(Myhwnd, -1, 0, 0, 0, 0, &H2 + &H1 + &H40) ' Windows only
                 $End If
                 SetRadioButtonValue OptionsMenuAlwaysOnTop
             Else
-                AlwaysOnTop = FALSE
+                AlwaysOnTop = False
                 $If WIN Then
                     If OS = "WINDOWS" Then y& = SetWindowPos&(Myhwnd, -2, 0, 0, 0, 0, &H2 + &H1 + &H40) ' Windows only
                 $End If
@@ -2954,15 +2984,15 @@ Sub __UI_Click (id As Long)
 
         Case OptionsMenuDebug
             If Not Debug Then
-                Debug = TRUE
-                Control(DebugFrame).Hidden = FALSE
-                Control(versionFrame).Hidden = TRUE
-                Control(PictureBoxLogoBottom).Hidden = TRUE
+                Debug = True
+                Control(DebugFrame).Hidden = False
+                Control(versionFrame).Hidden = True
+                Control(PictureBoxLogoBottom).Hidden = True
                 SetRadioButtonValue OptionsMenuDebug
             Else
-                Debug = FALSE
-                Control(versionFrame).Hidden = TRUE
-                Control(PictureBoxLogoBottom).Hidden = TRUE
+                Debug = False
+                Control(versionFrame).Hidden = True
+                Control(PictureBoxLogoBottom).Hidden = True
                 SetRadioButtonValue OptionsMenuDebug
             End If
 
@@ -2972,7 +3002,11 @@ Sub __UI_Click (id As Long)
                 Case "WINDOWS"
                     Shell _Hide _DontWait "%ComSpec% /C START " + c34 + c34 + " /B https://github.com/loopy750/SRT-Stats-Monitor"
                 Case "LINUX"
-                    Shell _Hide _DontWait "xdg-open https://github.com/loopy750/SRT-Stats-Monitor"
+                    If Mid$(_OS$, 2, 5) = "MACOS" Then
+                        Shell _Hide _DontWait "open https://github.com/loopy750/SRT-Stats-Monitor"
+                    Else
+                        Shell _Hide _DontWait "xdg-open https://github.com/loopy750/SRT-Stats-Monitor"
+                    End If
             End Select
 
         Case HelpMenuCheckForUpdates
@@ -2993,7 +3027,7 @@ Sub __UI_Click (id As Long)
             If _FileExists(fileCheckVersion) Then
                 Open fileCheckVersion For Input As #224
                 Do Until EOF(224)
-                    If LOF(224) = 0 Then NoKill = TRUE: Exit Do ' Overkill with EOF checking, but just being safe
+                    If LOF(224) = 0 Then NoKill = True: Exit Do ' Overkill with EOF checking, but just being safe
                     If EOF(224) Then Exit Do
                     Line Input #224, file224$
                 Loop
@@ -3001,18 +3035,18 @@ Sub __UI_Click (id As Long)
             Close #224
             If _FileExists(fileCheckVersion) Then Kill fileCheckVersion
             updateResult$ = file224$
-            If file224$ <> Ver Then verCheck$ = "New version is available (v" + _Trim$(Left$(updateResult$, 10)) + ")": _NotifyPopup "Loopy SRT Monitor", "New version is available (v" + _Trim$(Left$(updateResult$, 10)) + ")", "info"
+            If file224$ <> Ver And file224$ <> "" And file224$ <> "404: Not Found" Then verCheck$ = "New version is available (v" + _Trim$(Left$(updateResult$, 10)) + ")": _NotifyPopup "Loopy SRT Monitor", "New version is available (v" + _Trim$(Left$(updateResult$, 10)) + ")", "info"
             If file224$ = "" Or file224$ = "404: Not Found" Then verCheck$ = "Unable to check for new version..."
-            If file224$ = Ver Then verCheck$ = "This is the latest version (v" + _Trim$(Left$(Ver, 10)) + ")..."
+            If file224$ = Ver Then verCheck$ = "This is the latest version (v" + _Trim$(Left$(Ver, 10)) + ")"
             If verCheck <> "" Then updateDisplayCounter = 0
 
         Case OptionsMenuFullscreen
             If Not FullScreen Then
-                FullScreen = TRUE
+                FullScreen = True
                 _FullScreen _SquarePixels , _Smooth
                 SetRadioButtonValue OptionsMenuFullscreen
             Else
-                FullScreen = FALSE
+                FullScreen = False
                 _FullScreen _Off
                 SetRadioButtonValue OptionsMenuFullscreen
             End If
@@ -3022,15 +3056,15 @@ Sub __UI_Click (id As Long)
         Case HelpMenuAbout
             If VerBeta = "" Then
                 If VerPortable = "false" Then
-                    Answer = MessageBox("Loopy SRT Stats Monitor v" + Ver + " (" + VerDate + ") \nby loopy750\n\nOBS WebSocket version: " + checkWebSocketVersion$ + "\n\nHomepage: https://www.github.com/loopy750", "About", MsgBox_OkOnly + MsgBox_Information)
+                    _MessageBox "About", "Loopy SRT Stats Monitor v" + Ver + " (" + VerDate + ")" + EOL + "by loopy750" + EOL + EOL + "OBS WebSocket version: " + checkWebSocketVersion$ + EOL + EOL + "Homepage: https://www.github.com/loopy750", "info"
                 Else
-                    Answer = MessageBox("Loopy SRT Stats Monitor v" + Ver + " (" + VerDate + ") \nPortable version\nby loopy750\n\nOBS WebSocket version: " + checkWebSocketVersion$ + "\n\nHomepage: https://www.github.com/loopy750", "About", MsgBox_OkOnly + MsgBox_Information)
+                    _MessageBox "About", "Loopy SRT Stats Monitor v" + Ver + " (" + VerDate + ")" + EOL + "Portable version" + EOL + "by loopy750" + EOL + EOL + "OBS WebSocket version: " + checkWebSocketVersion$ + EOL + EOL + "Homepage: https://www.github.com/loopy750", "info"
                 End If
             Else
                 If VerPortable = "false" Then
-                    Answer = MessageBox("Loopy SRT Stats Monitor v" + VerBeta + "beta (" + VerDate + ") \nby loopy750\n\nOBS WebSocket version: " + checkWebSocketVersion$ + "\n\nHomepage: https://www.github.com/loopy750", "About", MsgBox_OkOnly + MsgBox_Information)
+                    _MessageBox "About", "Loopy SRT Stats Monitor v" + VerBeta + VerBetaTag + " (" + VerDate + ")" + EOL + "by loopy750" + EOL + EOL + "OBS WebSocket version: " + checkWebSocketVersion$ + EOL + EOL + "Homepage: https://www.github.com/loopy750", "info"
                 Else
-                    Answer = MessageBox("Loopy SRT Stats Monitor v" + VerBeta + "beta (" + VerDate + ") \nPortable version\nby loopy750\n\nOBS WebSocket version: " + checkWebSocketVersion$ + "\n\nHomepage: https://www.github.com/loopy750", "About", MsgBox_OkOnly + MsgBox_Information)
+                    _MessageBox "About", "Loopy SRT Stats Monitor v" + VerBeta + VerBetaTag + " (" + VerDate + ")" + EOL + "Portable version\nby loopy750" + EOL + EOL + "OBS WebSocket version: " + checkWebSocketVersion$ + EOL + EOL + "Homepage: https://www.github.com/loopy750", "info"
                 End If
             End If
 
@@ -4020,31 +4054,185 @@ Sub ErrorDisplay (ErrorTestVal)
 
         ' Error 6 message
         If ErrorTestVal = 6 Then
-            BSOD& = __imageMEM&("is_obs_open.png")
-            _PutImage (195, 27)-(605, 90), BSOD&
-            _FreeImage BSOD&
+            'BSOD& = __imageMEM&("is_obs_open.png")
+            '_PutImage (195, 27)-(605, 90), BSOD&
+            '_FreeImage BSOD&
+
+            If InStr(Command$, "-classic") = 0 Then
+
+                ' Set font for error screen
+                On Error GoTo App_Fail
+                ' Set OS variables
+                Select Case OS
+                    Case "WINDOWS"
+                        If _FileExists(Environ$("SYSTEMROOT") + "\fonts\SegUIVar.ttf") Then
+                            _Font _LoadFont(Environ$("SYSTEMROOT") + "\fonts\SegUIVar.ttf", 24)
+                        ElseIf _FileExists(Environ$("SYSTEMROOT") + "\fonts\phagspa.ttf") Then
+                            _Font _LoadFont(Environ$("SYSTEMROOT") + "\fonts\phagspa.ttf", 24)
+                        End If
+                    Case "LINUX"
+                        If _FileExists(Environ$("SYSTEMROOT") + "SegUIVar.ttf") Then
+                            _Font _LoadFont(Environ$("SYSTEMROOT") + "SegUIVar.ttf", 24)
+                        ElseIf _FileExists(Environ$("SYSTEMROOT") + "seguivar.ttf") Then
+                            _Font _LoadFont(Environ$("SYSTEMROOT") + "seguivar.ttf", 24)
+                        ElseIf _FileExists(Environ$("SYSTEMROOT") + "phagspa.ttf") Then
+                            _Font _LoadFont(Environ$("SYSTEMROOT") + "phagspa.ttf", 24)
+                        ElseIf _FileExists(Environ$("SYSTEMROOT") + "seguisb.ttf") Then
+                            _Font _LoadFont(Environ$("SYSTEMROOT") + "seguisb.ttf", 24)
+                        ElseIf _FileExists(Environ$("SYSTEMROOT") + "segoeui.ttf") Then
+                            _Font _LoadFont(Environ$("SYSTEMROOT") + "segoeui.ttf", 24)
+                        ElseIf _FileExists("/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf") Then
+                            _Font _LoadFont("/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf", 24)
+                        ElseIf _FileExists("/Library/Fonts/Arial Unicode.ttf") Then
+                            _Font _LoadFont("/Library/Fonts/Arial Unicode.ttf", 24)
+                        End If
+                End Select
+                On Error GoTo 0
+
+            End If
+
+            Color _RGB(254, 254, 254), _RGB(1, 100, 200)
+            _UPrintString (30, 1.5 * 18), "Connection to OBS Studio WebSocket failed"
+
+            If InStr(Command$, "-classic") = 0 Then
+
+                ' Set font for error screen
+                On Error GoTo App_Fail
+                ' Set OS variables
+                Select Case OS
+                    Case "WINDOWS"
+                        If _FileExists(Environ$("SYSTEMROOT") + "\fonts\SegUIVar.ttf") Then
+                            _Font _LoadFont(Environ$("SYSTEMROOT") + "\fonts\SegUIVar.ttf", 14)
+                        ElseIf _FileExists(Environ$("SYSTEMROOT") + "\fonts\phagspa.ttf") Then
+                            _Font _LoadFont(Environ$("SYSTEMROOT") + "\fonts\phagspa.ttf", 14)
+                        ElseIf _FileExists(Environ$("SYSTEMROOT") + "\fonts\leelawui.ttf") Then
+                            _Font _LoadFont(Environ$("SYSTEMROOT") + "\fonts\leelawui.ttf", 14)
+                        End If
+                    Case "LINUX"
+                        If _FileExists(Environ$("SYSTEMROOT") + "SegUIVar.ttf") Then
+                            _Font _LoadFont(Environ$("SYSTEMROOT") + "SegUIVar.ttf", 14)
+                        ElseIf _FileExists(Environ$("SYSTEMROOT") + "seguivar.ttf") Then
+                            _Font _LoadFont(Environ$("SYSTEMROOT") + "seguivar.ttf", 14)
+                        ElseIf _FileExists(Environ$("SYSTEMROOT") + "phagspa.ttf") Then
+                            _Font _LoadFont(Environ$("SYSTEMROOT") + "phagspa.ttf", 13)
+                        ElseIf _FileExists(Environ$("SYSTEMROOT") + "leelawui.ttf") Then
+                            _Font _LoadFont(Environ$("SYSTEMROOT") + "leelawui.ttf", 14)
+                        ElseIf _FileExists(Environ$("SYSTEMROOT") + "seguisb.ttf") Then
+                            _Font _LoadFont(Environ$("SYSTEMROOT") + "seguisb.ttf", 14)
+                        ElseIf _FileExists(Environ$("SYSTEMROOT") + "segoeui.ttf") Then
+                            _Font _LoadFont(Environ$("SYSTEMROOT") + "segoeui.ttf", 14)
+                        ElseIf _FileExists("/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf") Then
+                            _Font _LoadFont("/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf", 13)
+                        ElseIf _FileExists("/Library/Fonts/Arial Unicode.ttf") Then
+                            _Font _LoadFont("/Library/Fonts/Arial Unicode.ttf", 13)
+                        End If
+                End Select
+                On Error GoTo 0
+
+            End If
+
+            String_6_1 = 28
+            String_6_2 = 224
+            String_6_3 = 282
+
+            If InStr(Error_msg, "obs-websocket-http") Then
+
+                Error_msg_6_1 = "OBS " + c34 + "WebSocket Server" + c34 + " connection failed. Configure " + c34 + "HTTPBindAddress, HTTPBindPort, ws_url, ws_password" + c34
+                Error_msg_6_1a = "in " + c34 + "config.ini" + c34 + " and retry."
+
+                Error_msg_6_2 = "If configuration is correct, check OBS Studio is open, " + c34 + "WebSocket Server" + c34 + " is enabled in OBS Studio, and"
+                Error_msg_6_2a = c34 + "obs-websocket-http" + c34 + " is copied. Enable " + c34 + "WebSocket Server" + c34 + " in OBS Studio via Tools --> WebSocket Server Settings."
+
+                Error_msg_6_3 = "Check " + c34 + "WebSocketConnection" + c34 + " in " + c34 + "config.ini" + c34 + " is set to the required connection method. " + c34 + "obs-websocket-http" + c34
+                Error_msg_6_3a = "requires OBS WebSocket 5, included in the latest OBS Studio."
+
+                _UPrintString (String_6_1, 15.5 * 18), Chr$(16) + " obs-websocket-http": _UPrintString (String_6_2, 15.5 * 18), ":": _UPrintString (String_6_3, 15.5 * 18), "http://" + Left$(HTTP_Bind_Address, 64) + ":" + Left$(HTTP_Bind_Port, 64)
+            ElseIf InStr(Error_msg, "Node.js") Then
+
+                Error_msg_6_1 = "OBS " + c34 + "WebSocket Server" + c34 + " connection failed. Correctly configure " + c34 + "WebsocketAddress, WebsocketPassword" + c34 + " in"
+                Error_msg_6_1a = c34 + "config.ini" + c34 + " and retry."
+
+                Error_msg_6_2 = "If configuration is correct, check OBS Studio is open, " + c34 + "WebSocket Server" + c34 + " is enabled in OBS Studio, and " + c34 + "Node.js" + c34
+                Error_msg_6_2a = "is installed."
+
+                Error_msg_6_3 = "Check " + c34 + "WebSocketConnection" + c34 + " in " + c34 + "config.ini" + c34 + " is set to the required connection method."
+
+                _UPrintString (String_6_1, 15.5 * 18), Chr$(16) + " WebSocket Address": _UPrintString (String_6_2, 15.5 * 18), ":": _UPrintString (String_6_3, 15.5 * 18), "ws://" + Left$(OBS_URL, 64)
+            End If
+
+            Color _RGB(254, 254, 254), _RGB(1, 100, 200)
+            _UPrintString (String_6_1, 5 * 18), Error_msg_6_1
+            _UPrintString (String_6_1, 6 * 18), Error_msg_6_1a
+            _UPrintString (String_6_1, 8 * 18), Error_msg_6_2
+            _UPrintString (String_6_1, 9 * 18), Error_msg_6_2a
+            _UPrintString (String_6_1, 11 * 18), Error_msg_6_3
+            _UPrintString (String_6_1, 12 * 18), Error_msg_6_3a
+
+            _UPrintString (String_6_1, 14.5 * 18), Chr$(16) + " Current Status": _UPrintString (String_6_2, 14.5 * 18), ":": _UPrintString (String_6_3, 14.5 * 18), "Test " + _Trim$(Str$(ErrorTestVal)) + " of 10 failed"
+            If VerBeta = "" Then
+                _UPrintString (String_6_1, 16.5 * 18), Chr$(16) + " Program Version": _UPrintString (String_6_2, 15.5 * 18), ":": _UPrintString (String_6_3, 15.5 * 18), "Loopy SRT Monitor v" + Ver + ""
+            Else
+                _UPrintString (String_6_1, 16.5 * 18), Chr$(16) + " Program Version": _UPrintString (String_6_2, 16.5 * 18), ":": _UPrintString (String_6_3, 16.5 * 18), "Loopy SRT Monitor v" + VerBeta + VerBetaTag + ""
+            End If
+
+            _UPrintString (598, 19 * 18), "Program will close shortly"
+            Sound 440, 1, 0.1, -0.5, 4
+
         End If
 
-        BSOD& = __imageMEM&("face_sad_x.png")
-        _PutImage (24, 46)-(81, 158), BSOD&
-        _FreeImage BSOD&
-        Color _RGB(254, 254, 254), _RGB(1, 100, 200)
-        _PrintString (16, 12 * 18), "> Test #" + _Trim$(Str$(ErrorTestVal)) + " of 10 failed"
-        If InStr(Error_msg, Chr$(10)) >= 1 Then
-            _PrintString (16, 14 * 18), Left$(Error_msg, InStr(Error_msg, Chr$(10)) - 1)
-            _PrintString (16, 15 * 18), Mid$(Error_msg, InStr(Error_msg, Chr$(10)) + 1)
-            _PrintString (16, 16 * 18), Mid$(Error_msg_3, 1)
-            Sound 440, 1.5
-        Else
-            _PrintString (16, 14 * 18), Error_msg
+        If ErrorTestVal <> 6 Then
+
+            If InStr(Command$, "-classic") = 0 Then
+
+                ' Set font for error screen
+                On Error GoTo App_Fail
+                ' Set OS variables
+                Select Case OS
+                    Case "WINDOWS"
+                        If _FileExists(Environ$("SYSTEMROOT") + "\fonts\SegUIVar.ttf") Then
+                            _Font _LoadFont(Environ$("SYSTEMROOT") + "\fonts\SegUIVar.ttf", 12)
+                        ElseIf _FileExists(Environ$("SYSTEMROOT") + "\fonts\phagspa.ttf") Then
+                            _Font _LoadFont(Environ$("SYSTEMROOT") + "\fonts\phagspa.ttf", 12)
+                        ElseIf _FileExists(Environ$("SYSTEMROOT") + "\fonts\leelawui.ttf") Then
+                            _Font _LoadFont(Environ$("SYSTEMROOT") + "\fonts\leelawui.ttf", 12)
+                        End If
+                    Case "LINUX"
+                        If _FileExists("seguisb.ttf") Then _Font _LoadFont("seguisb.ttf", 12)
+                End Select
+                On Error GoTo 0
+
+            End If
+
+            BSOD& = __imageMEM&("face_sad_x.png")
+            _PutImage (24, 46)-(81, 158), BSOD&
+            _FreeImage BSOD&
+
+            Color _RGB(254, 254, 254), _RGB(1, 100, 200)
+            _UPrintString (16, 12 * 18), "> Test #" + _Trim$(Str$(ErrorTestVal)) + " of 10 failed"
+            If InStr(Error_msg, Chr$(10)) >= 1 Then
+                _UPrintString (16, 14 * 18), Left$(Error_msg, InStr(Error_msg, Chr$(10)) - 1)
+                _UPrintString (16, 15 * 18), Mid$(Error_msg, InStr(Error_msg, Chr$(10)) + 1)
+                _UPrintString (16, 16 * 18), Mid$(Error_msg_3, 1)
+                Sound 880, 1, 0.25, -0.25, 4
+                Sound 440, 1, 0.25, 0.25, 4
+            Else
+                _UPrintString (16, 14 * 18), Error_msg
+            End If
+            _UPrintString (16, 20 * 18), "Program will exit shortly or press any key to exit now..."
+            If VerBeta = "" Then
+                _UPrintString (638, 21 * 18), "Loopy SRT Monitor v" + Ver + ""
+            Else
+                _UPrintString (596, 21 * 18), "Loopy SRT Monitor v" + VerBeta + VerBetaTag + ""
+            End If
+
         End If
-        _PrintString (16, 20 * 18), "Program will exit shortly or press any key to exit now..."
-        _PrintString (645, 21 * 18), "Loopy SRT Monitor v" + Ver + ""
         _Display
         _Delay 0.5
         If HTTP_Enabled And HTTP_Auto_Open <> "false" Then If OS = "WINDOWS" And _FileExists(HTTP_File) Then Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
         Error_msg_3 = ""
-        For Error_Exit = 1 To 120
+        If _FileExists(filePrevious) Then Kill filePrevious
+        If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
+        For Error_Exit = 1 To 180
             _Delay 0.5
             If _Exit Then System
             If InKey$ <> "" Then System
@@ -4164,7 +4352,7 @@ End Sub
 Sub http_client_connect (HTTP_Mode$, HTTP_Scene$)
 
     On Error GoTo App_Fail
-    App_Refresh = TRUE
+    App_Refresh = True
 
     HTTP_Timer_GET = 0: HTTP_GET_a = "": HTTP_GET_a2 = "": HTTP_GET_i = 0: HTTP_GET_i2 = 0: HTTP_GET_i3 = 0: HTTP_GET_l = 0: HTTP_GET_d = "": HTTP_GET_d_2 = ""
     GetCurrentProgramScene.tmp = "": GetMediaInputStatus.tmp = "": GetVersion.tmp = ""
@@ -4176,7 +4364,7 @@ Sub http_client_connect (HTTP_Mode$, HTTP_Scene$)
     If http_connect_timer = 1 Then
         HTTP_Port_Client = "TCP/IP:" + HTTP_Bind_Port + ":"
         http_client = _OpenClient(HTTP_Port_Client + HTTP_Bind_Address)
-        If http_client = 0 Then RefreshDisplayRequest = TRUE: Error_msg$ = "- Unable to connect, check if " + c34 + HTTP_Bind_Address + ":" + HTTP_Bind_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to connect to " + c34 + "obs-websocket-http" + c34 + ". (Error: #15)": _Delay 3: Exit Sub
+        If http_client = 0 Then RefreshDisplayRequest = True: Error_msg$ = "- Unable to connect, check if " + c34 + HTTP_Bind_Address + ":" + HTTP_Bind_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to connect to " + c34 + "obs-websocket-http" + c34 + ". (Error: #15)": _Delay 3: Exit Sub
     End If
 
     Select Case LCase$(HTTP_Mode$)
@@ -4187,7 +4375,7 @@ Sub http_client_connect (HTTP_Mode$, HTTP_Scene$)
             HTTP_Header = ""
             HTTP_Header = HTTP_Header + "POST /emit/SetCurrentProgramScene HTTP/1.1" + SLS_EOL
             HTTP_Header = HTTP_Header + "Host: " + HTTP_Bind_Address + ":" + HTTP_Bind_Port + SLS_EOL
-            HTTP_Header = HTTP_Header + "User-Agent: curl/7.88.1" + SLS_EOL
+            HTTP_Header = HTTP_Header + "User-Agent: curl/8.1.2" + SLS_EOL
             HTTP_Header = HTTP_Header + "Accept: */*" + SLS_EOL
             HTTP_Header = HTTP_Header + "Authorization: " + HTTP_Auth_Key + SLS_EOL
             HTTP_Header = HTTP_Header + "Content-type: application/json" + SLS_EOL
@@ -4208,7 +4396,7 @@ Sub http_client_connect (HTTP_Mode$, HTTP_Scene$)
             HTTP_Header = ""
             HTTP_Header = HTTP_Header + "POST /call/GetCurrentProgramScene HTTP/1.1" + SLS_EOL
             HTTP_Header = HTTP_Header + "Host: " + HTTP_Bind_Address + ":" + HTTP_Bind_Port + SLS_EOL
-            HTTP_Header = HTTP_Header + "User-Agent: curl/7.88.1" + SLS_EOL
+            HTTP_Header = HTTP_Header + "User-Agent: curl/8.1.2" + SLS_EOL
             HTTP_Header = HTTP_Header + "Accept: */*" + SLS_EOL
             HTTP_Header = HTTP_Header + "Authorization: " + HTTP_Auth_Key + SLS_EOL
             HTTP_Header = HTTP_Header + "Content-type: application/json" + SLS_EOL + SLS_EOL
@@ -4253,7 +4441,7 @@ Sub http_client_connect (HTTP_Mode$, HTTP_Scene$)
             HTTP_Header = ""
             HTTP_Header = HTTP_Header + "POST /call/GetMediaInputStatus HTTP/1.1" + SLS_EOL
             HTTP_Header = HTTP_Header + "Host: " + HTTP_Bind_Address + ":" + HTTP_Bind_Port + SLS_EOL
-            HTTP_Header = HTTP_Header + "User-Agent: curl/7.88.1" + SLS_EOL
+            HTTP_Header = HTTP_Header + "User-Agent: curl/8.1.2" + SLS_EOL
             HTTP_Header = HTTP_Header + "Accept: */*" + SLS_EOL
             HTTP_Header = HTTP_Header + "Authorization: " + HTTP_Auth_Key + SLS_EOL
             HTTP_Header = HTTP_Header + "Content-type: application/json" + SLS_EOL
@@ -4298,7 +4486,7 @@ Sub http_client_connect (HTTP_Mode$, HTTP_Scene$)
             HTTP_Header = ""
             HTTP_Header = HTTP_Header + "POST /call/GetVersion HTTP/1.1" + SLS_EOL
             HTTP_Header = HTTP_Header + "Host: " + HTTP_Bind_Address + ":" + HTTP_Bind_Port + SLS_EOL
-            HTTP_Header = HTTP_Header + "User-Agent: curl/7.88.1" + SLS_EOL
+            HTTP_Header = HTTP_Header + "User-Agent: curl/8.1.2" + SLS_EOL
             HTTP_Header = HTTP_Header + "Accept: */*" + SLS_EOL
             HTTP_Header = HTTP_Header + "Authorization: " + HTTP_Auth_Key + SLS_EOL
             HTTP_Header = HTTP_Header + "Content-type: application/json" + SLS_EOL + SLS_EOL
@@ -4347,7 +4535,7 @@ Sub sls_client_connect
     SLS_streams_found = 0: SLS_Uptime1 = 0: SLS_Uptime2 = 0: SLS_streams_seek = 0
 
     On Error GoTo App_Fail
-    App_Refresh = TRUE
+    App_Refresh = True
 
     ' Open client every x seconds to prevent program freezing every second with high pings (v1.1.0)
     If SLS_Server_KeepAlive1 <> 0 Then
@@ -4364,7 +4552,7 @@ Sub sls_client_connect
 
         sls_client = _OpenClient(SLS_Port_Client + SLS_Server_IP)
 
-        If sls_client = 0 Then RefreshDisplayRequest = TRUE: Error_msg$ = "- Unable to connect, check if " + c34 + SLS_Server_IP + ":" + SLS_Server_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to read the SLS /" + Left$(SLS_Stats, 20) + " URL from its http server. (Error: #4)": _Delay 3: Exit Sub
+        If sls_client = 0 Then RefreshDisplayRequest = True: Error_msg$ = "- Unable to connect, check if " + c34 + SLS_Server_IP + ":" + SLS_Server_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to read the SLS /" + Left$(SLS_Stats, 20) + " URL from its http server. (Error: #4)": _Delay 3: Exit Sub
 
         SLS_Ping2 = Timer(.001)
         SLS_PingOut = (SLS_Ping2 - SLS_Ping1)
@@ -4415,7 +4603,7 @@ Sub sls_client_connect_2 ' SLS 2nd IP
     SLS_streams_found = 0: SLS_Uptime1 = 0: SLS_Uptime2 = 0: SLS_streams_seek = 0
 
     On Error GoTo App_Fail
-    App_Refresh = TRUE
+    App_Refresh = True
 
     ' Open client every x seconds to prevent program freezing every second with high pings (v1.1.0)
     If SLS_Server_KeepAlive2 <> 0 Then
@@ -4432,7 +4620,7 @@ Sub sls_client_connect_2 ' SLS 2nd IP
 
         sls_client_2 = _OpenClient(SLS_Port_Client_2 + SLS_Server_IP_2)
 
-        If sls_client_2 = 0 Then RefreshDisplayRequest = TRUE: Error_msg$ = "- Unable to connect, check if " + c34 + SLS_Server_IP_2 + ":" + SLS_Server_Port_2 + c34 + " is correct." + Chr$(10) + "- Program is unable to read the SLS /" + Left$(SLS_Stats_2, 20) + " URL from its http server. (Error: #13)": _Delay 3: Exit Sub
+        If sls_client_2 = 0 Then RefreshDisplayRequest = True: Error_msg$ = "- Unable to connect, check if " + c34 + SLS_Server_IP_2 + ":" + SLS_Server_Port_2 + c34 + " is correct." + Chr$(10) + "- Program is unable to read the SLS /" + Left$(SLS_Stats_2, 20) + " URL from its http server. (Error: #13)": _Delay 3: Exit Sub
 
         SLS_Ping2_2 = Timer(.001)
         SLS_PingOut_2 = (SLS_Ping2_2 - SLS_Ping1_2)
@@ -4482,7 +4670,7 @@ Sub restreamer_client_connect
     restreamer_token.xml = ""
 
     On Error GoTo App_Fail
-    App_Refresh = TRUE
+    App_Refresh = True
 
     ' Open client every x seconds to prevent program freezing every second with high pings (v1.1.1)
     If RESTREAMER_Server_KeepAlive <> 0 Then
@@ -4499,7 +4687,7 @@ Sub restreamer_client_connect
 
         restreamer_client = _OpenClient(RESTREAMER_Port_Client + RESTREAMER_Server_IP)
 
-        If restreamer_client = 0 Then RefreshDisplayRequest = TRUE: Error_msg$ = "- Unable to connect, check if " + c34 + RESTREAMER_Server_IP + ":" + RESTREAMER_Server_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to read the RESTREAMER stats URL from its http server. (Error: #16)": _Delay 3: Exit Sub
+        If restreamer_client = 0 Then RefreshDisplayRequest = True: Error_msg$ = "- Unable to connect, check if " + c34 + RESTREAMER_Server_IP + ":" + RESTREAMER_Server_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to read the RESTREAMER stats URL from its http server. (Error: #16)": _Delay 3: Exit Sub
 
         RESTREAMER_Ping2 = Timer(.001)
         RESTREAMER_PingOut = (RESTREAMER_Ping2 - RESTREAMER_Ping1)
@@ -4520,7 +4708,7 @@ Sub restreamer_client_connect
     RESTREAMER_Header = ""
     RESTREAMER_Header = RESTREAMER_Header + "POST /api/login HTTP/1.1" + RESTREAMER_EOL
     RESTREAMER_Header = RESTREAMER_Header + "Host: " + RESTREAMER_Server_IP + ":" + RESTREAMER_Server_Port + RESTREAMER_EOL
-    RESTREAMER_Header = RESTREAMER_Header + "User-Agent: curl/7.88.1" + RESTREAMER_EOL
+    RESTREAMER_Header = RESTREAMER_Header + "User-Agent: curl/8.1.2" + RESTREAMER_EOL
     RESTREAMER_Header = RESTREAMER_Header + "Accept: */*" + RESTREAMER_EOL
     RESTREAMER_Header = RESTREAMER_Header + "Content-type: application/json" + RESTREAMER_EOL
     RESTREAMER_Header = RESTREAMER_Header + "Content-Length: " + _Trim$(Str$(Len(RESTREAMER_Data))) + RESTREAMER_EOL + RESTREAMER_EOL
@@ -4575,7 +4763,7 @@ Sub restreamer_client_connect
     RESTREAMER_Header = ""
     RESTREAMER_Header = RESTREAMER_Header + "GET /api/v3/session/active?collectors=" + RESTREAMER_Stats + " HTTP/1.1" + RESTREAMER_EOL
     RESTREAMER_Header = RESTREAMER_Header + "Host: " + RESTREAMER_Server_IP + ":" + RESTREAMER_Server_Port + RESTREAMER_EOL
-    RESTREAMER_Header = RESTREAMER_Header + "User-Agent: curl/7.88.1" + RESTREAMER_EOL
+    RESTREAMER_Header = RESTREAMER_Header + "User-Agent: curl/8.1.2" + RESTREAMER_EOL
     RESTREAMER_Header = RESTREAMER_Header + "Accept: application/json" + RESTREAMER_EOL
     RESTREAMER_Header = RESTREAMER_Header + "Authorization: Bearer " + restreamer_token.xml + RESTREAMER_EOL
     RESTREAMER_Header = RESTREAMER_Header + RESTREAMER_EOL
@@ -4589,7 +4777,7 @@ Sub restreamer_client_connect
     RESTREAMER_streams_found = 0: RESTREAMER_streams_seek = 0
 
     On Error GoTo App_Fail
-    App_Refresh = TRUE
+    App_Refresh = True
 
 
 
@@ -4608,7 +4796,7 @@ Sub restreamer_client_connect
 
         restreamer_client = _OpenClient(RESTREAMER_Port_Client + RESTREAMER_Server_IP)
 
-        If restreamer_client = 0 Then RefreshDisplayRequest = TRUE: Error_msg$ = "- Unable to connect, check if " + c34 + RESTREAMER_Server_IP + ":" + RESTREAMER_Server_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to read the RESTREAMER stats URL from its http server. (Error: #16)": _Delay 3: Exit Sub
+        If restreamer_client = 0 Then RefreshDisplayRequest = True: Error_msg$ = "- Unable to connect, check if " + c34 + RESTREAMER_Server_IP + ":" + RESTREAMER_Server_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to read the RESTREAMER stats URL from its http server. (Error: #16)": _Delay 3: Exit Sub
 
         RESTREAMER_Ping2 = Timer(.001)
         RESTREAMER_PingOut = (RESTREAMER_Ping2 - RESTREAMER_Ping1)
@@ -4659,7 +4847,7 @@ Sub rtmp_client_connect
     RTMP_streams_found = 0: RTMP_Uptime1 = 0: RTMP_Uptime2 = 0: RTMP_streams_seek = 0
 
     On Error GoTo App_Fail
-    App_Refresh = TRUE
+    App_Refresh = True
 
     ' Open client every x seconds (v1.1.0)
     If RTMP_Server_KeepAlive <> 0 Then
@@ -4674,7 +4862,7 @@ Sub rtmp_client_connect
         RTMP_Ping1 = Timer(.001)
         rtmp_client = _OpenClient(RTMP_Port_Client + RTMP_Server_IP)
 
-        If rtmp_client = 0 Then RefreshDisplayRequest = TRUE: Error_msg$ = "- Unable to connect, check if " + c34 + RTMP_Server_IP + ":" + RTMP_Server_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to read the NGINX /" + Left$(RTMP_Stats, 20) + " URL from its http server. (Error: #14)": _Delay 3: Exit Sub
+        If rtmp_client = 0 Then RefreshDisplayRequest = True: Error_msg$ = "- Unable to connect, check if " + c34 + RTMP_Server_IP + ":" + RTMP_Server_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to read the NGINX /" + Left$(RTMP_Stats, 20) + " URL from its http server. (Error: #14)": _Delay 3: Exit Sub
 
         RTMP_Ping2 = Timer(.001)
         RTMP_PingOut = (RTMP_Ping2 - RTMP_Ping1)
@@ -4730,7 +4918,7 @@ Sub Multi0 (serverType$)
             If HTTP_Enabled Then If HTTP_Communication_Native Then http_client_connect "GetMedia", MediaSource1 Else Shell _Hide CMD_EXE_HTTP_FAST_GET_MEDIA1 Else Shell _Hide CMD_EXE_FAST + c34 + obs_get_media1 + c34
 
             On Error GoTo App_Fail
-            App_Refresh = TRUE
+            App_Refresh = True
 
 
 
@@ -4776,13 +4964,13 @@ Sub Multi0 (serverType$)
                         Open filePrevious_ms For Input As #92
 
                         If EOF(92) Then
-                            RefreshDisplayRequest = TRUE
+                            RefreshDisplayRequest = True
                             Error_msg = "- Unable to read " + c34 + "SceneOK" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + Chr$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + Chr$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSocket options are correctly set. (Error: #9)"
                             _Delay 3
                             GoTo LOF92
                         End If
 
-                        If LOF(92) = 0 Then NoKill = TRUE: GoTo LOF92 ' Overkill with EOF checking, but just being safe
+                        If LOF(92) = 0 Then NoKill = True: GoTo LOF92 ' Overkill with EOF checking, but just being safe
                         If EOF(92) Then GoTo LOF92
                         Line Input #92, file92
 
@@ -4828,13 +5016,13 @@ Sub Multi0 (serverType$)
             End If
 
 
-            If NoKill Then NoKill = FALSE Else If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
+            If NoKill Then NoKill = False Else If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
         Case "SLS"
             If __SLS_1_Enabled Then sls_client_connect
             If SLS_2_Active Then sls_client_connect_2 ' SLS 2nd IP
 
             On Error GoTo 0
-            App_Refresh = FALSE
+            App_Refresh = False
 
 
             If Dummy_Server <> "" Then DummyServer Dummy_Server
@@ -4867,7 +5055,7 @@ Sub Multi0 (serverType$)
 
             ' ---------- BELABOX detection ----------
 
-            BELABOX_1_Found = FALSE: BELABOX_2_Found = FALSE
+            BELABOX_1_Found = False: BELABOX_2_Found = False
 
             ' Discover if one or two streams are running
             Do
@@ -4891,9 +5079,9 @@ Sub Multi0 (serverType$)
                         If InStr(sls_stats.xml, SLS_Publisher1) Then SLS_Bitrate1 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, c34 + "bitrate" + c34 + ":") + Len(c34 + "bitrate" + c34 + ":")), 6))
 
                         If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
-                            BELABOX_1_Found = TRUE: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime: BELABOX_1_Offline = FALSE ' Uptime not reported in JSON data
+                            BELABOX_1_Found = True: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime: BELABOX_1_Offline = False ' Uptime not reported in JSON data
                         ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
-                            BELABOX_1_Found = TRUE: BELABOX_1_Offline = TRUE: BELABOX_1_Uptime = 0
+                            BELABOX_1_Found = True: BELABOX_1_Offline = True: BELABOX_1_Uptime = 0
                         End If
 
                     End If
@@ -4903,9 +5091,9 @@ Sub Multi0 (serverType$)
                         SLS_Bitrate1 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, "bitrate") + 9, 6))
 
                         If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
-                            BELABOX_1_Found = TRUE: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime: BELABOX_1_Offline = FALSE ' Uptime not reported in JSON data
+                            BELABOX_1_Found = True: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime: BELABOX_1_Offline = False ' Uptime not reported in JSON data
                         ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
-                            BELABOX_1_Found = TRUE: BELABOX_1_Offline = TRUE: BELABOX_1_Uptime = 0
+                            BELABOX_1_Found = True: BELABOX_1_Offline = True: BELABOX_1_Uptime = 0
                         End If
 
                     End If
@@ -4928,13 +5116,13 @@ Sub Multi0 (serverType$)
             If __RESTREAMER_1_Enabled Then restreamer_client_connect
 
             On Error GoTo 0
-            App_Refresh = FALSE
+            App_Refresh = False
 
 
             If Dummy_Server <> "" Then DummyServer Dummy_Server
 
 
-            If GetKeyRestreamer("message", restreamer_stats.xml) = "Missing or invalid JWT token" Then RefreshDisplayRequest = TRUE: Error_msg$ = "- Unable to connect, check if " + c34 + RESTREAMER_Server_IP + ":" + RESTREAMER_Server_Port + c34 + " is correct. Confirm correct username and password." + Chr$(10) + "- Restreamer response is " + c34 + "Missing or invalid JWT token" + c34 + ". (Error: #17)": _Delay 3: Exit Sub
+            If GetKeyRestreamer("message", restreamer_stats.xml) = "Missing or invalid JWT token" Then RefreshDisplayRequest = True: Error_msg$ = "- Unable to connect, check if " + c34 + RESTREAMER_Server_IP + ":" + RESTREAMER_Server_Port + c34 + " is correct. Confirm correct username and password." + Chr$(10) + "- Restreamer response is " + c34 + "Missing or invalid JWT token" + c34 + ". (Error: #17)": _Delay 3: Exit Sub
 
             If InStr(restreamer_stats.xml, RESTREAMER_ID_1) Then
                 RESTREAMER_Bitrate1 = Int(Val(GetKeyRestreamer("bandwidth_rx_kbit", Mid$(restreamer_stats.xml, InStr(restreamer_stats.xml, RESTREAMER_ID_1)))))
@@ -4958,7 +5146,7 @@ Sub Multi0 (serverType$)
             rtmp_client_connect
 
             On Error GoTo App_Fail
-            App_Refresh = TRUE
+            App_Refresh = True
 
             ' Older code:
             'If InStr(rtmp_stats.xml$, "<uptime>") Then RTMP_Uptime1 = Val(Mid$(rtmp_stats.xml$, InStr(rtmp_stats.xml$, "<uptime>") + 8, 16))
@@ -5056,7 +5244,7 @@ Sub Multi0 (serverType$)
 
     MediaSource1Time = MediaSource1TimeMS / 1000
     On Error GoTo 0
-    App_Refresh = FALSE
+    App_Refresh = False
 
     MediaSource1TimeMSOffset = MediaSource1TimeMS - MediaSource1TimeLog
     If MediaSource1TimeMSOffset < 0 Then MediaSource1TimeMSOffset = 0
@@ -5139,8 +5327,8 @@ Sub Multi0 (serverType$)
             End If
         End If
 
-        If tmpFileRestore = TRUE Then
-            tmpFileRestore = FALSE
+        If tmpFileRestore = True Then
+            tmpFileRestore = False
         Else
             If __FileStatusOutput Then statusOutputToFile "[FULL BANDWIDTH]:[STREAM] (" + _Trim$(Str$(CooldownDuration)) + " sec)"
             If ConnectionsLog Then statusConnectionsLogToFile "[INFO] Bandwidth restored for stream, " + _Trim$(Str$(ConnectionsLog1Count)) + " times (" + _Trim$(Str$(CooldownDuration)) + " sec)"
@@ -5199,7 +5387,7 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
             End If
 
             On Error GoTo App_Fail
-            App_Refresh = TRUE
+            App_Refresh = True
 
 
 
@@ -5274,13 +5462,13 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
 
                         Open filePrevious_ms For Input As #92
                         If EOF(92) Then
-                            RefreshDisplayRequest = TRUE
+                            RefreshDisplayRequest = True
                             Error_msg = "- Unable to read " + c34 + "MediaSource1" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + Chr$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + Chr$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSocket options are correctly set. (Error: #7)"
                             _Delay 3
                             GoTo LOF922
                         End If
 
-                        If LOF(92) = 0 Then NoKill = TRUE: GoTo LOF922 ' Overkill with EOF checking, but just being safe
+                        If LOF(92) = 0 Then NoKill = True: GoTo LOF922 ' Overkill with EOF checking, but just being safe
                         Line Input #92, file92
 
                     End If
@@ -5321,7 +5509,7 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
 
                     If Not HTTP_Enabled Then
 
-                        If EOF(92) Then RefreshDisplayRequest = TRUE: Error_msg = "- Unable to read " + c34 + "MediaSource2" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + Chr$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + Chr$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSocket options are correctly set. (Error: #8)": _Delay 3: GoTo LOF922
+                        If EOF(92) Then RefreshDisplayRequest = True: Error_msg = "- Unable to read " + c34 + "MediaSource2" + c34 + ", check " + c34 + "config.ini" + c34 + " & OBS to confirm it's correct." + Chr$(10) + "- If OBS is open, check communication is available via Node.js & obs-websocket-js.": Error_msg_2$ = "- If Node.js is installed, check " + c34 + "Restart playback" + c34 + " is disabled in OBS " + c34 + "Media Source" + c34 + "." + Chr$(10) + "- If " + c34 + "Restart playback" + c34 + " is disabled, check OBS WebSocket options are correctly set. (Error: #8)": _Delay 3: GoTo LOF922
                         Line Input #92, file92
 
                     End If
@@ -5359,15 +5547,15 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
             End If
 
 
-            If NoKill = TRUE Then NoKill = FALSE Else If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
+            If NoKill = True Then NoKill = False Else If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
             On Error GoTo 0
-            App_Refresh = FALSE
+            App_Refresh = False
         Case "SLS"
             If __SLS_1_Enabled Then sls_client_connect
             If SLS_2_Active Then sls_client_connect_2 ' SLS 2nd IP
 
             On Error GoTo 0
-            App_Refresh = FALSE
+            App_Refresh = False
 
 
             If Dummy_Server <> "" Then DummyServer Dummy_Server
@@ -5462,7 +5650,7 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
 
             ' ---------- BELABOX detection ----------
 
-            BELABOX_1_Found = FALSE: BELABOX_2_Found = FALSE
+            BELABOX_1_Found = False: BELABOX_2_Found = False
 
 
 
@@ -5492,9 +5680,9 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                             If InStr(sls_stats.xml, SLS_Publisher1) Then SLS_Bitrate1 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, c34 + "bitrate" + c34 + ":") + Len(c34 + "bitrate" + c34 + ":")), 6))
 
                             If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
-                                BELABOX_1_Found = TRUE: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime: BELABOX_1_Offline = FALSE ' Uptime not reported in JSON data
+                                BELABOX_1_Found = True: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime: BELABOX_1_Offline = False ' Uptime not reported in JSON data
                             ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
-                                BELABOX_1_Found = TRUE: BELABOX_1_Offline = TRUE: BELABOX_1_Uptime = 0
+                                BELABOX_1_Found = True: BELABOX_1_Offline = True: BELABOX_1_Uptime = 0
                             End If
 
                         End If
@@ -5503,9 +5691,9 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                             If InStr(sls_stats.xml, SLS_Publisher2) Then SLS_Bitrate2 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, c34 + "bitrate" + c34 + ":") + Len(c34 + "bitrate" + c34 + ":")), 6))
 
                             If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
-                                BELABOX_2_Found = TRUE: BELABOX_2_Uptime = BELABOX_2_Uptime + 1: SLS_Uptime2 = BELABOX_2_Uptime ' Uptime not reported in JSON data
+                                BELABOX_2_Found = True: BELABOX_2_Uptime = BELABOX_2_Uptime + 1: SLS_Uptime2 = BELABOX_2_Uptime ' Uptime not reported in JSON data
                             ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
-                                BELABOX_2_Found = TRUE: BELABOX_2_Offline = TRUE: BELABOX_2_Uptime = 0
+                                BELABOX_2_Found = True: BELABOX_2_Offline = True: BELABOX_2_Uptime = 0
                             End If
 
                         End If
@@ -5515,9 +5703,9 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                             SLS_Bitrate1 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, "bitrate") + 9, 6))
 
                             If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
-                                BELABOX_1_Found = TRUE: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime: BELABOX_1_Offline = FALSE ' Uptime not reported in JSON data
+                                BELABOX_1_Found = True: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime: BELABOX_1_Offline = False ' Uptime not reported in JSON data
                             ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
-                                BELABOX_1_Found = TRUE: BELABOX_1_Offline = TRUE: BELABOX_1_Uptime = 0
+                                BELABOX_1_Found = True: BELABOX_1_Offline = True: BELABOX_1_Uptime = 0
                             End If
 
                         End If
@@ -5526,9 +5714,9 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                             SLS_Bitrate2 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, "bitrate") + 9, 6))
 
                             If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
-                                BELABOX_2_Found = TRUE: BELABOX_2_Uptime = BELABOX_2_Uptime + 1: SLS_Uptime2 = BELABOX_2_Uptime ' Uptime not reported in JSON data
+                                BELABOX_2_Found = True: BELABOX_2_Uptime = BELABOX_2_Uptime + 1: SLS_Uptime2 = BELABOX_2_Uptime ' Uptime not reported in JSON data
                             ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
-                                BELABOX_2_Found = TRUE: BELABOX_2_Offline = TRUE: BELABOX_2_Uptime = 0
+                                BELABOX_2_Found = True: BELABOX_2_Offline = True: BELABOX_2_Uptime = 0
                             End If
 
                         End If
@@ -5575,9 +5763,9 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                             If InStr(sls_stats.xml, SLS_Publisher1) Then SLS_Bitrate1 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, c34 + "bitrate" + c34 + ":") + Len(c34 + "bitrate" + c34 + ":")), 6))
 
                             If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
-                                BELABOX_1_Found = TRUE: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime: BELABOX_1_Offline = FALSE ' Uptime not reported in JSON data
+                                BELABOX_1_Found = True: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime: BELABOX_1_Offline = False ' Uptime not reported in JSON data
                             ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
-                                BELABOX_1_Found = TRUE: BELABOX_1_Offline = TRUE: BELABOX_1_Uptime = 0
+                                BELABOX_1_Found = True: BELABOX_1_Offline = True: BELABOX_1_Uptime = 0
                             End If
 
                         End If
@@ -5586,9 +5774,9 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                             If InStr(sls_stats_2.xml, SLS_Publisher2) Then SLS_Bitrate2 = Val(Mid$(sls_stats_2.xml, (InStr(sls_stats_2.xml, c34 + "bitrate" + c34 + ":") + Len(c34 + "bitrate" + c34 + ":")), 6))
 
                             If _Trim$(Mid$(sls_stats_2.xml, InStr(InStr(sls_stats_2.xml, SLS_Publisher2), sls_stats_2.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
-                                BELABOX_2_Found = TRUE: BELABOX_2_Uptime = BELABOX_2_Uptime + 1: SLS_Uptime2 = BELABOX_2_Uptime: BELABOX_2_Offline = FALSE ' Uptime not reported in JSON data
+                                BELABOX_2_Found = True: BELABOX_2_Uptime = BELABOX_2_Uptime + 1: SLS_Uptime2 = BELABOX_2_Uptime: BELABOX_2_Offline = False ' Uptime not reported in JSON data
                             ElseIf Left$(_Trim$(Mid$(sls_stats_2.xml, InStr(InStr(sls_stats_2.xml, SLS_Publisher2), sls_stats_2.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
-                                BELABOX_2_Found = TRUE: BELABOX_2_Offline = TRUE: BELABOX_2_Uptime = 0
+                                BELABOX_2_Found = True: BELABOX_2_Offline = True: BELABOX_2_Uptime = 0
                             End If
 
                         End If
@@ -5598,9 +5786,9 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                             SLS_Bitrate1 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, "bitrate") + 9, 6))
 
                             If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
-                                BELABOX_1_Found = TRUE: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime: BELABOX_1_Offline = FALSE ' Uptime not reported in JSON data
+                                BELABOX_1_Found = True: BELABOX_1_Uptime = BELABOX_1_Uptime + 1: SLS_Uptime1 = BELABOX_1_Uptime: BELABOX_1_Offline = False ' Uptime not reported in JSON data
                             ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher1), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "false" Then
-                                BELABOX_1_Found = TRUE: BELABOX_1_Offline = TRUE: BELABOX_1_Uptime = 0
+                                BELABOX_1_Found = True: BELABOX_1_Offline = True: BELABOX_1_Uptime = 0
                             End If
 
                         End If
@@ -5609,9 +5797,9 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                             SLS_Bitrate2 = Val(Mid$(sls_stats_2.xml, InStr(InStr(sls_stats_2.xml, SLS_Publisher2), sls_stats_2.xml, "bitrate") + 9, 6))
 
                             If _Trim$(Mid$(sls_stats_2.xml, InStr(InStr(sls_stats_2.xml, SLS_Publisher2), sls_stats_2.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
-                                BELABOX_2_Found = TRUE: BELABOX_2_Uptime = BELABOX_2_Uptime + 1: SLS_Uptime2 = BELABOX_2_Uptime ' Uptime not reported in JSON data
+                                BELABOX_2_Found = True: BELABOX_2_Uptime = BELABOX_2_Uptime + 1: SLS_Uptime2 = BELABOX_2_Uptime ' Uptime not reported in JSON data
                             ElseIf Left$(_Trim$(Mid$(sls_stats_2.xml, InStr(InStr(sls_stats_2.xml, SLS_Publisher2), sls_stats_2.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
-                                BELABOX_2_Found = TRUE: BELABOX_2_Offline = TRUE: BELABOX_2_Uptime = 0
+                                BELABOX_2_Found = True: BELABOX_2_Offline = True: BELABOX_2_Uptime = 0
                             End If
 
                         End If
@@ -5650,11 +5838,11 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
             If __RESTREAMER_1_Enabled Or __RESTREAMER_2_Enabled Then restreamer_client_connect
 
             On Error GoTo 0
-            App_Refresh = FALSE
+            App_Refresh = False
 
             If Dummy_Server <> "" Then DummyServer Dummy_Server
 
-            If GetKeyRestreamer("message", restreamer_stats.xml) = "Missing or invalid JWT token" Then RefreshDisplayRequest = TRUE: Error_msg$ = "- Unable to connect, check if " + c34 + RESTREAMER_Server_IP + ":" + RESTREAMER_Server_Port + c34 + " is correct. Confirm correct username and password." + Chr$(10) + "- Restreamer response is " + c34 + "Missing or invalid JWT token" + c34 + ". (Error: #18)": _Delay 3: Exit Sub
+            If GetKeyRestreamer("message", restreamer_stats.xml) = "Missing or invalid JWT token" Then RefreshDisplayRequest = True: Error_msg$ = "- Unable to connect, check if " + c34 + RESTREAMER_Server_IP + ":" + RESTREAMER_Server_Port + c34 + " is correct. Confirm correct username and password." + Chr$(10) + "- Restreamer response is " + c34 + "Missing or invalid JWT token" + c34 + ". (Error: #18)": _Delay 3: Exit Sub
 
             If __RESTREAMER_1_Enabled Then
                 If InStr(restreamer_stats.xml, RESTREAMER_ID_1) Then
@@ -5702,7 +5890,7 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
             rtmp_client_connect
 
             On Error GoTo App_Fail
-            App_Refresh = TRUE
+            App_Refresh = True
 
             ' name:                       ' time:                                 ' bytes_in:
             ' (1) = live                  ' (1) time #1                           ' (1) total
@@ -5865,7 +6053,7 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
     End Select
 
     On Error GoTo 0
-    App_Refresh = FALSE
+    App_Refresh = False
 
     If serverSelection%% = 0 Or serverSelection%% = 1 Then
         MediaSource1TimeMSOffset = MediaSource1TimeMS - MediaSource1TimeLog
@@ -6007,15 +6195,15 @@ Sub Multi1_CMD_LBR_1
             If Right$(Scene_Current, 4) <> " LBR" And Right$(previousScene, 4) <> " LBR" Then ' Only set variable if not a Low Bitrate scene
                 ' titleScene1 cannot be changed so previousScene is used to change to LBR scene
                 ' this section changes to LBR scene but does not change back
-                If streamsUp = "1" Then SRR = TRUE: titleScene1 = previousScene: Scene_Current = titleScene1 ' For LBR title temp
-                If streamsUp = "12" Then SRR = TRUE: titleScene12 = previousScene: Scene_Current = titleScene12 ' For LBR title temp
+                If streamsUp = "1" Then SRR = True: titleScene1 = previousScene: Scene_Current = titleScene1 ' For LBR title temp
+                If streamsUp = "12" Then SRR = True: titleScene12 = previousScene: Scene_Current = titleScene12 ' For LBR title temp
             End If
         End If
 
         ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
         If SRR Then
             If HTTP_Communication_Native Then http_client_connect "Set", previousScene + " LBR" Else Shell _Hide _DontWait shell_cmd_1 + previousScene + " LBR" + shell_cmd_2
-            SRR = FALSE
+            SRR = False
         Else
             ' These two lines were the only code prior to LBR fix
             If Scene_Current = titleScene1 Then
@@ -6050,13 +6238,13 @@ Sub Multi1_CMD_LBR_2
 
                     If streamsUp = "1" Then
                         If previousScene <> titleScene1 Or Scene_Current <> titleScene1 Then
-                            SRR = TRUE
+                            SRR = True
                         End If
                     End If
 
                     If streamsUp = "12" Then
                         If previousScene <> titleScene12 Or Scene_Current <> titleScene12 Then
-                            SRR = TRUE
+                            SRR = True
                         End If
                     End If
 
@@ -6069,7 +6257,7 @@ Sub Multi1_CMD_LBR_2
                 End If
                 ' titleScene change should not be permanent when ReturnPreviousSceneRemember=false, so use titleScene Temp to revert
                 titleScene1 = titleScene1Temp: titleScene2 = titleScene2Temp: titleScene12 = titleScene12Temp
-                SRR = FALSE
+                SRR = False
             Else
                 ' Change scene for multi camera
                 ' These two lines were the only code prior to LBR fix
@@ -6084,8 +6272,8 @@ Sub Multi1_CMD_LBR_2
         End If
         On Error GoTo 0
 
-        If tmpFileRestore = TRUE Then
-            tmpFileRestore = FALSE
+        If tmpFileRestore = True Then
+            tmpFileRestore = False
         Else
             If __FileStatusOutput Then statusOutputToFile "[FULL BANDWIDTH]:[CAMERA #1] (" + _Trim$(Str$(CooldownDuration)) + " sec)"
             If ConnectionsLog Then statusConnectionsLogToFile "[INFO] Bandwidth restored for stream #1, " + _Trim$(Str$(ConnectionsLog1Count)) + " times (" + _Trim$(Str$(CooldownDuration)) + " sec)"
@@ -6123,8 +6311,8 @@ Sub Multi1_CMD_LBR_3
             If Right$(Scene_Current, 4) <> " LBR" And Right$(previousScene, 4) <> " LBR" Then ' Only set variable if not a Low Bitrate scene
                 ' titleScene2 cannot be changed so previousScene is used to change to LBR scene
                 ' this section changes to LBR scene but does not change back
-                If streamsUp = "2" Then SRR = TRUE: titleScene2 = previousScene: Scene_Current = titleScene2 ' For LBR title temp
-                If streamsUp = "12" Then SRR = TRUE: titleScene12 = previousScene: Scene_Current = titleScene12 ' For LBR title temp
+                If streamsUp = "2" Then SRR = True: titleScene2 = previousScene: Scene_Current = titleScene2 ' For LBR title temp
+                If streamsUp = "12" Then SRR = True: titleScene12 = previousScene: Scene_Current = titleScene12 ' For LBR title temp
             End If
         End If
 
@@ -6132,7 +6320,7 @@ Sub Multi1_CMD_LBR_3
         ' Fix for LBR scene when ReturnPreviousScene=true and ReturnPreviousSceneRemember=false
         If SRR Then
             If HTTP_Communication_Native Then http_client_connect "Set", previousScene + " LBR" Else Shell _Hide _DontWait shell_cmd_1 + previousScene + " LBR" + shell_cmd_2
-            SRR = FALSE
+            SRR = False
         Else
             ' These two lines were the only code prior to LBR fix
             If Scene_Current = titleScene2 Then
@@ -6271,13 +6459,13 @@ Sub Multi1_CMD_LBR_4
 
                         If streamsUp = "2" Then
                             If previousScene <> titleScene2 Or Scene_Current <> titleScene2 Then
-                                SRR = TRUE
+                                SRR = True
                             End If
                         End If
 
                         If streamsUp = "12" Then
                             If previousScene <> titleScene12 Or Scene_Current <> titleScene12 Then
-                                SRR = TRUE
+                                SRR = True
                             End If
                         End If
 
@@ -6290,7 +6478,7 @@ Sub Multi1_CMD_LBR_4
                     End If
                     ' titleScene change should not be permanent when ReturnPreviousSceneRemember=false, so use titleScene Temp to revert
                     titleScene1 = titleScene1Temp: titleScene2 = titleScene2Temp: titleScene12 = titleScene12Temp
-                    SRR = FALSE
+                    SRR = False
                 Else
                     ' Change scene for multi camera
                     ' These two lines were the only code prior to LBR fix
@@ -6305,8 +6493,8 @@ Sub Multi1_CMD_LBR_4
             End If
             On Error GoTo 0
 
-            If tmpFileRestore = TRUE Then
-                tmpFileRestore = FALSE
+            If tmpFileRestore = True Then
+                tmpFileRestore = False
             Else
                 If __FileStatusOutput Then statusOutputToFile "[FULL BANDWIDTH]:[CAMERA #2] (" + _Trim$(Str$(CooldownDuration)) + " sec)"
                 If ConnectionsLog Then statusConnectionsLogToFile "[INFO] Bandwidth restored for stream #2, " + _Trim$(Str$(ConnectionsLog1Count)) + " times (" + _Trim$(Str$(CooldownDuration)) + " sec)"
@@ -6474,7 +6662,6 @@ Sub Timer01
                             Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
                             _Delay 1
                             Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File
-                            'If HTTP_Auth_Key = "" Then Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW Else Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW + " --http_auth_key " + HTTP_Auth_Key
                         End If
                     Else
                         Shell _Hide CMD_EXE_HTTP + c34 + "http://" + HTTP_Bind_Address + ":" + HTTP_Bind_Port + "/call/GetVersion" + c34 + " -o " + c34 + filePrevious_ms + c34
@@ -6486,7 +6673,6 @@ Sub Timer01
                             Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
                             _Delay 1
                             Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File
-                            'If HTTP_Auth_Key = "" Then Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW Else Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File + c34 + " --ws_url ws://" + OBS_URL + " --ws_password " + OBS_PW + " --http_auth_key " + HTTP_Auth_Key
                         End If
                     End If
 
@@ -6498,9 +6684,9 @@ Sub Timer01
     End If
 
     ' Display stuff on screen ------------------------------------------------------------------------------------------------------------------------------
-    If Timer_Failed Then Timer_Failed = FALSE: ToolTip(Timer_Fail_CountLB) = "Last Failed: " + Time$: Tooltip_Mouse = TRUE
-    If Timer_Failed1 Then Timer_Failed1 = FALSE: ToolTip(Timer_Fail_CountLB) = "Last Failed: " + Time$: Tooltip_Mouse = TRUE
-    If Timer_Failed2 Then Timer_Failed2 = FALSE: ToolTip(Timer_Fail_Count_2LB) = "Last Failed: " + Time$: Tooltip_Mouse = TRUE
+    If Timer_Failed Then Timer_Failed = False: ToolTip(Timer_Fail_CountLB) = "Last Failed: " + Time$: Tooltip_Mouse = True
+    If Timer_Failed1 Then Timer_Failed1 = False: ToolTip(Timer_Fail_CountLB) = "Last Failed: " + Time$: Tooltip_Mouse = True
+    If Timer_Failed2 Then Timer_Failed2 = False: ToolTip(Timer_Fail_Count_2LB) = "Last Failed: " + Time$: Tooltip_Mouse = True
 
     If MediaSource1Time <> 0 Or MediaSource2Time <> 0 And RIST_MediaSource1Time_Count <= 4 And RIST_MediaSource2Time_Count <= 4 Then Timer_Fail = 0 ' SRT ' RIST mode
 
@@ -6513,7 +6699,7 @@ Sub Timer01
     Else
         If Timer_Fail >= 1 Then
             Control(Timer_FailLB).ForeColor = RED_WARNING
-            Stream_Down_Icon = TRUE
+            Stream_Down_Icon = True
             _Title "Stream Down! - Loopy SRT Monitor"
             iconStatus& = __imageMEM&("icon-x-16.png")
             If iconStatus& < -1 Then
@@ -6527,7 +6713,7 @@ Sub Timer01
 
     ' OK icon
     If Timer_Fail = 0 And Stream_Down_Icon Then
-        Stream_Down_Icon = FALSE
+        Stream_Down_Icon = False
         If Err = 0 Then
             _Title "Loopy SRT Monitor"
             $ExeIcon:'.\icon.ico'
@@ -6543,8 +6729,8 @@ Sub Timer01
             SetCaption (Timer_Fail_CountLB), LTrim$(Str$(Timer_Fail_Count)) + "   /   " + LTrim$(Str$(ConnectionsLog1Count)) + "  times"
         End If
 
-        Control(Stream1LightLB).Hidden = TRUE
-        Control(Stream2LightLB).Hidden = TRUE
+        Control(Stream1LightLB).Hidden = True
+        Control(Stream2LightLB).Hidden = True
         If MediaSource1Time <= 1 Then
             Control(StreamLightLB).ForeColor = _RGB32(252, 20, 10)
             SetCaption (StreamLightLB), "____________________________________"
@@ -6692,11 +6878,11 @@ Sub Timer01
     If srt_warmup And SceneLBActive_Temp_Disable >= 1 Then
         SceneLBActive_Temp_Disable = SceneLBActive_Temp_Disable + 1
         SceneLBActive_Temp_Disable_Display = " (" + _Trim$(Str$(31 - SceneLBActive_Temp_Disable)) + "s)"
-        If SceneLBActive_Temp_Disable > 31 Then SceneLBActive_Temp_Disable = 0: SceneLBActive_Temp_Disable_Display = "": SceneLBActive = TRUE ' Number of seconds to disable LBR
+        If SceneLBActive_Temp_Disable > 31 Then SceneLBActive_Temp_Disable = 0: SceneLBActive_Temp_Disable_Display = "": SceneLBActive = True ' Number of seconds to disable LBR
     End If
     If CooldownLog = 0 And srt_warmup And td_update > 1.1 And SceneLBActive And SceneLBActive_Temp_Disable = 0 And srt_warmup_LB = 0 Then
         SceneLBActive_Temp_Disable = 1
-        SceneLBActive = FALSE
+        SceneLBActive = False
         SetCaption StatusLB, "Update interval too high, LBR temporarily disabled...": updateDisplay = 1 ' Display error if update interval too high
     End If
     If CooldownLog = 0 And srt_warmup And td_update > 1.1 And Not SceneLBActive And SceneLBActive_Temp_Disable >= 1 Then
@@ -6798,7 +6984,7 @@ Sub Timer01
         If MediaSource2Time <= 2 Then Control(Uptime_Stream_2LB).ForeColor = RED_FAIL Else If MediaSource2Time >= 3 And MediaSource2Time < 10 Then Control(Uptime_Stream_2LB).ForeColor = RED_WARNING Else Control(Uptime_Stream_2LB).ForeColor = GREEN_OK
         If BELABOX_2_Found And MediaSource2Time >= 1 And MediaSource2Time <= 10 Then SetCaption (Uptime_Stream_2LB), calc_srt$(MediaSource2Time, 1) + calc_srt_sec$ + "*" Else SetCaption (Uptime_Stream_2LB), calc_srt$(MediaSource2Time, 1) + calc_srt_sec$ ' SRT ' SLS 2nd IP
 
-        Control(StreamLightLB).Hidden = TRUE
+        Control(StreamLightLB).Hidden = True
         If MediaSource1Time <= 1 Then
             Control(Stream1LightLB).ForeColor = _RGB32(252, 20, 10)
             SetCaption (Stream1LightLB), "____________________________________"
@@ -6816,13 +7002,13 @@ Sub Timer01
 
         If Timer_Fail_Stream1 = 2 And CooldownStartup = 0 Then
             Timer_Fail_Count1 = Timer_Fail_Count1 + 1
-            Timer_Failed1 = TRUE
+            Timer_Failed1 = True
             If Timer_Fail_Count1 > 999 Then Timer_Fail_Count1 = 999
         End If
 
         If Timer_Fail_Stream2 = 2 And CooldownStartup = 0 Then
             Timer_Fail_Count2 = Timer_Fail_Count2 + 1
-            Timer_Failed2 = TRUE
+            Timer_Failed2 = True
             If Timer_Fail_Count2 > 999 Then Timer_Fail_Count2 = 999
         End If
     Else
@@ -6843,7 +7029,7 @@ Sub Timer01
         SetCaption (Stream_Fail_TimerLB), calc_srt$(Timer_Fail_Stream1, 1) + calc_srt_sec$
     End If
 
-    If Scene_OK = "" Or Scene_Fail = "" Or Scene_Intro = "" Then RefreshDisplayRequest = TRUE: Error_msg = "- Variable/s for scenes empty, check if " + c34 + config_main + c34 + " exists. (Error: #5)": _Delay 3
+    If Scene_OK = "" Or Scene_Fail = "" Or Scene_Intro = "" Then RefreshDisplayRequest = True: Error_msg = "- Variable/s for scenes empty, check if " + c34 + config_main + c34 + " exists. (Error: #5)": _Delay 3
 
     If Timer_Fail >= 1 And Exe_OK And streamsUp <> "0" Then
         LoadImageMEM Control(PictureBox1), "tick_warning.png"
@@ -6861,29 +7047,29 @@ Sub Timer01
     ' Update Display: ---------------------------------------------------------------
     ' Debug
     If Not Debug Then
-        Control(DebugFrame).Hidden = TRUE
-        Control(versionFrame).Hidden = FALSE
-        Control(TimerLB).Hidden = TRUE
-        Control(TimerSnapshotLB).Hidden = TRUE
-        Control(td_displayLB2).Hidden = TRUE
-        Control(mouseXLB2).Hidden = TRUE
-        Control(mouseYLB2).Hidden = TRUE
-        Control(__ERRORLINELB2).Hidden = TRUE
-        Control(Debug_TimerLB).Hidden = TRUE
-        Control(Debug_Timer_SnapshotLB).Hidden = TRUE
-        Control(td_displayLB).Hidden = TRUE
-        Control(mouseXLB).Hidden = TRUE
-        Control(mouseYLB).Hidden = TRUE
-        Control(__ERRORLINELB).Hidden = TRUE
-        Control(LowBRTimerLB).Hidden = TRUE
-        Control(br_countdownLB).Hidden = TRUE
-        Control(MSRateLB).Hidden = TRUE
-        Control(MSRateLB2).Hidden = TRUE
-        Control(ms_playLB).Hidden = TRUE
-        Control(ms_playLB2).Hidden = TRUE
-        Control(LBRDelayLB).Hidden = TRUE
-        Control(br_delayLB).Hidden = TRUE
-        Control(PictureBoxLogoBottom).Hidden = FALSE
+        Control(DebugFrame).Hidden = True
+        Control(versionFrame).Hidden = False
+        Control(TimerLB).Hidden = True
+        Control(TimerSnapshotLB).Hidden = True
+        Control(td_displayLB2).Hidden = True
+        Control(mouseXLB2).Hidden = True
+        Control(mouseYLB2).Hidden = True
+        Control(__ERRORLINELB2).Hidden = True
+        Control(Debug_TimerLB).Hidden = True
+        Control(Debug_Timer_SnapshotLB).Hidden = True
+        Control(td_displayLB).Hidden = True
+        Control(mouseXLB).Hidden = True
+        Control(mouseYLB).Hidden = True
+        Control(__ERRORLINELB).Hidden = True
+        Control(LowBRTimerLB).Hidden = True
+        Control(br_countdownLB).Hidden = True
+        Control(MSRateLB).Hidden = True
+        Control(MSRateLB2).Hidden = True
+        Control(ms_playLB).Hidden = True
+        Control(ms_playLB2).Hidden = True
+        Control(LBRDelayLB).Hidden = True
+        Control(br_delayLB).Hidden = True
+        Control(PictureBoxLogoBottom).Hidden = False
         SetCaption Debug_TimerLB, "-"
         SetCaption Debug_Timer_SnapshotLB, "-"
         SetCaption td_displayLB, "-"
@@ -6902,55 +7088,55 @@ Sub Timer01
 
         ' Debug Temp
         If Debug_Temp = "true" Then
-            Control(DebugFrameTemp).Hidden = TRUE
-            Control(DebugTemp1LB).Hidden = TRUE
-            Control(DebugTemp2LB).Hidden = TRUE
-            Control(DebugTemp3LB).Hidden = TRUE
-            Control(DebugTemp4LB).Hidden = TRUE
-            Control(DebugTemp1LB2).Hidden = TRUE
-            Control(DebugTemp2LB2).Hidden = TRUE
-            Control(DebugTemp3LB2).Hidden = TRUE
-            Control(DebugTemp4LB2).Hidden = TRUE
-            Control(Settings).Hidden = FALSE
+            Control(DebugFrameTemp).Hidden = True
+            Control(DebugTemp1LB).Hidden = True
+            Control(DebugTemp2LB).Hidden = True
+            Control(DebugTemp3LB).Hidden = True
+            Control(DebugTemp4LB).Hidden = True
+            Control(DebugTemp1LB2).Hidden = True
+            Control(DebugTemp2LB2).Hidden = True
+            Control(DebugTemp3LB2).Hidden = True
+            Control(DebugTemp4LB2).Hidden = True
+            Control(Settings).Hidden = False
         End If
 
     ElseIf Debug Then
-        Control(DebugFrame).Hidden = FALSE
-        Control(versionFrame).Hidden = TRUE
-        Control(TimerLB).Hidden = FALSE
-        Control(TimerSnapshotLB).Hidden = FALSE
-        Control(td_displayLB2).Hidden = FALSE
-        Control(mouseXLB2).Hidden = FALSE
-        Control(mouseYLB2).Hidden = FALSE
-        Control(__ERRORLINELB2).Hidden = FALSE
-        Control(Debug_TimerLB).Hidden = FALSE
-        Control(Debug_Timer_SnapshotLB).Hidden = FALSE
-        Control(td_displayLB).Hidden = FALSE
-        Control(mouseXLB).Hidden = FALSE
-        Control(mouseYLB).Hidden = FALSE
-        Control(__ERRORLINELB).Hidden = FALSE
-        Control(LowBRTimerLB).Hidden = FALSE
-        Control(ms_playLB).Hidden = FALSE
-        Control(ms_playLB2).Hidden = FALSE
-        Control(br_countdownLB).Hidden = FALSE
-        Control(MSRateLB).Hidden = FALSE
-        Control(MSRateLB2).Hidden = FALSE
-        Control(LBRDelayLB).Hidden = FALSE
-        Control(br_delayLB).Hidden = FALSE
-        Control(PictureBoxLogoBottom).Hidden = TRUE
+        Control(DebugFrame).Hidden = False
+        Control(versionFrame).Hidden = True
+        Control(TimerLB).Hidden = False
+        Control(TimerSnapshotLB).Hidden = False
+        Control(td_displayLB2).Hidden = False
+        Control(mouseXLB2).Hidden = False
+        Control(mouseYLB2).Hidden = False
+        Control(__ERRORLINELB2).Hidden = False
+        Control(Debug_TimerLB).Hidden = False
+        Control(Debug_Timer_SnapshotLB).Hidden = False
+        Control(td_displayLB).Hidden = False
+        Control(mouseXLB).Hidden = False
+        Control(mouseYLB).Hidden = False
+        Control(__ERRORLINELB).Hidden = False
+        Control(LowBRTimerLB).Hidden = False
+        Control(ms_playLB).Hidden = False
+        Control(ms_playLB2).Hidden = False
+        Control(br_countdownLB).Hidden = False
+        Control(MSRateLB).Hidden = False
+        Control(MSRateLB2).Hidden = False
+        Control(LBRDelayLB).Hidden = False
+        Control(br_delayLB).Hidden = False
+        Control(PictureBoxLogoBottom).Hidden = True
 
         ' Debug Temp
         If Debug_Temp = "true" Then
-            Control(DebugFrameTemp).Hidden = FALSE
-            Control(DebugTemp1LB).Hidden = FALSE
-            Control(DebugTemp2LB).Hidden = FALSE
-            Control(DebugTemp3LB).Hidden = FALSE
-            Control(DebugTemp4LB).Hidden = FALSE
-            Control(DebugTemp1LB2).Hidden = FALSE
-            Control(DebugTemp2LB2).Hidden = FALSE
-            Control(DebugTemp3LB2).Hidden = FALSE
-            Control(DebugTemp4LB2).Hidden = FALSE
-            Control(Settings).Hidden = TRUE
+            Control(DebugFrameTemp).Hidden = False
+            Control(DebugTemp1LB).Hidden = False
+            Control(DebugTemp2LB).Hidden = False
+            Control(DebugTemp3LB).Hidden = False
+            Control(DebugTemp4LB).Hidden = False
+            Control(DebugTemp1LB2).Hidden = False
+            Control(DebugTemp2LB2).Hidden = False
+            Control(DebugTemp3LB2).Hidden = False
+            Control(DebugTemp4LB2).Hidden = False
+            Control(Settings).Hidden = True
         End If
 
         SetCaption TimerLB, "TIMER" ' TIMER
@@ -6961,12 +7147,12 @@ Sub Timer01
         SetCaption mouseYLB2, "mouseY"
         SetCaption __ERRORLINELB2, "_ERRORLINE"
         TIMEms Debug_Timer, 0, 0
-        SetCaption (Debug_Timer_SnapshotLB), tout + " sec "
+        SetCaption (Debug_Timer_SnapshotLB), tout + "s "
         ' MS rate
         SetCaption ms_playLB, _Trim$(Str$((MediaSourceTimeMSOffsetDisplay))) + " ms "
         SetCaption ms_playLB2, _Trim$(Str$((MediaSource2TimeMSOffsetDisplay))) + " ms "
-        SetCaption br_countdownLB, _Trim$(Str$(CooldownLog)) + " sec "
-        SetCaption br_delayLB, _Trim$(Str$(LBR_Delay)) + " sec "
+        SetCaption br_countdownLB, _Trim$(Str$(CooldownLog)) + "s "
+        SetCaption br_delayLB, _Trim$(Str$(LBR_Delay)) + "s "
 
     End If
 
@@ -6984,7 +7170,7 @@ Sub Timer01
             ' Output Kbps to file
             If __FileStatusOutput Then
                 On Error GoTo App_Fail
-                App_Refresh = TRUE
+                App_Refresh = True
                 Open outputKbpsFile1 For Output As #200
                 Select Case SLS_Bitrate1
                     Case 0 To 99
@@ -7002,18 +7188,18 @@ Sub Timer01
                 End Select
                 Close 204
                 On Error GoTo 0
-                App_Refresh = FALSE
+                App_Refresh = False
             End If
             returnPreviousSceneTime = 1
         Else
             GoTo Exit_returnPreviousSceneCheck
         End If
-        returnFirstCheck = TRUE
+        returnFirstCheck = True
 
         If HTTP_Enabled Then If HTTP_Communication_Native Then http_client_connect "Get", "" Else Shell _Hide CMD_EXE_HTTP_FAST_GET_SCENE Else Shell _Hide CMD_EXE_FAST + c34 + obs_get_scene + c34
 
         On Error GoTo App_Fail
-        App_Refresh = TRUE
+        App_Refresh = True
 
         If Not HTTP_Enabled Then ' HTTP
 
@@ -7027,7 +7213,7 @@ Sub Timer01
                     Open filePrevious For Input As #96
                     ' LOCK #96
                     Do Until EOF(96)
-                        If LOF(96) = 0 Then NoKill = TRUE: Exit Do ' Overkill with EOF checking, but just being safe
+                        If LOF(96) = 0 Then NoKill = True: Exit Do ' Overkill with EOF checking, but just being safe
                         If EOF(96) Then Exit Do
                         Line Input #96, file96
                         Scene_Bypass_Check = file96
@@ -7072,7 +7258,7 @@ Sub Timer01
             If HTTP_Enabled Then If HTTP_Communication_Native Then http_client_connect "Get", "" Else Shell _Hide CMD_EXE_HTTP_FAST_GET_SCENE Else Shell _Hide CMD_EXE_FAST + c34 + obs_get_scene + c34
 
             On Error GoTo App_Fail
-            App_Refresh = TRUE
+            App_Refresh = True
 
             If Not HTTP_Enabled Then ' HTTP
 
@@ -7084,7 +7270,7 @@ Sub Timer01
                         Open filePrevious For Input As #96
                         ' LOCK #96
                         Do Until EOF(96)
-                            If LOF(96) = 0 Then NoKill = TRUE: Exit Do ' Overkill with EOF checking, but just being safe
+                            If LOF(96) = 0 Then NoKill = True: Exit Do ' Overkill with EOF checking, but just being safe
                             If EOF(96) Then Exit Do
                             Line Input #96, file96
                             Scene_Bypass_Check = file96
@@ -7123,17 +7309,17 @@ Sub Timer01
     End If
     Close #96
 
-    If NoKill Then NoKill = FALSE Else If _FileExists(filePrevious) Then Kill filePrevious
+    If NoKill Then NoKill = False Else If _FileExists(filePrevious) Then Kill filePrevious
 
     On Error GoTo 0
-    App_Refresh = FALSE
+    App_Refresh = False
 
     ' Check if any of the 9 bypass scenes equal the current scene
     If Scene_Bypass_Check <> "none" Then ' In case user has scene name labelled "none", which will break the program
         If Scene_Bypass = Scene_Bypass_Check Or Scene_Bypass_2 = Scene_Bypass_Check Or Scene_Bypass_3 = Scene_Bypass_Check Or Scene_Bypass_4 = Scene_Bypass_Check Or Scene_Bypass_5 = Scene_Bypass_Check Or Scene_Bypass_6 = Scene_Bypass_Check Or Scene_Bypass_7 = Scene_Bypass_Check Or Scene_Bypass_8 = Scene_Bypass_Check Or Scene_Bypass_9 = Scene_Bypass_Check Then
             SetCaption (Scene_CurrentLB), "[ PAUSE ]"
             If Not Scene_Bypass_Log Then
-                Scene_Bypass_Log = TRUE
+                Scene_Bypass_Log = True
                 If __FileStatusOutput Then statusOutputToFile "[STREAM PAUSED]"
                 If ConnectionsLog Then statusConnectionsLogToFile "[INFO] Stream manually paused"
             End If
@@ -7156,7 +7342,7 @@ Sub Timer01
         statusBitrateToFile bitrateOutput
     End If
 
-    Scene_Bypass_Log = FALSE
+    Scene_Bypass_Log = False
 
     ' Execute Stream OK
     If Not __MultiCameraSwitch Then
@@ -7164,8 +7350,8 @@ Sub Timer01
             Timer_Fail = 0
             If CooldownLog = 0 Then Scene_Current = Scene_OK
             If Exe_Fail Then
-                Exe_Fail = FALSE
-                Exe_OK = TRUE
+                Exe_Fail = False
+                Exe_OK = True
                 LoadImageMEM Control(PictureBox1), "tick.png"
                 If HTTP_Communication_Native Then http_client_connect "Set", Scene_OK Else Shell _Hide _DontWait shell_cmd_1 + Scene_OK + shell_cmd_2
                 _Delay 0.033
@@ -7177,11 +7363,11 @@ Sub Timer01
         Else
             If Timer_Fail >= Stream_Fail_Delay Or RIST_MediaSource1Time_Count >= 5 Then ' RIST mode ' Scene_Fail triggered at 5 seconds, the same as SRT timeout
                 If Exe_OK Then
-                    Exe_OK = FALSE
-                    Exe_Fail = TRUE
+                    Exe_OK = False
+                    Exe_Fail = True
                     LoadImageMEM Control(PictureBox1), "cross.png"
                     If Not Exe_Fail_First Then
-                        Exe_Fail_First = TRUE
+                        Exe_Fail_First = True
                         Scene_Current = Scene_Intro
                         If HTTP_Communication_Native Then http_client_connect "Set", Scene_Intro Else Shell _Hide _DontWait shell_cmd_1 + Scene_Intro + shell_cmd_2
                         _Delay 0.033
@@ -7192,7 +7378,7 @@ Sub Timer01
                         If __FileStatusOutput Then statusOutputToFile "[STREAM DOWN]"
                         If ConnectionsLog Then statusConnectionsLogToFile "[WARN] No bandwidth for stream, " + _Trim$(Str$(ConnectionsLog1Count)) + " times"
                         Timer_Fail_Count = Timer_Fail_Count + 1
-                        Timer_Failed = TRUE
+                        Timer_Failed = True
                         If Timer_Fail_Count > 999 Then Timer_Fail_Count = 999
                     End If
                 End If
@@ -7305,7 +7491,7 @@ Sub Timer01
                 streamsUp = "0"
                 LoadImageMEM Control(PictureBox1), "cross.png"
                 If Not Exe_Fail_First Then
-                    Exe_Fail_First = TRUE
+                    Exe_Fail_First = True
                     Scene_Current = Scene_Intro
                     If HTTP_Communication_Native Then http_client_connect "Set", Scene_Intro Else Shell _Hide _DontWait shell_cmd_1 + Scene_Intro + shell_cmd_2
                     _Delay 0.033
@@ -7316,14 +7502,14 @@ Sub Timer01
                     If __FileStatusOutput Then statusOutputToFile "[STREAM DOWN]:[ALL CAMERAS DOWN]"
                     If ConnectionsLog Then statusConnectionsLogToFile "[WARN] No bandwidth for stream #1, no bandwidth for stream #2"
                     Timer_Fail_Count = Timer_Fail_Count + 1
-                    Timer_Failed = TRUE
+                    Timer_Failed = True
                     If Timer_Fail_Count > 999 Then Timer_Fail_Count = 999
                 End If
             End If
         End If
     End If
 
-    If srt_warmup And returnFirstCheck And __MultiCameraSwitch And previousSceneDisplay = "" Then RefreshDisplayRequest = TRUE: Error_msg = "- Variable/s for scenes empty, check if OBS is open." + Chr$(10) + "- If OBS is open, check communication is available via Node.js or obs-websocket-http.": Error_msg_2$ = "- If Node.js is selected, check OBS WebSocket options are correctly set. (Error: #6)": _Delay 3
+    If srt_warmup And returnFirstCheck And __MultiCameraSwitch And previousSceneDisplay = "" Then RefreshDisplayRequest = True: Error_msg = "- Variable/s for scenes empty, check if OBS is open." + Chr$(10) + "- If OBS is open, check communication is available via obs-websocket-http or Node.js.": Error_msg_2$ = "- If Node.js is selected, check OBS WebSocket options are correctly set. (Error: #6)": _Delay 3
 
     If RTMP_Active Then
         ' Temp2 variables
@@ -7336,22 +7522,22 @@ Sub Timer01
 
     If Not Exe_Fail_First Then
         Timer_Fail_First = Timer_Fail_First + 1
-        If (Stream_Fail_Delay + 3) - Timer_Fail_First <= 0 Then Exe_Fail_First = TRUE
+        If (Stream_Fail_Delay + 3) - Timer_Fail_First <= 0 Then Exe_Fail_First = True
     End If
 
     If Not Exe_Fail_First_Stream1 Then
         Timer_Fail_First_Stream1 = Timer_Fail_First_Stream1 + 1
-        If (Stream_Fail_Delay + 3) - Timer_Fail_First_Stream1 <= 0 Then Exe_Fail_First_Stream1 = TRUE
+        If (Stream_Fail_Delay + 3) - Timer_Fail_First_Stream1 <= 0 Then Exe_Fail_First_Stream1 = True
     End If
 
     If Not Exe_Fail_First_Stream2 Then
         Timer_Fail_First_Stream2 = Timer_Fail_First_Stream2 + 1
-        If (Stream_Fail_Delay + 3) - Timer_Fail_First_Stream2 <= 0 Then Exe_Fail_First_Stream2 = TRUE
+        If (Stream_Fail_Delay + 3) - Timer_Fail_First_Stream2 <= 0 Then Exe_Fail_First_Stream2 = True
     End If
 
     If Refresh_Request Then
-        Refresh_Request = FALSE
-        RefreshDisplayRequest = TRUE
+        Refresh_Request = False
+        RefreshDisplayRequest = True
     End If
 
     CooldownStartup = CooldownStartup - 1
@@ -7360,7 +7546,7 @@ Sub Timer01
     If srt_warmup_LB >= 1 Then srt_warmup_LB = srt_warmup_LB - 1
 
     If Not srt_warmup Then
-        srt_warmup = TRUE
+        srt_warmup = True
         If Allow_Resize = "true" Then
             _Resize On , _Smooth
             _Delay 0.25
@@ -7371,7 +7557,7 @@ Sub Timer01
         On Error GoTo 0
     End If
 
-    If ErrorTestRunOnce = TRUE Then ErrorTestRunOnce = FALSE
+    If ErrorTestRunOnce = True Then ErrorTestRunOnce = False
 
     If PingLog = "true" Then
         If Int(Timer / 60) <> PingLogTimer Then
@@ -7383,5 +7569,5 @@ Sub Timer01
     td_display = Timer(.001) - timer1
 End Sub
 
-'$INCLUDE:'InForm\InForm.ui'
+'$INCLUDE:'InForm\InForm.loopy_srt.ui'
 
