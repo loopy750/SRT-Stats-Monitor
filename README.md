@@ -6,10 +6,12 @@ Loopy SRT Stats Monitor
     <a href="https://github.com/loopy750/SRT-Stats-Monitor/releases/latest"><img src="https://img.shields.io/github/v/release/loopy750/SRT-Stats-Monitor?include_prereleases" alt="Download"></a>
 </p>
 
-Latest release available [here](https://github.com/loopy750/SRT-Stats-Monitor/releases/latest).   
+Latest release available [here](https://github.com/loopy750/SRT-Stats-Monitor/releases/latest).  
 Latest beta release if any are available can be found [here](https://github.com/loopy750/SRT-Stats-Monitor/tree/beta).
 
-This is a program to assist with **IRL streaming** for popular streaming websites such as Twitch, using OBS Studio. This program is currently in use by many Twitch and YouTube streamers and has been proven to a be a valuable asset to their stream.
+#### Loopy SRT Monitor is freeware. It contains no ads, telemetry, or other similar content. Carefully read the following content and downloaded text files before running. This program will not launch "out of the box" until the bare minimum of required settings are correctly configured.
+
+This is a program to assist with **IRL streaming** for popular streaming websites such as Twitch and YouTube, using OBS Studio. This program is currently in use by many Twitch and YouTube streamers and has been proven to a be a valuable asset to their stream.
 
 SRT is described as an open source video transport protocol that utilises the UDP transport protocol. It has several advantages over the abandoned RTMP protocol, including H.265/HEVC streaming.
 
@@ -28,6 +30,8 @@ Advanced features `MultiCameraSwitch=true` consider for a two-camera multiple-sc
 sprEEEzy's Guide
 ================
 
+This link has remained here, as it has helped many discover and configure Loopy SRT Monitor. Over time, however, some instructions may have become outdated, and will therefore possibly conflict with details on this page.
+
 https://www.youtube.com/watch?v=ql2SizZLCPs
 
 DOWNLOADS
@@ -36,7 +40,7 @@ DOWNLOADS
 Programs to download
 --------------------
 OBS Studio - [https://obsproject.com/](https://obsproject.com/)  
-obs-websocket-http - [https://github.com/IRLToolkit/obs-websocket-http/releases/latest](https://github.com/IRLToolkit/obs-websocket-http/releases/latest)   
+obs-websocket-http - [https://github.com/IRLToolkit/obs-websocket-http/releases/latest](https://github.com/IRLToolkit/obs-websocket-http/releases/latest) <sup>_(automatically downloaded if the Windows installer is used)_</sup>  
 Node.js - [https://nodejs.org/](https://nodejs.org/) <sup>_(not required if using obs-websocket-http)_</sup>  
 VLC 64-bit - [https://www.videolan.org/vlc/](https://www.videolan.org/vlc/)  
 OBS Tablet Remote - [http://t2t2.github.io/obs-tablet-remote/](http://t2t2.github.io/obs-tablet-remote/) <sup>_(requires [OBS WebSocket 4.9.1](https://github.com/obsproject/obs-websocket/releases))_</sup>
@@ -45,6 +49,13 @@ Known OBS SRT issues
 --------------------
 * [SRT streams have trouble connecting/reconnecting while Recording is running](https://github.com/obsproject/obs-studio/issues/4596) [_(possible solution)_](https://github.com/obsproject/obs-studio/issues/4596#issuecomment-1548255120)
 * [obs-websocket-http doesn't reconnect on connection loss](https://github.com/IRLToolkit/obs-websocket-http/issues/11)
+
+Known Loopy SRT Monitor issues
+------------------------------
+
+* "Always On Top" is non-functional (Linux/macOS)
+* Rare case where program might load with extremely large text, making most text unreadable (macOS)
+* While "MultiCameraSwitch" is enabled, mixing an OBS SRT "[SRT]" stream with a non-OBS SRT stream may cause low bitrate to not function as intended. It is recommended to use either two OBS SRT streams, or two non-OBS SRT streams if low bitrate function is enabled.
 
 INSTALLATION
 ============
