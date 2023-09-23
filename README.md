@@ -2,6 +2,10 @@
 
 v1.1.2
 ------
+- Fixed NGINX "MultiCameraSwitch" bug from v1.1.1
+- Changed some fonts ("-classic" parameter reverts)
+- Restart "obs-websocket-http" during error screen on lost connection [Windows]
+- Minor fixes
 
 # Download
 
