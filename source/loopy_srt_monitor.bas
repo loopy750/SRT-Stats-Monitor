@@ -746,7 +746,7 @@ Sub __UI_BeforeInit
     _Title "Loopy SRT Monitor - loopy750"
     Ver = "1.1.1"
     VerBeta = "1.1.2"
-    VerDate = "07/23"
+    VerDate = "09/23"
     VerPortable = "false"
 End Sub
 
@@ -759,6 +759,8 @@ Sub __UI_OnLoad
         End Declare
     $End If
     Myhwnd = _WindowHandle
+    If OS = "LINUX" Then Control(OptionsMenuAlwaysOnTop).Hidden = True
+
     ' ----------------------------------------------------------------------------------
 
     ' Update display: ---------------------------------------------------------------
@@ -1006,11 +1008,13 @@ Sub __UI_OnLoad
         'v1.1.2
         '------
         'Changes:
+        'Fix NGINX "MultiCameraSwitch" bug from v1.1.1
         'Font changes
         'Test 6 error page changed
         'Parameter "-classic" for old fonts
         'Restart obs-websocket-http during error screen
         'Delete temp files on error screen
+        'Delay added to http_client_connect to fix minor LBR issue and possibly any others (native too fast vs curl)
         '
         '* Changed some fonts ("-classic" parameter reverts)
         '* Minor fixes
@@ -2644,7 +2648,7 @@ Sub __UI_OnLoad
         Control(Low_Bitrate_StatusLB).Hidden = True
         SetCaption FailCount2LB, ""
         SetCaption Timer_Fail_Count_2LB, ""
-        SetCaption FailCount1LB, "DC / Low bitrate"
+        If InStr(Command$, "-classic") Then SetCaption FailCount1LB, "DC / Low bitrate" Else SetCaption FailCount1LB, "DC  /  Low bitrate"
         SetCaption FailCount2LB, "Low bitrate scene"
         SetCaption Timer_Fail_Count_2LB, "-" ' This is set in TIMER
     Else
@@ -4387,8 +4391,10 @@ Sub http_client_connect (HTTP_Mode$, HTTP_Scene$)
 
             Put #http_client, , HTTP_Header
             'Close http_client
+            _Delay .005 ' Prevent flooding that could cause issues
             Exit Sub
         Case "get"
+            _Delay .003 ' Prevent flooding that could cause issues
             ' Mode "Get", to get scene
             HTTP_Timer_GET = 0: HTTP_GET_a = "": HTTP_GET_a2 = "": HTTP_GET_i = 0: HTTP_GET_i2 = 0: HTTP_GET_i3 = 0: HTTP_GET_l = 0: HTTP_GET_d = "": HTTP_GET_d_2 = ""
             GetCurrentProgramScene.tmp = ""
@@ -4432,6 +4438,7 @@ Sub http_client_connect (HTTP_Mode$, HTTP_Scene$)
             GetCurrentProgramScene.tmp = HTTP_GET_d
             Exit Sub
         Case "getmedia"
+            _Delay .003 ' Prevent flooding that could cause issues
             ' Mode "GetMedia", to get scene
             HTTP_Timer_GET = 0: HTTP_GET_a = "": HTTP_GET_a2 = "": HTTP_GET_i = 0: HTTP_GET_i2 = 0: HTTP_GET_i3 = 0: HTTP_GET_l = 0: HTTP_GET_d = "": HTTP_GET_d_2 = ""
             GetMediaInputStatus.tmp = ""
@@ -6208,6 +6215,7 @@ Sub Multi1_CMD_LBR_1
             ' These two lines were the only code prior to LBR fix
             If Scene_Current = titleScene1 Then
                 If HTTP_Communication_Native Then http_client_connect "Set", titleScene1 + " LBR" Else Shell _Hide _DontWait shell_cmd_1 + titleScene1 + " LBR" + shell_cmd_2
+                _Delay .005 ' Prevent flooding that could cause issues
             End If
             If Scene_Current = titleScene12 Then
                 If HTTP_Communication_Native Then http_client_connect "Set", titleScene12 + " LBR" Else Shell _Hide _DontWait shell_cmd_1 + titleScene12 + " LBR" + shell_cmd_2
@@ -6339,10 +6347,9 @@ Sub Multi1_CMD_LBR_3
 End Sub
 
 Sub Multi1_CMD_LBR_4
-    ' Can only be called once per second else LBR malfuntions with mixed servers
+    ' Can only be called once per second else LBR malfunctions with mixed servers
 
     If Timer_Fail_Stream1 = 0 And Timer_Fail_Stream2 = 0 Then
-
         ' LBR_Delay streams 1+2
 
         Select Case MediaSource1TimeMSOffset
@@ -6387,6 +6394,7 @@ Sub Multi1_CMD_LBR_4
 
 
     Else
+
 
         ' LBR_Delay stream 1 or 2
 
@@ -6605,18 +6613,18 @@ Sub Timer01
         If __RESTREAMER_1_Enabled And __RESTREAMER_2_Enabled Then Multi1 "RESTREAMER", 0: Server_1 = "RESTREAMER": Server_2 = "RESTREAMER": GoTo Servers_Found
 
         ' Mixed servers (no OBS SRT)
-        If __SLS_1_Enabled And __RTMP_2_Enabled Then Multi1 "SLS", 1: Multi1 "RTMP", 2: Server_1 = "SLS": Server_2 = "RTMP": GoTo Servers_Found
-        If __RTMP_1_Enabled And __SLS_2_Enabled Then Multi1 "RTMP", 1: Multi1 "SLS", 2: Server_1 = "RTMP": Server_2 = "SLS": GoTo Servers_Found
+        If __SLS_1_Enabled And __RTMP_2_Enabled Then Multi1 "SLS", 1: Multi1 "NGINX", 2: Server_1 = "SLS": Server_2 = "NGINX": GoTo Servers_Found
+        If __RTMP_1_Enabled And __SLS_2_Enabled Then Multi1 "NGINX", 1: Multi1 "SLS", 2: Server_1 = "NGINX": Server_2 = "SLS": GoTo Servers_Found
         If __SLS_1_Enabled And __RESTREAMER_2_Enabled Then Multi1 "SLS", 1: Multi1 "RESTREAMER", 2: Server_1 = "SLS": Server_2 = "RESTREAMER": GoTo Servers_Found
         If __RESTREAMER_1_Enabled And __SLS_2_Enabled Then Multi1 "RESTREAMER", 1: Multi1 "SLS", 2: Server_1 = "RESTREAMER": Server_2 = "SLS": GoTo Servers_Found
-        If __RTMP_1_Enabled And __RESTREAMER_2_Enabled Then Multi1 "RTMP", 1: Multi1 "RESTREAMER", 2: Server_1 = "RTMP": Server_2 = "RESTREAMER": GoTo Servers_Found
-        If __RESTREAMER_1_Enabled And __RTMP_2_Enabled Then Multi1 "RESTREAMER", 1: Multi1 "RTMP", 2: Server_1 = "RESTREAMER": Server_2 = "RTMP": GoTo Servers_Found
+        If __RTMP_1_Enabled And __RESTREAMER_2_Enabled Then Multi1 "NGINX", 1: Multi1 "RESTREAMER", 2: Server_1 = "NGINX": Server_2 = "RESTREAMER": GoTo Servers_Found
+        If __RESTREAMER_1_Enabled And __RTMP_2_Enabled Then Multi1 "RESTREAMER", 1: Multi1 "NGINX", 2: Server_1 = "RESTREAMER": Server_2 = "NGINX": GoTo Servers_Found
 
         ' Mixed servers (with OBS SRT)
         If __SLS_1_Enabled And Not __SLS_2_Enabled And Not RTMP_Active And Not RESTREAMER_Active Then Multi1 "SLS", 1: Multi1 "SRT", 2: Server_1 = "SLS": Server_2 = "SRT": GoTo Servers_Found
         If __SLS_2_Enabled And Not __SLS_1_Enabled And Not RTMP_Active And Not RESTREAMER_Active Then Multi1 "SRT", 1: Multi1 "SLS", 2: Server_1 = "SRT": Server_2 = "SLS": GoTo Servers_Found
-        If __RTMP_1_Enabled And Not __RTMP_2_Enabled And Not SLS_Active And Not RESTREAMER_Active Then Multi1 "RTMP", 1: Multi1 "SRT", 2: Server_1 = "RTMP": Server_2 = "SRT": GoTo Servers_Found
-        If __RTMP_2_Enabled And Not __RTMP_1_Enabled And Not SLS_Active And Not RESTREAMER_Active Then Multi1 "SRT", 1: Multi1 "RTMP", 2: Server_1 = "SRT": Server_2 = "RTMP": GoTo Servers_Found
+        If __RTMP_1_Enabled And Not __RTMP_2_Enabled And Not SLS_Active And Not RESTREAMER_Active Then Multi1 "NGINX", 1: Multi1 "SRT", 2: Server_1 = "NGINX": Server_2 = "SRT": GoTo Servers_Found
+        If __RTMP_2_Enabled And Not __RTMP_1_Enabled And Not SLS_Active And Not RESTREAMER_Active Then Multi1 "SRT", 1: Multi1 "NGINX", 2: Server_1 = "SRT": Server_2 = "NGINX": GoTo Servers_Found
         If __RESTREAMER_1_Enabled And Not __RESTREAMER_2_Enabled And Not RTMP_Active And Not SLS_Active Then Multi1 "RESTREAMER", 1: Multi1 "SRT", 2: Server_1 = "RESTREAMER": Server_2 = "SRT": GoTo Servers_Found
         If __RESTREAMER_2_Enabled And Not __RESTREAMER_1_Enabled And Not RTMP_Active And Not SLS_Active Then Multi1 "SRT", 1: Multi1 "RESTREAMER", 2: Server_1 = "SRT": Server_2 = "RESTREAMER": GoTo Servers_Found
 

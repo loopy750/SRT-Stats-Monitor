@@ -632,7 +632,7 @@ SUB __UI_LoadForm_Light
 
     __UI_NewID = __UI_NewControl(__UI_Type_Label, "FailCount1LB", 130, 21, 164, 50, 0)
     __UI_RegisterResult = 0
-    SetCaption __UI_NewID, "DC / LBR (#1)"
+    SetCaption __UI_NewID, "DC  /  LBR (#1)"
     Control(__UI_NewID).Font = SetFont("SegUIVar.ttf?segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf?/Library/Fonts/Arial Unicode.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(3, 4, 4)
     Control(__UI_NewID).BackColor = _RGB32(160, 164, 168)
@@ -643,7 +643,7 @@ SUB __UI_LoadForm_Light
 
     __UI_NewID = __UI_NewControl(__UI_Type_Label, "FailCount2LB", 125, 21, 294, 50, 0)
     __UI_RegisterResult = 0
-    SetCaption __UI_NewID, "DC / LBR (#2)"
+    SetCaption __UI_NewID, "DC  /  LBR (#2)"
     Control(__UI_NewID).Font = SetFont("SegUIVar.ttf?segoeui.ttf?phagspa.ttf?seguisb.ttf?/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf?/usr/share/fonts/truetype/freefont/FreeSans.ttf?/Library/Fonts/Arial Unicode.ttf", 12)
     Control(__UI_NewID).ForeColor = _RGB32(3, 4, 4)
     Control(__UI_NewID).BackColor = _RGB32(160, 164, 168)
