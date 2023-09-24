@@ -30,4 +30,9 @@ InForm.bi
 InForm.bi		copy as InForm.loopy_srt.bi
 
 FIND:			__UI_LoadForm
-REPLACE W/:		IF INSTR(COMMAND$, "-light") THEN __UI_LoadForm_Light ELSE __UI_LoadForm
+REPLACE W/:		IF INSTR(COMMAND$, "-light") THEN
+					__UI_LoadForm_Light
+				ELSEIF INSTR(COMMAND$, "-classic") THEN __UI_LoadForm_Classic
+				ELSE
+					__UI_LoadForm
+				END IF
