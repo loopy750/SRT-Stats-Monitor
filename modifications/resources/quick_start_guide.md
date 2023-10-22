@@ -22,6 +22,7 @@ For fresh installs, this is a quick guide to get everything working. All **READM
 - [Loopy SRT Monitor GitHub](https://github.com/loopy750/SRT-Stats-Monitor/releases) - Install the latest **Loopy SRT Monitor**
 - Open **OBS Studio**, enable **OBS WebSocket** and configure _Server Port_ as ```4455``` and _Server Password_ as ```PassWS```
 - If using ```4.9.1-compat```, configure _Server Port_ as ```4444``` or a port that is unused by the latest **OBS WebSocket**
+- Users of the Windows Portable version will need to manually download **[obs-websocket-http](https://github.com/IRLToolkit/obs-websocket-http/releases)** and copy the .exe file as ```obs-websocket-http.exe``` to the ```Loopy SRT Monitor``` folder
 - Linux and macOS users will need to manually launch **[obs-websocket-http](https://github.com/IRLToolkit/obs-websocket-http/releases)** in Terminal, [video guide](https://www.youtube.com/watch?v=ATFWjLBIuZ4) available if needed
 - Open **Loopy SRT Monitor**
 
