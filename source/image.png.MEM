@@ -1065,7 +1065,8 @@ SUB LoadImageMEM (This AS __UI_ControlTYPE, FileMEM$)
     END IF
 
     IF LEN(ErrorMessage$) THEN
-        IF NotFoundImage = 0 THEN NotFoundImage = __UI_LoadThemeImage("notfound.png")
+        ' TODO
+        'IF NotFoundImage = 0 THEN NotFoundImage = __UI_LoadThemeImage("notfound.png")
 
         PrevDest = _DEST
         This.HelperCanvas = _NEWIMAGE(This.Width, This.Height, 32)

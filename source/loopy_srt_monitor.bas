@@ -1,3 +1,10 @@
+'
+' Loopy SRT Stats Monitor
+' -----------------------
+'
+' https://github.com/loopy750/SRT-Stats-Monitor
+'
+
 ': This program uses
 ': InForm - GUI library for QB64 - v1.5
 ': Fellippe Heitor, 2016-2023 - fellippe@qb64.org - @fellippeheitor
@@ -5,6 +12,7 @@
 '-----------------------------------------------------------
 
 ': Controls' IDs: ------------------------------------------------------------------
+$Unstable:Http
 Option _Explicit
 Dim Shared LoopySRTMonitor As Long
 Dim Shared FileMenu As Long
@@ -301,6 +309,8 @@ Common Shared BELABOX_1_Uptime As Long '                BELABOX
 Common Shared BELABOX_2_Uptime As Long '                BELABOX
 Common Shared BELABOX_1_Offline As Integer '            BELABOX
 Common Shared BELABOX_2_Offline As Integer '            BELABOX
+Common Shared HTTPS_1_Mode As Integer '                 BELABOX HTTPS
+Common Shared HTTPS_2_Mode As Integer '                 BELABOX HTTPS
 Common Shared Server_Dummy_Time As Long
 Common Shared sls_stats_dummy.xml As String
 Common Shared sls_connect_timer_1 As Integer
@@ -431,6 +441,7 @@ Common Shared HTTP_Auth_Key As String
 Common Shared HTTP_Enabled As _Byte
 Common Shared HTTP_File As String
 Common Shared HTTP_Filename As String
+Common Shared HTTP_File_Missing As Integer
 Common Shared http_Delay As Double
 Common Shared http_media2_File As String
 
@@ -649,8 +660,8 @@ $If WIN Then
     Dim Shared y& ' Windows only
 $End If
 
-$If VERSION < 3.8.0 Then
-        $ERROR Requires QB64 v3.8.0 or newer
+$If VERSION < 3.13.1 Then
+    $ERROR Requires QB64 v3.13.1 or newer
 $End If
 
 ' Set variables on load: ---------------------------------------------------------------
@@ -682,7 +693,7 @@ Else
 End If
 
 ' Default program settings
-'Const False = 0, True = Not False '    Located in file "InForm\InForm.bi", line ~328
+'Const False = 0, True = Not False '    Located in file "InForm\InForm.loopy_srt.bi", line ~321
 q = _Exit
 c10 = Chr$(10)
 c34 = Chr$(34)
@@ -723,34 +734,37 @@ If Err Then Cls: _UPrintString (30, 32), "ERR, _ERRORLINE:" + Str$(Err) + "," + 
 ' Added after InForm entry - END
 
 ': External modules: ---------------------------------------------------------------
-'$INCLUDE:'InForm\InForm.loopy_srt.bi'
-'$INCLUDE:'InForm\xp.uitheme'
-'$INCLUDE:'loopy_srt_monitor.frm'
+'$Include:'InForm\InForm.loopy_srt.bi'
+'$Include:'InForm\xp.uitheme'
+'$Include:'loopy_srt_monitor.frm'
 
 ': Event procedures: ---------------------------------------------------------------
-'$INCLUDE:'loopy_srt_monitor_light.frm'
-'$INCLUDE:'loopy_srt_monitor_classic.frm'
-'$INCLUDE:'image.png.MEM'
+'$Include:'loopy_srt_monitor_light.frm'
+'$Include:'loopy_srt_monitor_classic.frm'
+'$Include:'image.png.MEM'
 Sub __UI_BeforeInit
-    $VersionInfo:CompanyName=loopy750
-    $VersionInfo:ProductName=Loopy SRT Monitor
-    $VersionInfo:Comments=Monitor SRT Streams
-    $VersionInfo:FileDescription=Loopy SRT Monitor
-    $VersionInfo:FILEVERSION#=1,1,1,0
-    $VersionInfo:ProductVersion=1,1,1,0
-    $VersionInfo:LegalCopyright=loopy750
-    $VersionInfo:OriginalFilename=loopy_srt_monitor.exe
+    $VersionInfo:CompanyName='loopy750'
+    $VersionInfo:ProductName='Loopy SRT Monitor'
+    $VersionInfo:InternalName='Loopy SRT Monitor'
+    $VersionInfo:Comments='Monitor SRT Streams'
+    $VersionInfo:FileDescription='Loopy SRT Monitor'
+    $VersionInfo:Web='https://github.com/loopy750/SRT-Stats-Monitor'
+    $VersionInfo:FILEVERSION#=1,1,3,0
+    $VersionInfo:PRODUCTVERSION#=1,1,3,0
+    $VersionInfo:LegalCopyright='loopy750'
+    $VersionInfo:OriginalFilename='loopy_srt_monitor.exe'
     $Checking:On
-    '$EXEICON moved but still parsed on launch
+    '$ExeIcon moved but still parsed on launch
 
     _Title "Loopy SRT Monitor - loopy750"
-    Ver = "1.1.2"
+    Ver = "1.1.3"
     VerBeta = ""
-    VerDate = "09/23"
+    VerDate = "09/24"
     VerPortable = "false"
 End Sub
 
 Sub __UI_OnLoad
+    _ScreenMove _Middle
     ' Always on top: ------------------------------------------------------------------
     ' Windows only
     $If WIN Then
@@ -760,7 +774,6 @@ Sub __UI_OnLoad
     $End If
     Myhwnd = _WindowHandle
     If OS = "LINUX" Then Control(OptionsMenuAlwaysOnTop).Hidden = True
-
     ' ----------------------------------------------------------------------------------
 
     ' Update display: ---------------------------------------------------------------
@@ -1005,19 +1018,13 @@ Sub __UI_OnLoad
         Close #4
 
         '---------------------------------------------------------------
-        'v1.1.2
+        'v1.1.3
         '------
         'Changes:
-        'Fix NGINX "MultiCameraSwitch" bug from v1.1.1
-        'Font changes
-        'Test 6 error page changed
-        'Parameter "-classic" for old fonts
-        'Restart obs-websocket-http during error screen
-        'Delete temp files on error screen
-        'Delay added to http_client_connect to fix minor LBR issue and possibly any others (native too fast vs curl)
-        '
-        '* Changed some fonts ("-classic" parameter reverts)
-        '* Minor fixes
+        'Added support for BELABOX HTTPS stats (possibly unstable)
+        'Added notice when "obs-websocket-http" cannot be located
+        'Fixed NGINX bitrate file output
+        'Minor fixes
         '
         'UNDOCUMENTED
         '------------
@@ -1074,9 +1081,11 @@ Sub __UI_OnLoad
             ' Automatically open obs-websocket-http
             If OS = "WINDOWS" And _FileExists(HTTP_File) Then
                 If _DirExists(config_dir) And VerPortable = "false" Then ChDir config_dir ' obs-websocket-http cannot read program's "config.ini" unless started from its directory
-                Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
+                Shell _Hide "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
                 If FastStart <> "true" Then _Delay 1 Else _Delay .5
-                Shell _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File
+                Shell _Hide _DontWait "%ComSpec% /C START " + c34 + c34 + " /MIN " + c34 + HTTP_File
+            ElseIf OS = "WINDOWS" And Not _FileExists(HTTP_File) Then
+                HTTP_File_Missing = True
             End If
         End If
 
@@ -1485,6 +1494,7 @@ Sub __UI_OnLoad
             If Desktop_Width_Position = -1 And Desktop_Height_Position = -1 Then _ScreenMove _Middle Else _ScreenMove Desktop_Width_Position, Desktop_Height_Position
         End If
     End If
+
     ' Delay program if using HTTP to allow time for HTTP to connect to OBS WebSocket
     If FastStart <> "true" Then
         If OS = "WINDOWS" And _FileExists(HTTP_File) Then
@@ -2788,7 +2798,7 @@ Sub __UI_BeforeUpdateDisplay
             If _FileExists(outputStatusFile) Then Kill outputStatusFile
             If _FileExists(http_media2_File) Then Kill http_media2_File
             If ConnectionsLog Then statusConnectionsLogToFile "[INFO] Program exit"
-            If OS = "WINDOWS" And _FileExists(HTTP_File) Then Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
+            If OS = "WINDOWS" And _FileExists(HTTP_File) Then Shell _Hide "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
             System
     End Select
 
@@ -2908,7 +2918,7 @@ Sub __UI_Click (id As Long)
             If _FileExists(outputStatusFile) Then Kill outputStatusFile
             If _FileExists(http_media2_File) Then Kill http_media2_File
             If ConnectionsLog Then statusConnectionsLogToFile "[INFO] Program exit"
-            If OS = "WINDOWS" And _FileExists(HTTP_File) Then Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
+            If OS = "WINDOWS" And _FileExists(HTTP_File) Then Shell _Hide "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
             System
 
         Case StreamFailTimerLB
@@ -4147,8 +4157,13 @@ Sub ErrorDisplay (ErrorTestVal)
 
             If InStr(Error_msg, "obs-websocket-http") Then
 
-                Error_msg_6_1 = "OBS " + c34 + "WebSocket Server" + c34 + " connection failed. Configure " + c34 + "HTTPBindAddress, HTTPBindPort, ws_url, ws_password" + c34
-                Error_msg_6_1a = "in " + c34 + "config.ini" + c34 + " and retry."
+                If HTTP_File_Missing Then
+                    Error_msg_6_1 = "OBS " + c34 + "WebSocket Server" + c34 + " connection failed. Download " + c34 + "obs-websocket-http.exe" + c34 + " and retry. Open " + c34 + "readme.txt" + c34
+                    Error_msg_6_1a = "for more information about downloading this file."
+                Else
+                    Error_msg_6_1 = "OBS " + c34 + "WebSocket Server" + c34 + " connection failed. Configure " + c34 + "HTTPBindAddress, HTTPBindPort, ws_url, ws_password" + c34
+                    Error_msg_6_1a = "in " + c34 + "config.ini" + c34 + " and retry."
+                End If
 
                 Error_msg_6_2 = "If configuration is correct, check OBS Studio is open, " + c34 + "WebSocket Server" + c34 + " is enabled in OBS Studio, and"
                 Error_msg_6_2a = c34 + "obs-websocket-http" + c34 + " is copied. Enable " + c34 + "WebSocket Server" + c34 + " in OBS Studio via Tools --> WebSocket Server Settings."
@@ -4186,7 +4201,7 @@ Sub ErrorDisplay (ErrorTestVal)
             End If
 
             _UPrintString (598, 19 * 18), "Program will close shortly"
-            Sound 440, 1, 0.1, -0.5, 4
+            'Sound 440, 1, 0.1, -0.5, 4
 
         End If
 
@@ -4223,8 +4238,8 @@ Sub ErrorDisplay (ErrorTestVal)
                 _UPrintString (16, 14 * 18), Left$(Error_msg, InStr(Error_msg, Chr$(10)) - 1)
                 _UPrintString (16, 15 * 18), Mid$(Error_msg, InStr(Error_msg, Chr$(10)) + 1)
                 _UPrintString (16, 16 * 18), Mid$(Error_msg_3, 1)
-                Sound 880, 1, 0.25, -0.25, 4
-                Sound 440, 1, 0.25, 0.25, 4
+                'Sound 880, 1, 0.25, -0.25, 4
+                'Sound 440, 1, 0.25, 0.25, 4
             Else
                 _UPrintString (16, 14 * 18), Error_msg
             End If
@@ -4238,7 +4253,7 @@ Sub ErrorDisplay (ErrorTestVal)
         End If
         _Display
         _Delay 0.5
-        If HTTP_Enabled And HTTP_Auto_Open <> "false" Then If OS = "WINDOWS" And _FileExists(HTTP_File) Then Shell "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
+        If HTTP_Enabled And HTTP_Auto_Open <> "false" Then If OS = "WINDOWS" And _FileExists(HTTP_File) Then Shell _Hide "%ComSpec% /C START " + c34 + c34 + " /MIN " + "taskkill /IM " + c34 + HTTP_Filename + c34 + " /F"
         Error_msg_3 = ""
         If _FileExists(filePrevious) Then Kill filePrevious
         If _FileExists(filePrevious_ms) Then Kill filePrevious_ms
@@ -4385,7 +4400,7 @@ Sub http_client_connect (HTTP_Mode$, HTTP_Scene$)
             HTTP_Header = ""
             HTTP_Header = HTTP_Header + "POST /emit/SetCurrentProgramScene HTTP/1.1" + SLS_EOL
             HTTP_Header = HTTP_Header + "Host: " + HTTP_Bind_Address + ":" + HTTP_Bind_Port + SLS_EOL
-            HTTP_Header = HTTP_Header + "User-Agent: curl/8.1.2" + SLS_EOL
+            HTTP_Header = HTTP_Header + "User-Agent: curl/8.7.1" + SLS_EOL
             HTTP_Header = HTTP_Header + "Accept: */*" + SLS_EOL
             HTTP_Header = HTTP_Header + "Authorization: " + HTTP_Auth_Key + SLS_EOL
             HTTP_Header = HTTP_Header + "Content-type: application/json" + SLS_EOL
@@ -4408,7 +4423,7 @@ Sub http_client_connect (HTTP_Mode$, HTTP_Scene$)
             HTTP_Header = ""
             HTTP_Header = HTTP_Header + "POST /call/GetCurrentProgramScene HTTP/1.1" + SLS_EOL
             HTTP_Header = HTTP_Header + "Host: " + HTTP_Bind_Address + ":" + HTTP_Bind_Port + SLS_EOL
-            HTTP_Header = HTTP_Header + "User-Agent: curl/8.1.2" + SLS_EOL
+            HTTP_Header = HTTP_Header + "User-Agent: curl/8.7.1" + SLS_EOL
             HTTP_Header = HTTP_Header + "Accept: */*" + SLS_EOL
             HTTP_Header = HTTP_Header + "Authorization: " + HTTP_Auth_Key + SLS_EOL
             HTTP_Header = HTTP_Header + "Content-type: application/json" + SLS_EOL + SLS_EOL
@@ -4454,7 +4469,7 @@ Sub http_client_connect (HTTP_Mode$, HTTP_Scene$)
             HTTP_Header = ""
             HTTP_Header = HTTP_Header + "POST /call/GetMediaInputStatus HTTP/1.1" + SLS_EOL
             HTTP_Header = HTTP_Header + "Host: " + HTTP_Bind_Address + ":" + HTTP_Bind_Port + SLS_EOL
-            HTTP_Header = HTTP_Header + "User-Agent: curl/8.1.2" + SLS_EOL
+            HTTP_Header = HTTP_Header + "User-Agent: curl/8.7.1" + SLS_EOL
             HTTP_Header = HTTP_Header + "Accept: */*" + SLS_EOL
             HTTP_Header = HTTP_Header + "Authorization: " + HTTP_Auth_Key + SLS_EOL
             HTTP_Header = HTTP_Header + "Content-type: application/json" + SLS_EOL
@@ -4499,7 +4514,7 @@ Sub http_client_connect (HTTP_Mode$, HTTP_Scene$)
             HTTP_Header = ""
             HTTP_Header = HTTP_Header + "POST /call/GetVersion HTTP/1.1" + SLS_EOL
             HTTP_Header = HTTP_Header + "Host: " + HTTP_Bind_Address + ":" + HTTP_Bind_Port + SLS_EOL
-            HTTP_Header = HTTP_Header + "User-Agent: curl/8.1.2" + SLS_EOL
+            HTTP_Header = HTTP_Header + "User-Agent: curl/8.7.1" + SLS_EOL
             HTTP_Header = HTTP_Header + "Accept: */*" + SLS_EOL
             HTTP_Header = HTTP_Header + "Authorization: " + HTTP_Auth_Key + SLS_EOL
             HTTP_Header = HTTP_Header + "Content-type: application/json" + SLS_EOL + SLS_EOL
@@ -4563,9 +4578,16 @@ Sub sls_client_connect
 
         SLS_Ping1 = Timer(.001)
 
-        sls_client = _OpenClient(SLS_Port_Client + SLS_Server_IP)
+        ' Switch to HTTPS mode if "https://" is found in the server variable
+        If Mid$(LCase$(SLS_Server_IP), 1, 8) = "https://" Then HTTPS_1_Mode = True Else HTTPS_1_Mode = False
 
-        If sls_client = 0 Then RefreshDisplayRequest = True: Error_msg$ = "- Unable to connect, check if " + c34 + SLS_Server_IP + ":" + SLS_Server_Port + c34 + " is correct." + Chr$(10) + "- Program is unable to read the SLS /" + Left$(SLS_Stats, 20) + " URL from its http server. (Error: #4)": _Delay 3: Exit Sub
+        If HTTPS_1_Mode Then ' HTTPS mode
+            sls_client = _OpenClient("HTTP:" + SLS_Server_IP + ":" + SLS_Server_Port + "/" + SLS_Stats)
+        Else
+            sls_client = _OpenClient(SLS_Port_Client + SLS_Server_IP)
+        End If
+
+        If sls_client = 0 Then RefreshDisplayRequest = True: Error_msg$ = "- Unable to connect, check if " + c34 + SLS_Server_IP + ":" + SLS_Server_Port + c34 + " is correct. If using HTTPS, confirm port 443 is configured." + Chr$(10) + "- Program is unable to read the SLS /" + Left$(SLS_Stats, 20) + " URL from its http server. (Error: #4)": _Delay 3: Exit Sub
 
         SLS_Ping2 = Timer(.001)
         SLS_PingOut = (SLS_Ping2 - SLS_Ping1)
@@ -4575,7 +4597,20 @@ Sub sls_client_connect
     ' Reset timer and delay if connection was not established, else Put will cause a program error
     If sls_client = 0 Then sls_connect_timer_1 = 99: _Delay 3
 
-    Put #sls_client, , SLS_Header
+    If HTTPS_1_Mode Then ' HTTPS mode
+        ' Client must reopen
+        If sls_connect_timer_1 <> 1 Then sls_client = _OpenClient("HTTP:" + SLS_Server_IP + ":" + SLS_Server_Port + "/" + SLS_Stats)
+        ''While Not EOF(sls_client)
+        ''_Limit 100
+        Get #sls_client, , SLS_GET_d
+        ''sls_stats.xml = sls_stats.xml + SLS_GET_d
+        ''Wend
+        'Close sls_client
+        sls_stats.xml = SLS_GET_d
+        Exit Sub
+    Else
+        Put #sls_client, , SLS_Header
+    End If
 
     ' Connect to SRT Live Server and grab json data
     SLS_Timer_GET = Timer
@@ -4631,9 +4666,16 @@ Sub sls_client_connect_2 ' SLS 2nd IP
 
         SLS_Ping1_2 = Timer(.001)
 
-        sls_client_2 = _OpenClient(SLS_Port_Client_2 + SLS_Server_IP_2)
+        ' Switch to HTTPS mode if "https://" is found in the server variable
+        If Mid$(LCase$(SLS_Server_IP_2), 1, 8) = "https://" Then HTTPS_2_Mode = True Else HTTPS_2_Mode = False
 
-        If sls_client_2 = 0 Then RefreshDisplayRequest = True: Error_msg$ = "- Unable to connect, check if " + c34 + SLS_Server_IP_2 + ":" + SLS_Server_Port_2 + c34 + " is correct." + Chr$(10) + "- Program is unable to read the SLS /" + Left$(SLS_Stats_2, 20) + " URL from its http server. (Error: #13)": _Delay 3: Exit Sub
+        If HTTPS_2_Mode Then ' HTTPS mode
+            sls_client_2 = _OpenClient("HTTP:" + SLS_Server_IP_2 + ":" + SLS_Server_Port_2 + "/" + SLS_Stats_2)
+        Else
+            sls_client_2 = _OpenClient(SLS_Port_Client_2 + SLS_Server_IP_2)
+        End If
+
+        If sls_client_2 = 0 Then RefreshDisplayRequest = True: Error_msg$ = "- Unable to connect, check if " + c34 + SLS_Server_IP_2 + ":" + SLS_Server_Port_2 + c34 + " is correct. If using HTTPS, confirm port 443 is configured." + Chr$(10) + "- Program is unable to read the SLS /" + Left$(SLS_Stats_2, 20) + " URL from its http server. (Error: #13)": _Delay 3: Exit Sub
 
         SLS_Ping2_2 = Timer(.001)
         SLS_PingOut_2 = (SLS_Ping2_2 - SLS_Ping1_2)
@@ -4643,7 +4685,20 @@ Sub sls_client_connect_2 ' SLS 2nd IP
     ' Reset timer and delay if connection was not established, else Put will cause a program error
     If sls_client_2 = 0 Then sls_connect_timer_2 = 99: _Delay 3
 
-    Put #sls_client_2, , SLS_Header_2
+    If HTTPS_2_Mode Then ' HTTPS mode
+        ' Client must reopen
+        If sls_connect_timer_2 <> 1 Then sls_client_2 = _OpenClient("HTTP:" + SLS_Server_IP_2 + ":" + SLS_Server_Port_2 + "/" + SLS_Stats_2)
+        ''While Not EOF(sls_client_2)
+        ''_Limit 100
+        Get #sls_client_2, , SLS_GET_d_2
+        ''sls_stats_2.xml = sls_stats_2.xml + SLS_GET_d_2
+        ''Wend
+        'Close sls_client
+        sls_stats_2.xml = SLS_GET_d_2
+        Exit Sub
+    Else
+        Put #sls_client_2, , SLS_Header_2
+    End If
 
     ' Connect to SRT Live Server and grab json data
     SLS_Timer_GET = Timer
@@ -4721,7 +4776,7 @@ Sub restreamer_client_connect
     RESTREAMER_Header = ""
     RESTREAMER_Header = RESTREAMER_Header + "POST /api/login HTTP/1.1" + RESTREAMER_EOL
     RESTREAMER_Header = RESTREAMER_Header + "Host: " + RESTREAMER_Server_IP + ":" + RESTREAMER_Server_Port + RESTREAMER_EOL
-    RESTREAMER_Header = RESTREAMER_Header + "User-Agent: curl/8.1.2" + RESTREAMER_EOL
+    RESTREAMER_Header = RESTREAMER_Header + "User-Agent: curl/8.7.1" + RESTREAMER_EOL
     RESTREAMER_Header = RESTREAMER_Header + "Accept: */*" + RESTREAMER_EOL
     RESTREAMER_Header = RESTREAMER_Header + "Content-type: application/json" + RESTREAMER_EOL
     RESTREAMER_Header = RESTREAMER_Header + "Content-Length: " + _Trim$(Str$(Len(RESTREAMER_Data))) + RESTREAMER_EOL + RESTREAMER_EOL
@@ -4776,7 +4831,7 @@ Sub restreamer_client_connect
     RESTREAMER_Header = ""
     RESTREAMER_Header = RESTREAMER_Header + "GET /api/v3/session/active?collectors=" + RESTREAMER_Stats + " HTTP/1.1" + RESTREAMER_EOL
     RESTREAMER_Header = RESTREAMER_Header + "Host: " + RESTREAMER_Server_IP + ":" + RESTREAMER_Server_Port + RESTREAMER_EOL
-    RESTREAMER_Header = RESTREAMER_Header + "User-Agent: curl/8.1.2" + RESTREAMER_EOL
+    RESTREAMER_Header = RESTREAMER_Header + "User-Agent: curl/8.7.1" + RESTREAMER_EOL
     RESTREAMER_Header = RESTREAMER_Header + "Accept: application/json" + RESTREAMER_EOL
     RESTREAMER_Header = RESTREAMER_Header + "Authorization: Bearer " + restreamer_token.xml + RESTREAMER_EOL
     RESTREAMER_Header = RESTREAMER_Header + RESTREAMER_EOL
@@ -5702,10 +5757,10 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                         ' If one stream is running and SLS_Publisher2 is the stream, find it here
                         If Mid$(sls_stats.xml, InStr(sls_stats.xml, "publishers") + 15, Len(SLS_Publisher2)) = SLS_Publisher2 Then
                             If InStr(sls_stats.xml, SLS_Publisher2) Then SLS_Bitrate2 = Val(Mid$(sls_stats.xml, (InStr(sls_stats.xml, c34 + "bitrate" + c34 + ":") + Len(c34 + "bitrate" + c34 + ":")), 6))
-
-                            If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
+                            ' TODO: Confirm SLS_2_Enabled = "true" doesn't break anything
+                            If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" And SLS_2_Enabled = "true" Then ' SLS_2_Enabled fix (v1.1.3)
                                 BELABOX_2_Found = True: BELABOX_2_Uptime = BELABOX_2_Uptime + 1: SLS_Uptime2 = BELABOX_2_Uptime ' Uptime not reported in JSON data
-                            ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
+                            ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" And SLS_2_Enabled = "true" Then ' SLS_2_Enabled fix (v1.1.3)
                                 BELABOX_2_Found = True: BELABOX_2_Offline = True: BELABOX_2_Uptime = 0
                             End If
 
@@ -5726,9 +5781,9 @@ Sub Multi1 (serverType As String, serverSelection As _Byte)
                         If Mid$(sls_stats.xml, InStr(sls_stats.xml, SLS_Publisher2), Len(SLS_Publisher2)) = SLS_Publisher2 Then
                             SLS_Bitrate2 = Val(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, "bitrate") + 9, 6))
 
-                            If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" Then
+                            If _Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)) = "true" And SLS_2_Enabled = "true" Then ' SLS_2_Enabled fix (v1.1.3)
                                 BELABOX_2_Found = True: BELABOX_2_Uptime = BELABOX_2_Uptime + 1: SLS_Uptime2 = BELABOX_2_Uptime ' Uptime not reported in JSON data
-                            ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" Then
+                            ElseIf Left$(_Trim$(Mid$(sls_stats.xml, InStr(InStr(sls_stats.xml, SLS_Publisher2), sls_stats.xml, c34 + "connected" + c34 + ":") + 12, 5)), 4) = "fals" And SLS_2_Enabled = "true" Then ' SLS_2_Enabled fix (v1.1.3)
                                 BELABOX_2_Found = True: BELABOX_2_Offline = True: BELABOX_2_Uptime = 0
                             End If
 
@@ -7185,22 +7240,47 @@ Sub Timer01
             If __FileStatusOutput Then
                 On Error GoTo App_Fail
                 App_Refresh = True
+
                 Open outputKbpsFile1 For Output As #200
-                Select Case SLS_Bitrate1
-                    Case 0 To 99
-                        If SLS_Kbps_Precision <> "nerd" Then Print #200, _Trim$(Str$(Int(SLS_Bitrate1 / 100))) Else Print #200, _Trim$(Str$(Int(SLS_Bitrate1)))
-                    Case Is >= 100
-                        If SLS_Kbps_Precision <> "nerd" Then Print #200, _Trim$(Str$(Int(SLS_Bitrate1 / 100))) + "00" Else Print #200, _Trim$(Str$(Int(SLS_Bitrate1)))
-                End Select
+
+                If Server_1 = "NGINX" Then
+                    Select Case RTMP_Bitrate1
+                        Case 0 To 99
+                            If SLS_Kbps_Precision <> "nerd" Then Print #200, _Trim$(Str$(Int(RTMP_Bitrate1 / 100))) Else Print #200, _Trim$(Str$(Int(RTMP_Bitrate1)))
+                        Case Is >= 100
+                            If SLS_Kbps_Precision <> "nerd" Then Print #200, _Trim$(Str$(Int(RTMP_Bitrate1 / 100))) + "00" Else Print #200, _Trim$(Str$(Int(RTMP_Bitrate1)))
+                    End Select
+                Else
+                    Select Case SLS_Bitrate1
+                        Case 0 To 99
+                            If SLS_Kbps_Precision <> "nerd" Then Print #200, _Trim$(Str$(Int(SLS_Bitrate1 / 100))) Else Print #200, _Trim$(Str$(Int(SLS_Bitrate1)))
+                        Case Is >= 100
+                            If SLS_Kbps_Precision <> "nerd" Then Print #200, _Trim$(Str$(Int(SLS_Bitrate1 / 100))) + "00" Else Print #200, _Trim$(Str$(Int(SLS_Bitrate1)))
+                    End Select
+                End If
+
                 Close 200
+
                 Open outputKbpsFile2 For Output As #204
-                Select Case SLS_Bitrate2
-                    Case 0 To 99
-                        If SLS_Kbps_Precision <> "nerd" Then Print #204, _Trim$(Str$(Int(SLS_Bitrate2 / 100))) Else Print #204, _Trim$(Str$(Int(SLS_Bitrate2)))
-                    Case Is >= 100
-                        If SLS_Kbps_Precision <> "nerd" Then Print #204, _Trim$(Str$(Int(SLS_Bitrate2 / 100))) + "00" Else Print #204, _Trim$(Str$(Int(SLS_Bitrate2)))
-                End Select
+
+                If Server_2 = "NGINX" Then
+                    Select Case RTMP_Bitrate2
+                        Case 0 To 99
+                            If SLS_Kbps_Precision <> "nerd" Then Print #204, _Trim$(Str$(Int(RTMP_Bitrate2 / 100))) Else Print #204, _Trim$(Str$(Int(RTMP_Bitrate2)))
+                        Case Is >= 100
+                            If SLS_Kbps_Precision <> "nerd" Then Print #204, _Trim$(Str$(Int(RTMP_Bitrate2 / 100))) + "00" Else Print #204, _Trim$(Str$(Int(RTMP_Bitrate2)))
+                    End Select
+                Else
+                    Select Case SLS_Bitrate2
+                        Case 0 To 99
+                            If SLS_Kbps_Precision <> "nerd" Then Print #204, _Trim$(Str$(Int(SLS_Bitrate2 / 100))) Else Print #204, _Trim$(Str$(Int(SLS_Bitrate2)))
+                        Case Is >= 100
+                            If SLS_Kbps_Precision <> "nerd" Then Print #204, _Trim$(Str$(Int(SLS_Bitrate2 / 100))) + "00" Else Print #204, _Trim$(Str$(Int(SLS_Bitrate2)))
+                    End Select
+                End If
+
                 Close 204
+
                 On Error GoTo 0
                 App_Refresh = False
             End If
@@ -7583,5 +7663,5 @@ Sub Timer01
     td_display = Timer(.001) - timer1
 End Sub
 
-'$INCLUDE:'InForm\InForm.loopy_srt.ui'
+'$Include:'InForm\InForm.loopy_srt.ui'
 
